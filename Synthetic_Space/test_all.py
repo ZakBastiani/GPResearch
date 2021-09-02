@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from Synthetic_Space import Gaussian_Process
 from Synthetic_Space import Random_Gaussian
 from Synthetic_Space import Constant_Bias
-from Synthetic_Space import Opt_Alpha_Constant_Bias
+from Synthetic_Space import Opt_Alpha
 from Synthetic_Space import Calc_Alpha
 from Synthetic_Space import Calc_Alpha_Calc_Constant_Bias
 from Synthetic_Space import Wei_Model
@@ -98,9 +98,9 @@ sensor_time = np.linspace(0, space_range, N_time)
 # Constant alpha for the whole system
 alpha = np.random.normal(alpha_mean, alpha_variance, size=1)
 # Constant sensor bias in time
-# sensor_bias = np.outer(np.random.normal(bias_mean, bias_variance, size=N_sensors), np.ones(N_time))
+sensor_bias = np.outer(np.random.normal(bias_mean, bias_variance, size=N_sensors), np.ones(N_time))
 # Smooth sensor bias in time
-sensor_bias = np.random.multivariate_normal(bias_mean * np.ones(N_time), bias_kernel(sensor_time, sensor_time), N_sensors)
+# sensor_bias = np.random.multivariate_normal(bias_mean * np.ones(N_time), bias_kernel(sensor_time, sensor_time), N_sensors)
 first_data = gaussian.function(sensors, sensor_time)
 
 # Data received with sensor bias
@@ -148,14 +148,14 @@ calc_alpha.print_error(alpha, sensor_bias, gaussian.matrix2d, calc_alpha_estimat
 # calc_both_estimate = calc_both.build(gaussian.space, gaussian.time)
 # calc_both_gt_estimate = calc_both.build(true_sensors, true_sensor_time)
 # calc_both.print_error(alpha, sensor_bias, gaussian.matrix2d, calc_both_estimate, true_data, calc_both_gt_estimate )
-#
-# # # Building a Gp that predicts bias and optimizes alpha
-# # opt_alpha_calc_bias = Opt_Alpha_Constant_Bias.OptAlphaCalcBias(sensors, sensor_time, data, true_sensors, sensor_time, true_data, space_kernel,
-# #                                                                time_kernel, kernel, noise, theta_not, bias_variance, bias_mean, alpha_variance, alpha_mean)
-# # opt_alpha_calc_bias_estimate = opt_alpha_calc_bias.build(gaussian.space, gaussian.time)
-# # opt_alpha_calc_bias_gt_estimate = opt_alpha_calc_bias.build(true_sensors, true_sensor_time)
-# # opt_alpha_calc_bias.print_error(alpha, sensor_bias, gaussian.matrix2d, opt_alpha_calc_bias_estimate, true_data, opt_alpha_calc_bias_gt_estimate)
-# #
+
+# Building a Gp that predicts bias and optimizes alpha
+opt_alpha = Opt_Alpha.OptAlphaCalcBias(sensors, sensor_time, data, true_sensors, sensor_time, true_data, space_kernel,
+                                       time_kernel, kernel, noise, theta_not, sensor_bias, alpha_variance, alpha_mean)
+opt_alpha_estimate = opt_alpha.build(gaussian.space, gaussian.time)
+opt_alpha_gt_estimate = opt_alpha.build(true_sensors, true_sensor_time)
+opt_alpha.print_error(alpha, sensor_bias, gaussian.matrix2d, opt_alpha_estimate, true_data, opt_alpha_gt_estimate)
+
 # # # Building a Gp that optimizes both alpha and bias
 # # opt_both = Wei_Model.OptBoth(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
 # #                              space_kernel, time_kernel, kernel, noise, theta_not, bias_variance,

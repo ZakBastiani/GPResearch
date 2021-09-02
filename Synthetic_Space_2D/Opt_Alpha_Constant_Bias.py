@@ -82,7 +82,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 self.bias = self.calc_bias_matrix(self.Sigma, self.X.T, self.Y, Xt.T, Yt, self.alpha)
                 extend_bias = torch.reshape(self.bias.repeat(self.N_time, 1).T, (-1, 1))
 
-                chunk1 = (1 / 2) * torch.log(torch.det(Sigma_hat))  # currently giving -inf or inf
+                chunk1 = -(1 / 2) * torch.log(torch.det(Sigma_hat))  # currently giving -inf or inf
                 # print("chunk1: " + str(chunk1))
                 chunk2 = -(1 / 2) * (self.Y - extend_bias).T @ torch.cholesky_inverse(Sigma_hat) @ (
                         self.Y - extend_bias)
@@ -103,9 +103,9 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                                 time_kernel(np.array([[x[1]]]),
                                             np.array(torch.unique(self.X.T[1]))))
                     k = torch.tensor(k)
-                    output = theta_not / self.alpha ** 2 - k @ torch.cholesky_inverse(Sigma_hat) @ k.T
+                    output = theta_not - k @ torch.cholesky_inverse(Sigma_hat) @ k.T
                     if 0 > output:
-                        # print("Negative variance of " + str(output))
+                        print("Negative variance of " + str(output))
                         return abs(output)
                     return output
 

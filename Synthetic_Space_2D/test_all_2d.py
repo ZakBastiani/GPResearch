@@ -17,7 +17,7 @@ from Synthetic_Space_2D import Calc_Alpha_Calc_Changing_Bias
 N_sensors = 10  # Number of sensors
 N_true_sensors = 2  # Number of ground truth sensor points
 N_time = 10  # Number of time samples
-noise = 0.1  # random noise in the system
+noise = 1  # random noise in the system
 
 space_range = 10
 time_range = 10
@@ -78,7 +78,7 @@ def bias_kernel(X, Y):
     return kernel
 
 
-N_trials = 30
+N_trials = 1
 gp_error = np.zeros(4)
 calc_alpha_errors = np.zeros(4)
 calc_constant_bias_errors = np.zeros(4)
