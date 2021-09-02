@@ -78,7 +78,7 @@ def bias_kernel(X, Y):
     return kernel
 
 
-N_trials = 1
+N_trials = 30
 gp_error = np.zeros(4)
 calc_alpha_errors = np.zeros(4)
 calc_constant_bias_errors = np.zeros(4)

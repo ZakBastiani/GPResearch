@@ -50,7 +50,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
             alpha_poly = np.zeros(5)
             y_min_bias = (Y - b).T
             alpha_poly[4] = y_min_bias.T @ sigma_inv @ y_min_bias
-            # alpha_poly[2] = len(space_X) * len(time_X)
+            alpha_poly[2] = -len(space_X) * len(time_X)
             alpha_poly[1] = alpha_mean / (alpha_variance ** 2)
             alpha_poly[0] = -1 / (alpha_variance ** 2)
             for i in range(len(Xt)):
