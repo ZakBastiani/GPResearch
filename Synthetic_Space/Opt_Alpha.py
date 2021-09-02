@@ -47,7 +47,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                     k = torch.tensor(k)
                     output = theta_not - k @ torch.cholesky_inverse(Sigma_hat) @ k.T
                     if 0 > output:
-                        # print("Negative variance of " + str(output))
+                        print("Negative variance of " + str(output))
                         return abs(output)
                     return output
 
@@ -57,7 +57,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                                 time_kernel(np.array([[x[1]]]),
                                             np.array(torch.unique(self.X.T[1]))))
                     k = torch.tensor(k)
-                    return k @ torch.cholesky_inverse(Sigma_hat) @ (self.Y - self.bias)
+                    return (k @ torch.cholesky_inverse(Sigma_hat) @ (self.Y - self.bias))/self.alpha
 
                 for i in range(0, len(Xt)):
                     chunk4 += (1 / 2) * (
@@ -79,15 +79,15 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
-        optimizer = torch.optim.Adam(zaks_model.parameters(), lr=0.001)  # lr is very important, lr>0.1 lead to failure
+        optimizer = torch.optim.Adam(zaks_model.parameters(), lr=0.01)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
         best_alpha = 0
-        for i in range(1000):
+        for i in range(100):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             loss.backward()
             optimizer.step()
-            # print("i: " + str(i) + ", loss: " + str(loss[0][0]))
+            print("i: " + str(i) + ", loss: " + str(loss[0][0]))
             # print("alpha: " + str(zaks_model.alpha))
             if smallest_loss > loss:
                 smallest_loss = loss
