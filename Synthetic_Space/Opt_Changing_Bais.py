@@ -6,7 +6,7 @@ import math
 
 class OptChangingBias(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise, theta_not,
-                 bias_variance, bias_mean, bias_kernel, alpha):
+                 bias_variance, bias_mean, bias_kernel, alpha, actual_bias):
 
         # Opimization module used to maximaxize Wei's equation
         # should get similar results to the above model
@@ -14,12 +14,13 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
             def __init__(self, X, Y, K, N_sensors, N_time):
                 super(zak_gpr, self).__init__()
                 self.X = X
+                self.N_sensors = N_sensors
                 self.Y = Y
                 self.Sigma = torch.tensor(K)
                 self.N_sensors = N_sensors
                 self.N_time = N_time
-                # self.bias = nn.Parameter(torch.zeros((N_time*N_sensors, 1)))
-                self.bias = nn.Parameter(torch.tensor([bias_kernel.flatten()]).T)
+                self.bias = nn.Parameter(torch.zeros((N_time*N_sensors, 1)))
+                # self.bias = nn.Parameter(torch.tensor([actual_bias.flatten()]).T)
                 self.alpha = torch.tensor(alpha)
 
             def v(self, x, Sigma_hat):
@@ -38,14 +39,14 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
             # Maximizing the predicted bias based on direct function
             def forward(self, Xt, Yt):
                 Sigma_hat = self.Sigma + noise*torch.eye(self.N_sensors*self.N_time)
+                bias_sigma = torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float()
 
                 chunk1 = -(1/2) * torch.logdet(self.alpha**2 * Sigma_hat)  # currently giving -inf or inf
                 # print("chunk1: " + str(chunk1))
                 chunk2 = -(1/2) * (self.Y - self.bias).T @ torch.cholesky_inverse(self.alpha**2 * Sigma_hat) @ (self.Y - self.bias)
                 # print("chunk2: " + str(chunk2))
-                prob_b = -(1/2) * ((((self.bias - bias_mean) ** 2) / bias_variance**2)
-                                   + math.log(2 * math.pi * bias_variance**2))
-                chunk3 = torch.sum(prob_b)
+                prob_b = -(1/2) * (torch.logdet(bias_sigma) + self.bias.T @ bias_sigma @ self.bias + len(self.bias) * math.log(2 * math.pi))
+                chunk3 = -(self.N_sensors / 2) * math.log(2 * math.pi) + prob_b
                 # print("chunk3: " + str(chunk3))
 
                 chunk4 = 0
