@@ -4,9 +4,9 @@ import numpy as np
 from Synthetic_Space import Gaussian_Process
 import math
 
-class OptChangingBias(Gaussian_Process.GaussianProcess):
+class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise, theta_not,
-                 bias_variance, bias_mean, bias_kernel, alpha, actual_bias):
+                 bias_variance, bias_mean, bias_kernel, alpha_mean, alpha_variance):
 
         # Opimization module used to maximaxize Wei's equation
         # should get similar results to the above model
@@ -21,7 +21,7 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
                 self.N_time = N_time
                 self.bias = nn.Parameter(torch.zeros((N_time*N_sensors, 1)))
                 # self.bias = nn.Parameter(torch.tensor([actual_bias.flatten()]).T)
-                self.alpha = torch.tensor(alpha)
+                self.alpha = nn.Parameter(torch.eye(1))
 
             def v(self, x, Sigma_hat):
                 k = kernel([x.detach().numpy()], self.X.detach().numpy()).T
@@ -45,9 +45,10 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
                                    + (self.Y - self.bias).T @ torch.cholesky_inverse(self.alpha**2 * Sigma_hat) @ (self.Y - self.bias)
                                    + self.N_sensors * math.log(2 * math.pi))
                 # print("chunk2: " + str(chunk2))
+                prob_a = -(1 / 2) * (((self.alpha - alpha_mean) ** 2 / alpha_variance) + math.log(alpha_variance * 2 * math.pi))
                 chunk2 = -(1/2) * (torch.logdet(bias_sigma)
                                    + self.bias.T @ torch.cholesky_inverse(bias_sigma) @ self.bias
-                                   + len(self.bias) * math.log(2 * math.pi))
+                                   + len(self.bias) * math.log(2 * math.pi)) + prob_a
                 # chunk2 = -(1/2) * (math.log(bias_variance**2) + ((self.bias - bias_mean)**2)/(bias_variance**2)+ math.log(2 * math.pi))
                 # print("chunk3: " + str(chunk3))
 

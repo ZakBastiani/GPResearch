@@ -32,8 +32,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 chunk2 = -(1 / 2) * (self.Y - self.bias).T @ torch.cholesky_inverse(self.alpha**2 * Sigma_hat) @ (
                         self.Y - self.bias)
                 # print("chunk2: " + str(chunk2))
-                prob_a = -(1 / 2) * ((self.alpha - alpha_mean) ** 2 / alpha_variance) + math.log(
-                    (alpha_variance * math.sqrt(2 * math.pi)))
+                prob_a = -(1 / 2) * (((self.alpha - alpha_mean) ** 2 / alpha_variance) + math.log(alpha_variance * 2 * math.pi))
                 chunk3 = -(self.N_sensors / 2) * math.log(2 * math.pi) + prob_a # fix later
                 # print("chunk3: " + str(chunk3))
 

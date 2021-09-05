@@ -38,7 +38,6 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
                 current_C += ((k_star.T @ sigma_hat_inv @ Y) * (k_star.T @ sigma_hat_inv)
                               - alpha * Yt[n] * (k_star.T @ sigma_hat_inv)) / (theta_not - holder)
             A += (sigma_hat_inv).T
-
             A += (alpha ** 2) * np.linalg.inv(bias_sigma)
             C[0] = Y.T @ sigma_hat_inv + current_C
 
