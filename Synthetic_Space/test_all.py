@@ -217,7 +217,7 @@ calc_both_changing_bias_gp.print_error(alpha, sensor_bias, gaussian.matrix2d, ca
 # Building a GP that predicts the bias but is given alpha
 opt_changing_bias_alpha_gp = Opt_Changing_Bias_and_Alpha.OptChangingBiasAndAlpha(sensors, sensor_time, data, true_sensors, sensor_time,
                                                          true_data, space_kernel, time_kernel, kernel, noise,
-                                                         theta_not, bias_variance, bias_mean, bias_kernel, alpha_mean, alpha_variance)
+                                                         theta_not, bias_variance, bias_mean, bias_kernel, alpha_mean, alpha_variance, alpha, sensor_bias)
 opt_changing_bias_alpha_estimate = opt_changing_bias_alpha_gp.build(gaussian.space, gaussian.time)
 opt_changing_bias_alpha_gt_estimate = opt_changing_bias_alpha_gp.build(true_sensors, true_sensor_time)
 opt_changing_bias_alpha_gp.print_error(alpha, sensor_bias, gaussian.matrix2d, opt_changing_bias_alpha_estimate, true_data, opt_changing_bias_alpha_gt_estimate)

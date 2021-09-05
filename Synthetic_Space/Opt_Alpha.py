@@ -32,7 +32,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 chunk2 = -(1 / 2) * (self.Y - self.bias).T @ torch.cholesky_inverse(self.alpha**2 * Sigma_hat) @ (
                         self.Y - self.bias)
                 # print("chunk2: " + str(chunk2))
-                prob_a = -(1 / 2) * (((self.alpha - alpha_mean) ** 2 / alpha_variance) + math.log(alpha_variance * 2 * math.pi))
+                prob_a = -(1 / 2) * (((self.alpha - alpha_mean) ** 2 / alpha_variance**2) + math.log(alpha_variance**2 * 2 * math.pi))
                 chunk3 = -(self.N_sensors / 2) * math.log(2 * math.pi) + prob_a # fix later
                 # print("chunk3: " + str(chunk3))
 
@@ -78,10 +78,10 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
-        optimizer = torch.optim.Adam(zaks_model.parameters(), lr=0.01)  # lr is very important, lr>0.1 lead to failure
+        optimizer = torch.optim.Adam(zaks_model.parameters(), lr=0.001)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
         best_alpha = 0
-        for i in range(100):
+        for i in range(1000):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             loss.backward()
