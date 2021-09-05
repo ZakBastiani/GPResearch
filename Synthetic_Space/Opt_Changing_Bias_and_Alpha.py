@@ -45,7 +45,7 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
                                    + (self.Y - self.bias).T @ torch.cholesky_inverse(self.alpha**2 * Sigma_hat) @ (self.Y - self.bias)
                                    + self.N_sensors * math.log(2 * math.pi))
                 # print("chunk2: " + str(chunk2))
-                prob_a = -(1 / 2) * (((self.alpha - alpha_mean) ** 2 / alpha_variance) + math.log(alpha_variance * 2 * math.pi))
+                prob_a = -(1/2) * (((self.alpha - alpha_mean) ** 2 / (alpha_variance**2)) + math.log((alpha_variance**2) * 2 * math.pi))
                 chunk2 = -(1/2) * (torch.logdet(bias_sigma)
                                    + self.bias.T @ torch.cholesky_inverse(bias_sigma) @ self.bias
                                    + len(self.bias) * math.log(2 * math.pi)) + prob_a
@@ -56,7 +56,7 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
                 for i in range(0, len(Xt)):
                     holder = self.mu(Xt[i], Sigma_hat)
                     var = self.v(Xt[i], Sigma_hat)
-                    chunk3 += - (1/2) * (torch.log(var) + ((Yt[i] - holder)**2)/var + math.log(2 * math.pi))
+                    chunk3 += -(1/2) * (torch.log(var) + ((Yt[i] - holder)**2)/var + math.log(2 * math.pi))
                 # print("chunk4: " + str(chunk4))
 
                 return chunk1 + chunk2 + chunk3
@@ -76,10 +76,10 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
         optimizer = torch.optim.Adam(zaks_model.parameters(),
-                                     lr=0.001)  # lr is very important, lr>0.1 lead to failure
+                                     lr=0.01)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
         guess_bias = []
-        for i in range(5000):
+        for i in range(500):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             if loss < smallest_loss:

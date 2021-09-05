@@ -75,7 +75,7 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
         optimizer = torch.optim.Adam(zaks_model.parameters(),
-                                     lr=0.001)  # lr is very important, lr>0.1 lead to failure
+                                     lr=0.01)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
         guess_bias = []
         for i in range(500):
