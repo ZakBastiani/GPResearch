@@ -87,7 +87,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
             loss = -zaks_model.forward(Xt, Yt.T)
             loss.backward()
             optimizer.step()
-            print("i: " + str(i) + ", loss: " + str(loss[0][0]))
+            # print("i: " + str(i) + ", loss: " + str(loss[0][0]))
             # print("alpha: " + str(zaks_model.alpha))
             if smallest_loss > loss:
                 smallest_loss = loss
