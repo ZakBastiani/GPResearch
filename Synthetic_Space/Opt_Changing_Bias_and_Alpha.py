@@ -79,7 +79,7 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
                                      lr=0.001)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
         guess_bias = []
-        for i in range(500):
+        for i in range(5000):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             if loss < smallest_loss:

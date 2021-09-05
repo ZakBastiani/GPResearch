@@ -90,7 +90,7 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
         with torch.no_grad():
             holder = zaks_model(Xt, Yt.T)
 
-        self.type = "Gaussian Process Regression optimizing bias and alpha"
+        self.type = "Gaussian Process Regression optimizing bias given alpha"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.alpha = zaks_model.alpha.detach().numpy()
