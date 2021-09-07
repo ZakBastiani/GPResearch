@@ -6,7 +6,7 @@ import math
 
 class OptChangingBias(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise, theta_not,
-                 bias_variance, bias_mean, bias_kernel, alpha, actual_bias):
+                 bias_variance, bias_mean, bias_kernel, alpha):
 
         # Opimization module used to maximaxize Wei's equation
         # should get similar results to the above model
@@ -14,13 +14,11 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
             def __init__(self, X, Y, K, N_sensors, N_time):
                 super(zak_gpr, self).__init__()
                 self.X = X
-                self.N_sensors = N_sensors
                 self.Y = Y
                 self.Sigma = torch.tensor(K)
                 self.N_sensors = N_sensors
                 self.N_time = N_time
                 self.bias = nn.Parameter(torch.zeros((N_time*N_sensors, 1)))
-                # self.bias = nn.Parameter(torch.tensor([actual_bias.flatten()]).T)
                 self.alpha = torch.tensor(alpha)
 
             def v(self, x, Sigma_hat):
@@ -39,26 +37,24 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
             # Maximizing the predicted bias based on direct function. This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
                 Sigma_hat = self.Sigma + noise*torch.eye(self.N_sensors*self.N_time)
-                bias_sigma = torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float()
 
-                chunk1 = -(1/2) * (torch.logdet(self.alpha**2 * Sigma_hat)
-                                   + (self.Y - self.bias).T @ torch.cholesky_inverse(self.alpha**2 * Sigma_hat) @ (self.Y - self.bias)
-                                   + self.N_sensors * math.log(2 * math.pi))
+                chunk1 = -(1/2) * torch.logdet(self.alpha**2 * Sigma_hat)  # currently giving -inf or inf
+                # print("chunk1: " + str(chunk1))
+                chunk2 = -(1/2) * (self.Y - self.bias).T @ torch.cholesky_inverse(self.alpha**2 * Sigma_hat) @ (self.Y - self.bias)
                 # print("chunk2: " + str(chunk2))
-                chunk2 = -(1/2) * (torch.logdet(bias_sigma)
-                                   + self.bias.T @ torch.cholesky_inverse(bias_sigma) @ self.bias
-                                   + len(self.bias) * math.log(2 * math.pi))
-                # chunk2 = -(1/2) * (math.log(bias_variance**2) + ((self.bias - bias_mean)**2)/(bias_variance**2)+ math.log(2 * math.pi))
+                prob_b = -(1/2) * ((((self.bias - bias_mean) ** 2) / bias_variance**2)
+                                   + math.log(2 * math.pi * bias_variance**2))
+                chunk3 = torch.sum(prob_b)
                 # print("chunk3: " + str(chunk3))
 
-                chunk3 = 0
+                chunk4 = 0
                 for i in range(0, len(Xt)):
                     holder = self.mu(Xt[i], Sigma_hat)
                     var = self.v(Xt[i], Sigma_hat)
-                    chunk3 += - (1/2) * (torch.log(var) + ((Yt[i] - holder)**2)/var + math.log(2 * math.pi))
+                    chunk4 += -(1/2) * (torch.log(var) + ((Yt[i] - holder)**2)/var + math.log(2 * math.pi))
                 # print("chunk4: " + str(chunk4))
 
-                return chunk1 + chunk2 + chunk3
+                return chunk1 + chunk2 + chunk3 + chunk4  # Add back chunk1
 
 
         # Need to alter the sensor matrix and the data matrix
@@ -77,13 +73,12 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
         optimizer = torch.optim.Adam(zaks_model.parameters(),
                                      lr=0.01)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
-        guess_bias = []
-        for i in range(500):
+        for i in range(100):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             if loss < smallest_loss:
                 smallest_loss = loss
-                # print(loss)
+                print(loss)
             loss.backward()
             optimizer.step()
         # print("Smallest Loss:" + str(smallest_loss))
