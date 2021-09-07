@@ -36,7 +36,7 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
                 k = torch.from_numpy(k)
                 return (k.T @ torch.linalg.inv(Sigma_hat) @ (self.Y - self.bias))/self.alpha
 
-            # Maximizing the predicted bias based on direct function
+            # Maximizing the predicted bias based on direct function. This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
                 Sigma_hat = self.Sigma + noise*torch.eye(self.N_sensors*self.N_time)
                 bias_sigma = torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float()

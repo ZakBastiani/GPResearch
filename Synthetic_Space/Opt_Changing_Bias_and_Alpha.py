@@ -19,9 +19,10 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
                 self.Sigma = torch.tensor(K)
                 self.N_sensors = N_sensors
                 self.N_time = N_time
-                self.bias = nn.Parameter(torch.zeros((N_time*N_sensors, 1)))
-                # self.bias = nn.Parameter(torch.tensor([actual_bias.flatten()]).T)
-                self.alpha = nn.Parameter(torch.eye(1))
+                # self.bias = nn.Parameter(torch.zeros((N_time*N_sensors, 1)))
+                self.bias = nn.Parameter(torch.tensor([bias.flatten()]).T).float()
+                # self.alpha = nn.Parameter(torch.eye(1))
+                self.alpha = nn.Parameter(torch.tensor(alpha))
 
             def v(self, x, Sigma_hat):
                 k = kernel([x.detach().numpy()], self.X.detach().numpy()).T
@@ -36,7 +37,7 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
                 k = torch.from_numpy(k)
                 return (k.T @ torch.linalg.inv(Sigma_hat) @ (self.Y - self.bias))/self.alpha
 
-            # Maximizing the predicted bias based on direct function
+            # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
                 Sigma_hat = self.Sigma + noise*torch.eye(self.N_sensors*self.N_time)
                 bias_sigma = torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float()
@@ -47,7 +48,7 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
                 # print("chunk2: " + str(chunk2))
                 prob_a = -(1/2) * (((self.alpha - alpha_mean) ** 2 / (alpha_variance)) + math.log((alpha_variance) * 2 * math.pi))
                 chunk2 = -(1/2) * (torch.logdet(bias_sigma)
-                                   + self.bias.T @ torch.cholesky_inverse(bias_sigma).double() @ self.bias
+                                   + self.bias.T @ torch.cholesky_inverse(bias_sigma) @ self.bias
                                    + len(self.bias) * math.log(2 * math.pi)) + prob_a
                 # chunk2 = -(1/2) * (math.log(bias_variance**2) + ((self.bias - bias_mean)**2)/(bias_variance**2)+ math.log(2 * math.pi))
                 # print("chunk3: " + str(chunk3))
@@ -76,7 +77,7 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
         optimizer = torch.optim.Adam(zaks_model.parameters(),
-                                     lr=0.01)  # lr is very important, lr>0.1 lead to failure
+                                     lr=0.001)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
         guess_bias = []
         for i in range(500):
@@ -84,7 +85,7 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
             loss = -zaks_model.forward(Xt, Yt.T)
             if loss < smallest_loss:
                 smallest_loss = loss
-                # print(loss)
+                print(loss)
             loss.backward()
             optimizer.step()
         # print("Smallest Loss:" + str(smallest_loss))

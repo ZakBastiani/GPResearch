@@ -21,49 +21,41 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 self.N_sensors = N_sensors
                 self.N_time = N_time
                 self.bias = torch.tensor(bias.reshape(-1, 1))
-                # self.alpha = nn.Parameter(torch.tensor(alpha))
-                self.alpha = nn.Parameter(torch.eye(1))
+                self.alpha = nn.Parameter(torch.tensor(1.0))
+                # self.alpha = nn.Parameter(torch.tensor(1.27080147))
 
+            def v(self, x, Sigma_hat):
+                k = kernel([x.detach().numpy()], self.X.detach().numpy()).T
+                k = torch.from_numpy(k)
+                output = theta_not - k.T @ torch.cholesky_inverse(Sigma_hat) @ k
+                if output < 0:
+                    print('Error')
+                return output
+
+            def mu(self, x, Sigma_hat):
+                k = kernel([x.detach().numpy()], self.X.detach().numpy()).T
+                k = torch.from_numpy(k)
+                return (k.T @ torch.linalg.inv(Sigma_hat) @ (self.Y - self.bias))/self.alpha
+
+            # Maximizing the predicted bias based on direct function. This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
                 Sigma_hat = self.Sigma + torch.eye(len(self.Sigma)) * noise
+                print(torch.det(Sigma_hat))
+                chunk1 = -(1/2) * (len(Sigma_hat)*torch.log(self.alpha**2) + torch.log(torch.det(Sigma_hat))
+                                   + ((self.Y - self.bias).T @ torch.inverse(Sigma_hat) @ (self.Y - self.bias))/(self.alpha**2)
+                                   + len(Sigma_hat) * math.log(2 * math.pi))  # currently giving -inf or inf
+                print("chunk1: " + str(chunk1))
+                chunk2 = -(1 / 2) * (((self.alpha - alpha_mean) ** 2 / alpha_variance) + math.log(alpha_variance * 2 * math.pi))
+                print("chunk2: " + str(chunk2))
 
-                chunk1 = -(1 / 2) * torch.log(torch.det(self.alpha**2 * Sigma_hat))  # currently giving -inf or inf
-                # print("chunk1: " + str(chunk1))
-                chunk2 = -(1 / 2) * (self.Y - self.bias).T @ torch.cholesky_inverse(self.alpha**2 * Sigma_hat) @ (
-                        self.Y - self.bias)
-                # print("chunk2: " + str(chunk2))
-                prob_a = -(1 / 2) * (((self.alpha - alpha_mean) ** 2 / alpha_variance**2) + math.log(alpha_variance**2 * 2 * math.pi))
-                chunk3 = -(self.N_sensors / 2) * math.log(2 * math.pi) + prob_a # fix later
-                # print("chunk3: " + str(chunk3))
-
-                chunk4 = 0
-
-                def v(x):
-                    k = np.kron(space_kernel(np.array([[x[0]]]),
-                                             np.array(torch.unique(self.X.T[0]))),
-                                time_kernel(np.array([[x[1]]]),
-                                            np.array(torch.unique(self.X.T[1]))))
-                    k = torch.tensor(k)
-                    output = theta_not - k @ torch.cholesky_inverse(Sigma_hat) @ k.T
-                    if 0 > output:
-                        print("Negative variance of " + str(output))
-                        return abs(output)
-                    return output
-
-                def mu(x):
-                    k = np.kron(space_kernel(np.array([[x[0]]]),
-                                             np.array(torch.unique(self.X.T[0]))),
-                                time_kernel(np.array([[x[1]]]),
-                                            np.array(torch.unique(self.X.T[1]))))
-                    k = torch.tensor(k)
-                    return (k @ torch.cholesky_inverse(Sigma_hat) @ (self.Y - self.bias))/self.alpha
-
+                chunk3 = 0
                 for i in range(0, len(Xt)):
-                    chunk4 += (1 / 2) * (
-                            -torch.log(v(Xt[i])) - ((Yt[i] - mu(Xt[i])) ** 2) / v(Xt[i]) - math.log(2 * math.pi))
-                # print("chunk4: " + str(chunk4))
+                    holder = self.mu(Xt[i], Sigma_hat)
+                    var = self.v(Xt[i], Sigma_hat)
+                    chunk3 += -(1/2) * (torch.log(var) + ((Yt[i] - holder)**2)/var + math.log(2 * math.pi))
+                print("chunk3: " + str(chunk3))
 
-                return chunk1 + chunk2 + chunk3 + chunk4  # Add back chunk1
+                return chunk1 + chunk2 + chunk3  # Add back chunk1
 
         # Need to alter the sensor matrix and the data matrix
         X = torch.tensor([np.outer(space_X, np.ones(len(time_X))).flatten(),
@@ -78,16 +70,16 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
-        optimizer = torch.optim.Adam(zaks_model.parameters(), lr=0.001)  # lr is very important, lr>0.1 lead to failure
+        optimizer = torch.optim.Adam(zaks_model.parameters(), lr=0.01)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
         best_alpha = 0
-        for i in range(1000):
+        for i in range(500):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             loss.backward()
             optimizer.step()
-            # print("i: " + str(i) + ", loss: " + str(loss[0][0]))
-            # print("alpha: " + str(zaks_model.alpha))
+            print("i: " + str(i) + ", loss: " + str(loss[0][0]))
+            print("alpha: " + str(zaks_model.alpha))
             if smallest_loss > loss:
                 smallest_loss = loss
                 best_alpha = zaks_model.alpha.clone()

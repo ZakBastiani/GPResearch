@@ -8,7 +8,8 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
                  space_kernel, time_kernel, kernel, noise, theta_not, alpha_mean, alpha_variance, bias):
         sigma_inv = np.linalg.inv(np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X)) + noise * np.eye(
             len(space_X) * len(time_X)))
-
+        print(np.linalg.det(np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X)) + noise * np.eye(
+            len(space_X) * len(time_X))))
         # Need to alter the sensor matrix and the data matrix
         X = np.array([np.outer(space_X, np.ones(len(time_X))).flatten(),
                       np.outer(time_X, np.ones(len(space_X))).T.flatten()]).T
