@@ -17,7 +17,7 @@ from Synthetic_Space import Opt_Changing_Bias_and_Alpha
 # Variables that control the space
 N_sensors = 10  # Number of sensors
 N_true_sensors = 2  # Number of ground truth sensor points
-N_time = 10  #0 Number of time samples
+N_time = 10  # Number of time samples
 noise = 0.01  # random noise in the system
 
 space_range = 10
@@ -41,9 +41,9 @@ N_space_test = 50
 N_time_test = 50
 
 # setting the seed for the program
-seed = np.random.randint(100000000)
-# seed = 55169561
-seed = 16804736
+# seed = np.random.randint(100000000)
+seed = 55169561
+# seed = 16804736
 np.random.seed(seed)
 print("Seed: " + str(seed))
 
@@ -107,7 +107,7 @@ first_data = gaussian.function(sensors, sensor_time)
 
 # Data received with sensor bias
 # data = f(sensors, sensor_time) + noise*np.random.randn(N_sensors, N_time)
-data = alpha * (first_data + noise * np.random.randn(N_sensors, N_time)) + sensor_bias
+data = alpha * (first_data) + sensor_bias
 
 # Selecting the location of the ground truth points
 true_sensors = np.linspace(0, space_range, N_true_sensors+2)[1:-1]

@@ -19,10 +19,10 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
                 self.Sigma = torch.tensor(K)
                 self.N_sensors = N_sensors
                 self.N_time = N_time
-                # self.bias = nn.Parameter(torch.zeros((N_time*N_sensors, 1)))
-                self.bias = nn.Parameter(torch.tensor([bias.flatten()]).T).float()
-                # self.alpha = nn.Parameter(torch.eye(1))
-                self.alpha = nn.Parameter(torch.tensor(alpha))
+                self.bias = nn.Parameter(torch.zeros((N_time*N_sensors, 1)))
+                # self.bias = nn.Parameter(torch.tensor([bias.flatten()]).T).float()
+                self.alpha = nn.Parameter(torch.eye(1))
+                # self.alpha = nn.Parameter(torch.tensor(alpha))
 
             def v(self, x, Sigma_hat):
                 k = kernel([x.detach().numpy()], self.X.detach().numpy()).T
@@ -39,7 +39,7 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
 
             # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
-                Sigma_hat = self.Sigma + noise*torch.eye(self.N_sensors*self.N_time)
+                Sigma_hat = self.Sigma # + noise**2*torch.eye(self.N_sensors*self.N_time)
                 bias_sigma = torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float()
 
                 chunk1 = -(1/2) * (torch.logdet(self.alpha**2 * Sigma_hat)
@@ -76,7 +76,7 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
-        optimizer = torch.optim.Adam(zaks_model.parameters(),
+        optimizer = torch.optim.Adagrad(zaks_model.parameters(),
                                      lr=0.001)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
         guess_bias = []

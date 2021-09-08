@@ -36,7 +36,7 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
 
             # Maximizing the predicted bias based on direct function. This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
-                Sigma_hat = self.Sigma + noise*torch.eye(self.N_sensors*self.N_time)
+                Sigma_hat = self.Sigma #+ noise**2*torch.eye(self.N_sensors*self.N_time)
 
                 chunk1 = -(1/2) * torch.logdet(self.alpha**2 * Sigma_hat)  # currently giving -inf or inf
                 # print("chunk1: " + str(chunk1))
@@ -70,7 +70,7 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
-        optimizer = torch.optim.Adam(zaks_model.parameters(),
+        optimizer = torch.optim.Adagrad(zaks_model.parameters(),
                                      lr=0.01)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
         for i in range(100):
