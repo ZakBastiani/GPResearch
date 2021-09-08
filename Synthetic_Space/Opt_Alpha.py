@@ -22,7 +22,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 self.N_time = N_time
                 self.bias = torch.tensor(bias.reshape(-1, 1))
                 self.alpha = nn.Parameter(torch.tensor(1.0))
-                # self.alpha = nn.Parameter(torch.tensor(0.67635105))
+
 
             def v(self, x, Sigma_hat):
                 k = kernel([x.detach().numpy()], self.X.detach().numpy()).T
@@ -43,18 +43,18 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 chunk1 = -(1/2) * (len(Sigma_hat)*torch.log(self.alpha**2) + torch.log(torch.det(Sigma_hat))
                                    + ((self.Y - self.bias).T @ torch.inverse(Sigma_hat) @ (self.Y - self.bias))/(self.alpha**2)
                                    + len(Sigma_hat) * math.log(2 * math.pi))
-                print("chunk1: " + str(chunk1))
+                # print("chunk1: " + str(chunk1))
                 chunk2 = -(1 / 2) * (((self.alpha - alpha_mean) ** 2 / alpha_variance) + math.log(alpha_variance * 2 * math.pi))
-                print("chunk2: " + str(chunk2))
+                # print("chunk2: " + str(chunk2))
 
                 chunk3 = 0
                 for i in range(0, len(Xt)):
                     holder = self.mu(Xt[i], Sigma_hat)
                     var = self.v(Xt[i], Sigma_hat)
                     chunk3 += -(1/2) * (torch.log(var) + ((Yt[i] - holder)**2)/var + math.log(2 * math.pi))
-                print("chunk3: " + str(chunk3))
+                # print("chunk3: " + str(chunk3))
 
-                return chunk1 + chunk2 + chunk3  # Add back chunk1
+                return chunk1 + chunk2 + chunk3
 
         # Need to alter the sensor matrix and the data matrix
         X = torch.tensor([np.outer(space_X, np.ones(len(time_X))).flatten(),
@@ -69,16 +69,16 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
-        optimizer = torch.optim.Adagrad(zaks_model.parameters(), lr=0.001)  # lr is very important, lr>0.1 lead to failure
+        optimizer = torch.optim.Adagrad(zaks_model.parameters(), lr=0.01)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
         best_alpha = 0
-        for i in range(500):
+        for i in range(200):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             loss.backward()
             optimizer.step()
-            print("i: " + str(i) + ", loss: " + str(loss[0][0]))
-            print("alpha: " + str(zaks_model.alpha))
+            if i % 100 == 0:
+                print(loss)
             if smallest_loss > loss:
                 smallest_loss = loss
                 best_alpha = zaks_model.alpha.clone()

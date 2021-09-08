@@ -36,25 +36,24 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
 
             # Maximizing the predicted bias based on direct function. This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
-                Sigma_hat = self.Sigma #+ noise**2*torch.eye(self.N_sensors*self.N_time)
-
-                chunk1 = -(1/2) * torch.logdet(self.alpha**2 * Sigma_hat)  # currently giving -inf or inf
+                Sigma_hat = self.Sigma + torch.eye(len(self.Sigma)) * noise ** 2
+                chunk1 = -(1 / 2) * (len(Sigma_hat) * torch.log(self.alpha ** 2) + torch.log(torch.det(Sigma_hat))
+                                     + ((self.Y - self.bias).T @ torch.inverse(Sigma_hat) @ (self.Y - self.bias)) / (
+                                                 self.alpha ** 2)
+                                     + len(Sigma_hat) * math.log(2 * math.pi))
                 # print("chunk1: " + str(chunk1))
-                chunk2 = -(1/2) * (self.Y - self.bias).T @ torch.cholesky_inverse(self.alpha**2 * Sigma_hat) @ (self.Y - self.bias)
-                # print("chunk2: " + str(chunk2))
-                prob_b = -(1/2) * ((((self.bias - bias_mean) ** 2) / bias_variance**2)
+                chunk2 = -(1/2) * sum((((self.bias - bias_mean) ** 2) / bias_variance**2)
                                    + math.log(2 * math.pi * bias_variance**2))
-                chunk3 = torch.sum(prob_b)
-                # print("chunk3: " + str(chunk3))
+                # print("chunk2: " + str(chunk2))
 
-                chunk4 = 0
+                chunk3 = 0
                 for i in range(0, len(Xt)):
                     holder = self.mu(Xt[i], Sigma_hat)
                     var = self.v(Xt[i], Sigma_hat)
-                    chunk4 += -(1/2) * (torch.log(var) + ((Yt[i] - holder)**2)/var + math.log(2 * math.pi))
-                # print("chunk4: " + str(chunk4))
+                    chunk3 += -(1 / 2) * (torch.log(var) + ((Yt[i] - holder) ** 2) / var + math.log(2 * math.pi))
+                # print("chunk3: " + str(chunk3))
 
-                return chunk1 + chunk2 + chunk3 + chunk4  # Add back chunk1
+                return chunk1 + chunk2 + chunk3
 
 
         # Need to alter the sensor matrix and the data matrix
@@ -71,14 +70,15 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
         optimizer = torch.optim.Adagrad(zaks_model.parameters(),
-                                     lr=0.01)  # lr is very important, lr>0.1 lead to failure
+                                     lr=0.001)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
-        for i in range(100):
+        for i in range(1000):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             if loss < smallest_loss:
                 smallest_loss = loss
-                print(loss)
+                if i % 100 == 0:
+                    print(loss)
             loss.backward()
             optimizer.step()
         # print("Smallest Loss:" + str(smallest_loss))

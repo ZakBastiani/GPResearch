@@ -56,7 +56,7 @@ class GaussianProcess:
             plt.savefig("graphs/" + title + str(k))
             plt.pause(0.5)
             images.append(imageio.imread("graphs/" + title + str(k) + '.png'))
-        imageio.mimsave("graphs/" + str(title) + '.gif', images[1:])
+        imageio.mimsave("graphs/" + str(title) + '.gif', images[1:], duration=10/len(data))
 
     def print_error(self, true_alpha, true_bias, true_y, guess_y, gt_data, gt_guess):
         print("-------" + self.type + "-------")
