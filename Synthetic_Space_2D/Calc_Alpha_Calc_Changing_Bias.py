@@ -25,7 +25,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         Yt = _Yt.flatten()
 
         for counter in range(10):
-            sigma_hat_inv = np.linalg.inv(sigma + noise * np.eye(len(sigma)))
+            sigma_hat_inv = np.linalg.inv(sigma + (noise**2) * np.eye(len(sigma)))
             # Build and calc A and C
             A = np.zeros(shape=(N_sensors * N_time, N_sensors * N_time))
             C = np.zeros(shape=(1, N_sensors * N_time))

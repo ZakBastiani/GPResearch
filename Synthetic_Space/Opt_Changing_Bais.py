@@ -43,7 +43,7 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
                                      + len(Sigma_hat) * math.log(2 * math.pi))
                 # print("chunk1: " + str(chunk1))
                 chunk2 = -(1/2) * sum((((self.bias - bias_mean) ** 2) / bias_variance**2)
-                                   + math.log(2 * math.pi * bias_variance**2))
+                                      + math.log(2 * math.pi * bias_variance**2))
                 # print("chunk2: " + str(chunk2))
 
                 chunk3 = 0
@@ -69,16 +69,16 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
-        optimizer = torch.optim.Adagrad(zaks_model.parameters(),
+        optimizer = torch.optim.Adam(zaks_model.parameters(),
                                      lr=0.001)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
-        for i in range(1000):
+        for i in range(5000):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             if loss < smallest_loss:
                 smallest_loss = loss
-                if i % 100 == 0:
-                    print(loss)
+            if i % 100 == 0:
+                print(loss)
             loss.backward()
             optimizer.step()
         # print("Smallest Loss:" + str(smallest_loss))

@@ -6,7 +6,7 @@ from Synthetic_Space_2D import Gaussian_Process
 class CalcAlpha(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
                  space_kernel, time_kernel, kernel, noise, theta_not, alpha_mean, alpha_variance, bias):
-        sigma_inv = np.linalg.inv(np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X)) + noise * np.eye(
+        sigma_inv = np.linalg.inv(np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X)) + (noise**2) * np.eye(
             len(space_X) * len(time_X)))
 
         # Need to alter the sensor matrix and the data matrix
@@ -31,7 +31,7 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
             alpha_poly[3] -= (Yt[i] * k_star.T @ sigma_inv @ y_min_bias) / divisor
 
         roots = np.roots(alpha_poly)  # The algorithm relies on computing the eigenvalues of the companion matrix
-        # print(roots)
+        print(roots)
         real_roots = []
         alpha = 1
         for root in roots:
