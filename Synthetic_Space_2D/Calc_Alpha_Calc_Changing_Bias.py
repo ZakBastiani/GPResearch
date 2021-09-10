@@ -11,7 +11,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         # Let guess with alpha = mean
         alpha = alpha_mean
         sigma = np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X))
-        sigma_inv = np.linalg.inv(sigma + noise * np.eye(len(sigma)))
+        sigma_inv = np.linalg.inv(sigma + (noise**2) * np.eye(len(sigma)))
         bias_sigma = np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))
 
         N_sensors = len(space_X)
