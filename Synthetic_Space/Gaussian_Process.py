@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+from Synthetic_Space import MAPEstimate
 
 class GaussianProcess:
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, noise):
@@ -14,7 +14,7 @@ class GaussianProcess:
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
-        self.L = np.linalg.cholesky(self.Sigma + noise * np.eye(len(self.Sigma)))
+        self.L = np.linalg.cholesky(self.Sigma + noise**2 * np.eye(len(self.Sigma)))
 
     def build(self, space_points, time_points):
 
@@ -56,5 +56,6 @@ class GaussianProcess:
         print("Avg L2 error at Ground Truth Points: " + str(gt_error))
         error = sum(((true_y - guess_y)**2).flatten()) / (len(guess_y.flatten()))
         print("Avg L2 error at Test Points: " + str(error))
+        print("Total Loss: " + str(self.loss))
         print("")
 

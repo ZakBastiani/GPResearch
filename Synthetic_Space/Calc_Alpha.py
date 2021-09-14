@@ -1,15 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from Synthetic_Space import Gaussian_Process
+from Synthetic_Space import MAPEstimate
 
 
 class CalcAlpha(Gaussian_Process.GaussianProcess):
-    def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
-                 space_kernel, time_kernel, kernel, noise, theta_not, alpha_mean, alpha_variance, bias):
-        sigma_inv = np.linalg.inv(np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X)) + noise * np.eye(
+    def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise, theta_not,
+                 alpha_mean, alpha_variance, bias, bias_kernel, bias_variance):
+        sigma_inv = np.linalg.inv(np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X)) + noise**2 * np.eye(
             len(space_X) * len(time_X)))
-        print(np.linalg.det(np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X)) + noise * np.eye(
-            len(space_X) * len(time_X))))
         # Need to alter the sensor matrix and the data matrix
         X = np.array([np.outer(space_X, np.ones(len(time_X))).flatten(),
                       np.outer(time_X, np.ones(len(space_X))).T.flatten()]).T
@@ -47,16 +46,19 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
             alpha = closest
 
         self.type = "Gaussian Process Regression calculating alpha with a provided bias"
-        self.space_X = np.concatenate((space_X, space_Xt))
+        self.space_X = space_X # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.alpha = alpha
         self.bias = bias
-        self.Y = np.concatenate(((_Y - bias) / self.alpha, _Yt))
+        self.Y = (_Y - bias) / self.alpha  # np.concatenate(((_Y - bias) / self.alpha, _Yt))
         self.noise = noise
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
         self.L = np.linalg.cholesky((self.Sigma + noise * np.eye(len(self.Sigma))))
+        self.loss = MAPEstimate.map_estimate_numpy(X, Y, Xt, Yt, bias.flatten(), alpha, noise, self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
+                                                   alpha_variance, np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X)), len(space_X), len(time_X), theta_not)
+        print(self.loss)
 
 
 

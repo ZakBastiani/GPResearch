@@ -132,7 +132,8 @@ gp.display(gaussian.space, gaussian.time, estimate, "Basic GP on the received da
 
 # Building a GP that predicts alpha given bias
 calc_alpha = Calc_Alpha.CalcAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-                 space_kernel, time_kernel, kernel, noise, theta_not, alpha_mean, alpha_variance, sensor_bias)
+                 space_kernel, time_kernel, kernel, noise, theta_not, alpha_mean, alpha_variance, sensor_bias,
+                                  bias_kernel, bias_variance)
 calc_alpha_estimate = calc_alpha.build(gaussian.space, gaussian.time)
 calc_alpha_gt_estimate = calc_alpha.build(true_sensors, true_sensor_time)
 calc_alpha.print_error(alpha, sensor_bias, gaussian.matrix2d, calc_alpha_estimate, true_data, calc_alpha_gt_estimate)

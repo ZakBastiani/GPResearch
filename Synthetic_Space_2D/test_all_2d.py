@@ -19,7 +19,7 @@ from Synthetic_Space_2D import Opt_Theta
 N_sensors = 10  # Number of sensors
 N_true_sensors = 2  # Number of ground truth sensor points
 N_time = 10  # Number of time samples
-noise = 0.1  # random noise in the system
+noise = 1  # random noise in the system Standard Deviation
 
 space_range = 10
 time_range = 10
