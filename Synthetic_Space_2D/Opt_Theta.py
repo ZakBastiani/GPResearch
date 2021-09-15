@@ -24,7 +24,7 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                 self.N_sensors = N_sensors
                 self.N_time = N_time
                 self.bias = torch.zeros((N_time*N_sensors, 1))
-                self.alpha = torch.eye(1)
+                self.alpha = torch.eye(1)*alpha_mean
                 self.theta_space = nn.Parameter(torch.tensor(2.0))
                 self.theta_time = nn.Parameter(torch.tensor(1.0))
 
@@ -45,8 +45,8 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                 return kern.T
 
             def calcboth(self, Xt, Yt):
-                alpha = alpha_mean
-                b = torch.tensor((N_time*N_sensors, 1))
+                alpha = self.alpha
+                b = self.bias
                 sigma = torch.kron(self.space_kernel(space_X, space_X), self.time_kernel(time_X, time_X))
                 bias_sigma = torch.kron(torch.eye(len(space_X)), torch.tensor(bias_kernel(time_X, time_X)))
                 sigma_hat_inv = torch.inverse(sigma + (noise ** 2) * torch.eye(len(sigma)))
@@ -56,8 +56,8 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                     C = torch.zeros((1, N_sensors * N_time))
                     current_C = 0
                     for n in range(len(Xt)):
-                        k_star = self.kernel(Xt[n].reshape(1, -1), self.X).T
-                        holder = k_star.T @ sigma_hat_inv @ k_star
+                        k_star = self.kernel(Xt[n].reshape(1, -1), X).T
+                        holder = (k_star.T @ sigma_hat_inv @ k_star)
                         holder2 = (k_star.T @ sigma_hat_inv).T @ (k_star.T @ sigma_hat_inv)
                         A += holder2 / (theta_not - holder)
                         current_C += ((k_star.T @ sigma_hat_inv @ self.Y) * (k_star.T @ sigma_hat_inv)
