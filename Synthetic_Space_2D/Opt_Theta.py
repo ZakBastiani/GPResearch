@@ -12,6 +12,8 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                  noise, theta_not, bias_kernel, alpha_mean, alpha_variance):
         N_sensors = len(space_X)
         N_time = len(time_X)
+        space_X = torch.tensor(space_X)
+        time_X = torch.tensor(time_X)
 
         class theta_opt(nn.Module):
             def __init__(self, X, Y, N_sensors, N_time):
@@ -23,75 +25,66 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                 self.N_time = N_time
                 self.bias = torch.zeros((N_time*N_sensors, 1))
                 self.alpha = torch.eye(1)
-                self.theta_space = nn.Parameter(torch.tensor(2.0), requires_grad=True)
-                self.theta_time = nn.Parameter(torch.tensor(1.0), requires_grad=True)
+                self.theta_space = nn.Parameter(torch.tensor(2.0))
+                self.theta_time = nn.Parameter(torch.tensor(1.0))
 
             def space_kernel(self, X, Y):
-                kernel = np.ndarray(shape=(len(X), len(Y)))
-                for x in range(0, len(X)):
-                    for y in range(0, len(Y)):
-                        kernel[x][y] = theta_not * np.exp(- ((X[x][0] - Y[y][0]) ** 2) / (2 * self.theta_space.item() ** 2)
-                                                          - ((X[x][1] - Y[y][1]) ** 2) / (2 * self.theta_space.item() ** 2))
+                kernel = theta_not*torch.exp(-((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T)**2)/(2*self.theta_space**2)
+                                             -((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2))
                 return kernel
 
             def time_kernel(self, X, Y):
-                kernel = np.ndarray(shape=(len(X), len(Y)))
-                for x in range(0, len(X)):
-                    for y in range(0, len(Y)):
-                        kernel[x][y] = np.exp(-((X[x] - Y[y]) ** 2) / (2 * self.theta_time.item() ** 2))
+                kernel = torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T)**2)/(2*self.theta_time**2))
                 return kernel
 
             def kernel(self, X, Y):
-                kern = np.ndarray(shape=(len(X), len(Y)))
-                for x in range(0, len(X)):
-                    for y in range(0, len(Y)):
-                        kern[x][y] = theta_not * np.exp(- ((X[x][0] - Y[y][0]) ** 2) / (2 * self.theta_space.item() ** 2)
-                                                        - ((X[x][1] - Y[y][1]) ** 2) / (2 * self.theta_space.item() ** 2)
-                                                        - ((X[x][2] - Y[y][2]) ** 2) / (2 * self.theta_time.item() ** 2))
-                return kern
+                kern = theta_not * torch.exp(
+                    - ((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
+                    - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
+                    - ((X.T[2].repeat(len(Y), 1) - Y.T[2].repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
+                return kern.T
 
             def calcboth(self, Xt, Yt):
                 alpha = alpha_mean
                 b = torch.tensor((N_time*N_sensors, 1))
-                sigma = np.kron(self.space_kernel(space_X, space_X), self.time_kernel(time_X, time_X))
-                bias_sigma = np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))
-                sigma_hat_inv = np.linalg.inv(sigma + (noise ** 2) * np.eye(len(sigma)))
-                X = self.X.detach().numpy()
-                Y = self.Y.detach().numpy()
+                sigma = torch.kron(self.space_kernel(space_X, space_X), self.time_kernel(time_X, time_X))
+                bias_sigma = torch.kron(torch.eye(len(space_X)), torch.tensor(bias_kernel(time_X, time_X)))
+                sigma_hat_inv = torch.inverse(sigma + (noise ** 2) * torch.eye(len(sigma)))
                 for counter in range(10):
                     # Build and calc A and C
-                    A = np.zeros(shape=(N_sensors * N_time, N_sensors * N_time))
-                    C = np.zeros(shape=(1, N_sensors * N_time))
+                    A = torch.zeros((N_sensors * N_time, N_sensors * N_time))
+                    C = torch.zeros((1, N_sensors * N_time))
                     current_C = 0
                     for n in range(len(Xt)):
-                        k_star = self.kernel([Xt[n]], X).T
-                        holder = (k_star.T @ sigma_hat_inv @ k_star)[0][0]
+                        k_star = self.kernel(Xt[n].reshape(1, -1), self.X).T
+                        holder = k_star.T @ sigma_hat_inv @ k_star
                         holder2 = (k_star.T @ sigma_hat_inv).T @ (k_star.T @ sigma_hat_inv)
                         A += holder2 / (theta_not - holder)
-                        current_C += ((k_star.T @ sigma_hat_inv @ Y) * (k_star.T @ sigma_hat_inv)
+                        current_C += ((k_star.T @ sigma_hat_inv @ self.Y) * (k_star.T @ sigma_hat_inv)
                                       - alpha * Yt[n] * (k_star.T @ sigma_hat_inv)) / (theta_not - holder)
                     A += (sigma_hat_inv).T
 
-                    A += (alpha ** 2) * np.linalg.inv(bias_sigma)
-                    C[0] = Y.T @ sigma_hat_inv + current_C
+                    A += (alpha ** 2) * torch.inverse(bias_sigma)
+                    C[0] = self.Y.T @ sigma_hat_inv + current_C
 
                     # Inverse A and multiply it by C
-                    A_inverse = np.linalg.inv(A)
+                    A_inverse = torch.inverse(A)
                     b = C @ A_inverse
 
-                    alpha_poly = np.zeros(5)
-                    y_min_bias = (Y - b.T)
+                    alpha_poly = torch.zeros(5)
+                    y_min_bias = (self.Y - b.T)
                     alpha_poly[4] = y_min_bias.T @ sigma_hat_inv @ y_min_bias
                     alpha_poly[2] = -len(space_X) * len(time_X)
                     alpha_poly[1] = alpha_mean / (alpha_variance ** 2)
                     alpha_poly[0] = -1 / (alpha_variance ** 2)
                     for i in range(len(Xt)):
-                        k_star = self.kernel([Xt[i]], X).T
+                        k_star = self.kernel(Xt[i].reshape(1, -1), self.X).T
                         divisor = (theta_not - k_star.T @ sigma_hat_inv @ k_star)
-                        alpha_poly[4] += (k_star.T @ sigma_hat_inv @ y_min_bias) ** 2 / divisor
-                        alpha_poly[3] -= (Yt[i] * k_star.T @ sigma_hat_inv @ y_min_bias) / divisor
+                        holder = k_star.T @ sigma_hat_inv @ y_min_bias
+                        alpha_poly[4] += ((holder) ** 2 / divisor).item()
+                        alpha_poly[3] -= ((Yt[i] * holder) / divisor).item()
 
-                    roots = np.roots(alpha_poly)
+                    roots = np.roots(alpha_poly.detach().numpy()) #maybe?
                     # print(roots)
                     real_roots = []
                     for root in roots:
@@ -105,17 +98,18 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                                 closest = r
                         alpha = (closest + alpha) / 2
                 self.alpha = torch.tensor(alpha)
-                self.bias = torch.tensor(b)
+                self.bias = b
 
             # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
-                self.calcboth(Xt.detach().numpy(), Yt.detach().numpy())
-                sigma = np.kron(self.space_kernel(space_X, space_X), self.time_kernel(time_X, time_X))
-                bias_sigma = np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))
+                self.calcboth(Xt, Yt)
+                print(self.alpha)
+                sigma = torch.kron(self.space_kernel(space_X, space_X), self.time_kernel(time_X, time_X))
+                bias_sigma = torch.kron(torch.eye(len(space_X)), torch.tensor(bias_kernel(time_X, time_X)))
                 return MAPEstimate.map_estimate_torch(self.X, self.Y, Xt, Yt, self.bias.T, self.alpha, noise,
                                                    torch.tensor(sigma), self.space_kernel, self.time_kernel, self.kernel,
                                                     alpha_mean, alpha_variance,
-                                                   torch.tensor(bias_sigma),
+                                                   torch.tensor(bias_sigma).float(),
                                                    len(space_X), len(time_X), theta_not)
 
         X = torch.tensor(np.concatenate((np.repeat(space_X, len(time_X), axis=0),
@@ -128,7 +122,7 @@ class OptTheta(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         theta_model = theta_opt(X, Y.T, len(space_X), len(time_X))
-        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.02)  # lr is very important, lr>0.1 lead to failure
+        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.02)
         smallest_loss = 1000
         for i in range(1000):
             optimizer.zero_grad()
