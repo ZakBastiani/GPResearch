@@ -43,9 +43,9 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
         optimizer = torch.optim.Adam(zaks_model.parameters(),
-                                     lr=0.01)  # lr is very important, lr>0.1 lead to failure
+                                     lr=0.05)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
-        for i in range(2000):
+        for i in range(1500):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             if loss < smallest_loss:

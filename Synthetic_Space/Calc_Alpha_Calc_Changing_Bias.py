@@ -25,7 +25,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         Yt = _Yt.flatten()
         bias_sigma = np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))
 
-        for counter in range(10):
+        for counter in range(30):
             sigma_hat_inv = np.linalg.inv(sigma + noise**2 * np.eye(len(sigma)))
             # Build and calc A and C
             A = np.zeros(shape=(N_sensors * N_time, N_sensors * N_time))
@@ -50,17 +50,18 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
             y_min_bias = (Y - b).T
             alpha_poly[4] = y_min_bias.T @ sigma_inv @ y_min_bias
             alpha_poly[2] = -len(space_X) * len(time_X)
-            alpha_poly[1] = alpha_mean / (alpha_variance ** 2)
-            alpha_poly[0] = -1 / (alpha_variance ** 2)
+            alpha_poly[1] = alpha_mean / (alpha_variance**2)
+            alpha_poly[0] = -1 / (alpha_variance**2)
             for i in range(len(Xt)):
                 k_star = kernel([Xt[i]], X).T
                 divisor = (theta_not - k_star.T @ sigma_inv @ k_star)
-                alpha_poly[4] += (k_star.T @ sigma_inv @ y_min_bias) ** 2 / divisor
-                alpha_poly[3] -= (Yt[i] * k_star.T @ sigma_inv @ y_min_bias) / divisor
+                alpha_poly[4] += (k_star.T @ sigma_inv @ y_min_bias)**2 / divisor
+                alpha_poly[3] -= (Yt[i]*k_star.T @ sigma_inv @ y_min_bias) / divisor
 
-            roots = np.roots(alpha_poly)
+            roots = np.roots(alpha_poly)  # The algorithm relies on computing the eigenvalues of the companion matrix
             # print(roots)
             real_roots = []
+            alpha = 1
             for root in roots:
                 if root.imag == 0:
                     real_roots.append(root.real)
@@ -70,7 +71,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
                 for r in real_roots:
                     if abs(closest - alpha_mean) > abs(r - alpha_mean):
                         closest = r
-                alpha = (closest + alpha)/2
+                alpha = closest
 
         self.type = "Gaussian Process Regression calculating both a changing bias and alpha"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
@@ -82,8 +83,8 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
-        self.L = np.linalg.cholesky(self.Sigma + noise * np.eye(len(self.Sigma)))
-        self.loss = MAPEstimate.map_estimate_numpy(X, Y, Xt, Yt, self.bias.flatten(), alpha, noise, self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
+        self.L = np.linalg.cholesky(self.Sigma + noise**2 * np.eye(len(self.Sigma)))
+        self.loss = MAPEstimate.map_estimate_numpy(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise, self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
                                                    alpha_variance, np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X)), len(space_X), len(time_X), theta_not)
 
 
