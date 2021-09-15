@@ -24,9 +24,9 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
                                  np.tile(time_Xt, len(space_Xt)).reshape((-1, 1))), axis=1)
         Y = _Y.flatten()
         Yt = _Yt.flatten()
-        for counter in range(10):
-            sigma_hat_inv = np.linalg.inv(sigma + (noise**2) * np.eye(len(sigma)))
+        sigma_hat_inv = np.linalg.inv(sigma + (noise ** 2) * np.eye(len(sigma)))
 
+        for counter in range(1):
             # Build and calc A and C
             A = np.zeros(shape=(N_sensors * N_time, N_sensors * N_time))
             C = np.zeros(shape=(1, N_sensors * N_time))
@@ -45,6 +45,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
 
             # Inverse A and multiply it by C
             A_inverse = np.linalg.inv(A)
+            print(A_inverse)
             b = C @ A_inverse
 
             alpha_poly = np.zeros(5)
