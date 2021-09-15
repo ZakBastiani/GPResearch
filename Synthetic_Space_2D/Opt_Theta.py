@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import torch
 from torch import nn
 from Synthetic_Space_2D import Gaussian_Process
-from Synthetic_Space_2D import Calc_Alpha_Calc_Changing_Bias
+from Synthetic_Space_2D import MAPEstimate
 
 
 class OptTheta(Gaussian_Process.GaussianProcess):
@@ -64,7 +64,7 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                 k = torch.from_numpy(k)
                 return (k.T @ torch.linalg.inv(Sigma_hat) @ (self.Y - self.bias))/self.alpha
 
-            def calcboth(self, sigma, bias_sigma):
+            def calcboth(self, Xt, Yt, sigma, bias_sigma):
                 alpha = alpha_mean
                 b = torch.tensor((N_time*N_sensors, 1))
                 for counter in range(10):
@@ -114,30 +114,16 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                             if abs(closest - alpha_mean) > abs(r - alpha_mean):
                                 closest = r
                         alpha = (closest + alpha)/2
-                return alpha, b
+                self.alpha = alpha
+                self.bias = bias
 
             # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
-                Sigma_hat = self.kernel(self.X, self.X) + noise*torch.eye(self.N_sensors*self.N_time)
-                bias_sigma = torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float()
-                self.alpha, self.bias = self.calcboth(Sigma_hat, bias_sigma)
-
-                chunk1 = -(1/2) * (torch.logdet(self.alpha**2 * Sigma_hat)
-                                   + (self.Y - self.bias).T @ torch.cholesky_inverse(self.alpha**2 * Sigma_hat) @ (self.Y - self.bias)
-                                   + self.N_sensors * math.log(2 * math.pi))
-
-                prob_a = -(1/2) * (((self.alpha - alpha_mean) ** 2 / (alpha_variance)) + math.log((alpha_variance) * 2 * math.pi))
-                chunk2 = -(1/2) * (torch.logdet(bias_sigma)
-                                   + self.bias.T @ torch.cholesky_inverse(bias_sigma) @ self.bias
-                                   + len(self.bias) * math.log(2 * math.pi)) + prob_a
-
-                chunk3 = 0
-                for i in range(0, len(Xt)):
-                    holder = self.mu(Xt[i], Sigma_hat)
-                    var = self.v(Xt[i], Sigma_hat)
-                    chunk3 += -(1/2) * (torch.log(var) + ((Yt[i] - holder)**2)/var + math.log(2 * math.pi))
-
-                return chunk1 + chunk2 + chunk3
+                calcBoth()
+                return MAPEstimate.map_estimate_torch(X, Y.T, Xt, Yt, self.bias, self.alpha, noise,
+                                                      torch.tensor(self.Sigma), self.space_kernel, self.time_kernel, self.kernel, alpha_mean,
+                                                      alpha_variance, torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float(),
+                                                      len(space_X), len(time_X), theta_not)
 
         X = torch.tensor(np.concatenate((np.repeat(space_X, len(time_X), axis=0),
                             np.tile(time_X, len(space_X)).reshape((-1, 1))), axis=1))

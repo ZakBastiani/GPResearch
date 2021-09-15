@@ -4,14 +4,12 @@ import matplotlib.pyplot as plt
 from Synthetic_Space_2D import Gaussian_Process
 from Synthetic_Space_2D import Random_Gaussian
 from Synthetic_Space_2D import Constant_Bias
-from Synthetic_Space_2D import Opt_Alpha_Constant_Bias
 from Synthetic_Space_2D import Calc_Alpha
 from Synthetic_Space_2D import Calc_Alpha_Calc_Constant_Bias
 from Synthetic_Space_2D import Wei_Model
 from Synthetic_Space_2D import Calc_Bias_Changing_In_Time
 from Synthetic_Space_2D import Calc_Bias_Changing_In_Time_Plus_GP
 from Synthetic_Space_2D import Calc_Bias_Changing_In_Time_Integrated_GP
-from Synthetic_Space_2D import Opt_Changing_Bais
 from Synthetic_Space_2D import Calc_Alpha_Calc_Changing_Bias
 from Synthetic_Space_2D import Opt_Theta
 
