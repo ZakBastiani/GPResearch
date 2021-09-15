@@ -15,6 +15,7 @@ class GaussianProcess:
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
         self.L = np.linalg.cholesky(self.Sigma + noise**2 * np.eye(len(self.Sigma)))
+        self.loss = 0
 
     def build(self, space_points, time_points):
 

@@ -3,10 +3,11 @@ import torch.nn as nn
 import numpy as np
 from Synthetic_Space import Gaussian_Process
 import math
+from Synthetic_Space import MAPEstimate
 
 class OptChangingBias(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise, theta_not,
-                 bias_variance, bias_mean, bias_kernel, alpha):
+                 bias_variance, bias_mean, bias_kernel, alpha, alpha_mean, alpha_variance):
 
         # Opimization module used to maximaxize Wei's equation
         # should get similar results to the above model
@@ -21,40 +22,12 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
                 self.bias = nn.Parameter(torch.zeros((N_time*N_sensors, 1)))
                 self.alpha = torch.tensor(alpha)
 
-            def v(self, x, Sigma_hat):
-                k = kernel([x.detach().numpy()], self.X.detach().numpy()).T
-                k = torch.from_numpy(k)
-                output = theta_not - k.T @ torch.cholesky_inverse(Sigma_hat) @ k
-                if output < 0:
-                    print('Error')
-                return output
-
-            def mu(self, x, Sigma_hat):
-                k = kernel([x.detach().numpy()], self.X.detach().numpy()).T
-                k = torch.from_numpy(k)
-                return (k.T @ torch.linalg.inv(Sigma_hat) @ (self.Y - self.bias))/self.alpha
-
             # Maximizing the predicted bias based on direct function. This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
-                Sigma_hat = self.Sigma + torch.eye(len(self.Sigma)) * noise ** 2
-                chunk1 = -(1 / 2) * (len(Sigma_hat) * torch.log(self.alpha ** 2) + torch.log(torch.det(Sigma_hat))
-                                     + ((self.Y - self.bias).T @ torch.inverse(Sigma_hat) @ (self.Y - self.bias)) / (
-                                                 self.alpha ** 2)
-                                     + len(Sigma_hat) * math.log(2 * math.pi))
-                # print("chunk1: " + str(chunk1))
-                chunk2 = -(1/2) * sum((((self.bias - bias_mean) ** 2) / bias_variance**2)
-                                      + math.log(2 * math.pi * bias_variance**2))
-                # print("chunk2: " + str(chunk2))
-
-                chunk3 = 0
-                for i in range(0, len(Xt)):
-                    holder = self.mu(Xt[i], Sigma_hat)
-                    var = self.v(Xt[i], Sigma_hat)
-                    chunk3 += -(1 / 2) * (torch.log(var) + ((Yt[i] - holder) ** 2) / var + math.log(2 * math.pi))
-                # print("chunk3: " + str(chunk3))
-
-                return chunk1 + chunk2 + chunk3
-
+                return MAPEstimate.map_estimate_torch(X, Y.T, Xt, Yt, self.bias, self.alpha, noise,
+                                                      torch.tensor(self.Sigma), space_kernel, time_kernel, kernel, alpha_mean,
+                                                      alpha_variance, torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float(),
+                                                      len(space_X), len(time_X), theta_not)
 
         # Need to alter the sensor matrix and the data matrix
         X = torch.tensor([np.outer(space_X, np.ones(len(time_X))).flatten(),
@@ -70,9 +43,9 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
         # setting the model and then using torch to optimize
         zaks_model = zak_gpr(X, Y.T, K, len(space_X), len(time_X))
         optimizer = torch.optim.Adam(zaks_model.parameters(),
-                                     lr=0.001)  # lr is very important, lr>0.1 lead to failure
+                                     lr=0.01)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
-        for i in range(5000):
+        for i in range(2000):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             if loss < smallest_loss:
@@ -96,4 +69,8 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
         self.L = np.linalg.cholesky(self.Sigma + noise * np.eye(len(self.Sigma)))
+        self.loss = MAPEstimate.map_estimate_torch(X, Y.T, Xt, Yt.T, zaks_model.bias, zaks_model.alpha, noise,
+                                                   torch.tensor(zaks_model.Sigma), space_kernel, time_kernel, kernel, alpha_mean,
+                                                   alpha_variance, torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float(),
+                                                   len(space_X), len(time_X), theta_not)
 

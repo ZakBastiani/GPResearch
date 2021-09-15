@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Synthetic_Space import Gaussian_Process
 from Synthetic_Space import MAPEstimate
+import torch
 
 
 class CalcAlpha(Gaussian_Process.GaussianProcess):
@@ -58,7 +59,6 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
         self.L = np.linalg.cholesky((self.Sigma + noise * np.eye(len(self.Sigma))))
         self.loss = MAPEstimate.map_estimate_numpy(X, Y, Xt, Yt, bias.flatten(), alpha, noise, self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
                                                    alpha_variance, np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X)), len(space_X), len(time_X), theta_not)
-        print(self.loss)
 
 
 
