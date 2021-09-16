@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import torch
 import matplotlib.pyplot as plt
 from Synthetic_Space_2D import Gaussian_Process
 from Synthetic_Space_2D import Random_Gaussian
@@ -36,6 +37,8 @@ bias_mean = 0
 theta_sensor_time_bias = 8
 alpha_mean = 1
 alpha_variance = 0.25
+
+torch.set_default_dtype(torch.float64)
 
 # setting the seed for the program
 # seed = np.random.randint(100000000)
@@ -233,11 +236,11 @@ for i in range(0, N_trials):
     #                              "GP calculating both a changing bias and alpha with int gp")
     plt.show()
 
-    # Using an optimizer to find theta_time and theta_space
-    opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-                                   noise, theta_not, bias_kernel, alpha_mean, alpha_variance)
-    print(opt_theta.space_theta)
-    print(opt_theta.time_theta)
+    # # Using an optimizer to find theta_time and theta_space
+    # opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+    #                                noise, theta_not, bias_kernel, alpha_mean, alpha_variance)
+    # print(opt_theta.space_theta)
+    # print(opt_theta.time_theta)
 
     # Letting an optimizer do all the work
     opt_all = Opt_All.OptAll(sensors, sensor_time, data, true_sensors, sensor_time, true_data,

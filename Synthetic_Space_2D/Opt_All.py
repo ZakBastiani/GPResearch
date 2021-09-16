@@ -95,8 +95,8 @@ class OptAll(Gaussian_Process.GaussianProcess):
         print(self.space_theta)
         self.Y = (_Y - self.bias) / self.alpha  # np.concatenate(((_Y - self.bias)/self.alpha, _Yt))
         self.noise = noise
-        self.space_kernel = theta_model.space_kernel.detach()
-        self.time_kernel = theta_model.time_kernel.detach()
-        self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
-        self.L = np.linalg.cholesky(self.Sigma + self.noise ** 2 * np.eye(len(self.Sigma)))
+        self.space_kernel = theta_model.space_kernel
+        self.time_kernel = theta_model.time_kernel
+        self.Sigma = torch.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
+        self.L = np.linalg.cholesky(self.Sigma.detach().numpy() + self.noise ** 2 * np.eye(len(self.Sigma)))
         self.loss = -smallest_loss

@@ -71,7 +71,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
                 for r in real_roots:
                     if abs(closest - alpha_mean) > abs(r - alpha_mean):
                         closest = r
-                alpha = (closest + alpha)/2
+                alpha = closest
 
         N_sensors = int(math.sqrt((N_sensors)))
 
