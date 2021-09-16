@@ -2,14 +2,14 @@ import numpy as np
 import torch
 import math
 
-jitter = 1
+jitter = 0.000001
 
 def map_estimate_torch(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, time_kernel, kernel, alpha_mean,
                        alpha_variance, bias_sigma, N_sensors, N_time, theta_not):
-    Sigma_hat = Sigma + noise**2*torch.eye(N_sensors*N_time)
+    Sigma_hat = Sigma + (noise**2) * torch.eye(N_sensors*N_time)
     bias_sigma = bias_sigma + jitter*torch.eye(len(bias_sigma))
 
-    chunk1 = -(1/2) * (torch.logdet(alpha**2 * Sigma_hat + jitter*torch.eye(len(Sigma_hat))) # currently giving -inf
+    chunk1 = -(1/2) * (torch.logdet(alpha**2 * Sigma_hat)  # currently giving -inf
                        + (Y - bias).T @ torch.inverse(alpha**2 * Sigma_hat) @ (Y - bias)
                        + N_sensors * math.log(2 * math.pi))
 
@@ -36,9 +36,9 @@ def map_estimate_torch(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, ti
         var = v(Xt[i])
         chunk3 += -(1/2) * (torch.log(var) + ((Yt[i] - holder)**2)/var + math.log(2 * math.pi))
 
-    print("torch chunk1: " + str(chunk1))
-    print("torch chunk2: " + str(chunk2))
-    print("torch chunk3: " + str(chunk3))
+    # print("torch chunk1: " + str(chunk1))
+    # print("torch chunk2: " + str(chunk2))
+    # print("torch chunk3: " + str(chunk3))
 
     return chunk1 + chunk2 + chunk3
 
@@ -47,13 +47,12 @@ def map_estimate_numpy(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, ti
                        alpha_variance, bias_sigma, N_sensors, N_time, theta_not):
     Sigma_hat = Sigma + noise**2 * np.eye(N_sensors*N_time)
     bias_sigma = bias_sigma + jitter*np.eye(len(bias_sigma))
-    print(np.linalg.det(Sigma_hat))
-    chunk1 = -(1/2) * (np.log(np.linalg.det(alpha**2 * Sigma_hat)) # Currently giving inf
+    chunk1 = -(1/2) * (torch.logdet(torch.tensor(alpha**2 * Sigma_hat)).detach().numpy() # Currently giving inf
                        + (Y - bias).T @ np.linalg.inv(alpha**2 * Sigma_hat) @ (Y - bias)
                        + N_sensors * math.log(2 * math.pi))
 
     prob_a = -(1/2) * (((alpha - alpha_mean) ** 2 / (alpha_variance**2)) + math.log((alpha_variance**2) * 2 * math.pi))
-    prob_b = -(1/2) * (np.log(np.linalg.det(bias_sigma))
+    prob_b = -(1/2) * (torch.logdet(torch.tensor(bias_sigma)).detach().numpy()
                        + bias.T @ np.linalg.inv(bias_sigma) @ bias
                        + len(bias) * math.log(2 * math.pi))
     chunk2 = prob_a + prob_b
@@ -75,8 +74,8 @@ def map_estimate_numpy(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, ti
         var = v(Xt[i])
         chunk3 += -(1/2) * (np.log(var) + ((Yt[i] - holder)**2)/var + math.log(2 * math.pi))
 
-    print("numpy chunk1: " + str(chunk1))
-    print("numpy chunk2: " + str(chunk2))
-    print("numpy chunk3: " + str(chunk3))
+    # print("numpy chunk1: " + str(chunk1))
+    # print("numpy chunk2: " + str(chunk2))
+    # print("numpy chunk3: " + str(chunk3))
 
     return chunk1 + chunk2 + chunk3

@@ -15,7 +15,7 @@ from Synthetic_Space_2D import Opt_Theta
 from Synthetic_Space_2D import Opt_All
 
 # Variables that control the space
-N_sensors = 10  # Number of sensors
+N_sensors = 8  # Number of sensors
 N_true_sensors = 2  # Number of ground truth sensor points
 N_time = 10  # Number of time samples
 noise = 0.01  # random noise in the system Standard Deviation
@@ -136,14 +136,14 @@ for i in range(0, N_trials):
     # print(true_sensors)
     # print(true_data)
 
-    # # Building a basic GP
-    # gp = Gaussian_Process.GaussianProcess(sensors, sensor_time, data, true_sensors, true_sensor_time, true_data,
-    #                                       space_kernel, time_kernel, noise, N_sensors)
-    # estimate = gp.build(gaussian.space, gaussian.time, space_points)
-    # gt_estimate = gp.build(true_sensors, true_sensor_time, N_true_sensors)
-    # gp_error = gp.print_error(alpha, sensor_bias, underlyingData, estimate, true_data, gt_estimate)
-    # # gp.display(gaussian.space, space_points, gaussian.time, estimate, "Basic GP on the received data")
-    #
+    # Building a basic GP
+    gp = Gaussian_Process.GaussianProcess(sensors, sensor_time, data, true_sensors, true_sensor_time, true_data,
+                                          space_kernel, time_kernel, noise, N_sensors)
+    estimate = gp.build(gaussian.space, gaussian.time, space_points)
+    gt_estimate = gp.build(true_sensors, true_sensor_time, N_true_sensors)
+    gp_error = gp.print_error(alpha, sensor_bias, underlyingData, estimate, true_data, gt_estimate)
+    # gp.display(gaussian.space, space_points, gaussian.time, estimate, "Basic GP on the received data")
+
     # Building a GP that predicts alpha given bias
     calc_alpha = Calc_Alpha.CalcAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
                                       space_kernel, time_kernel, kernel, noise, theta_not, alpha_mean, alpha_variance,
@@ -232,7 +232,7 @@ for i in range(0, N_trials):
     # # changing_bias_int_gp.display(gaussian.space, space_points, gaussian.time, calc_both_changing_bias_estimate,
     # #                              "GP calculating both a changing bias and alpha with int gp")
     # plt.show()
-
+    #
     # # Using an optimizer to find theta_time and theta_space
     # opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
     #                                noise, theta_not, bias_kernel, alpha_mean, alpha_variance)
