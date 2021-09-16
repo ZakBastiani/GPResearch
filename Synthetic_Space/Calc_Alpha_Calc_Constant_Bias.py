@@ -11,7 +11,7 @@ class CalcBoth(Gaussian_Process.GaussianProcess):
         alpha = alpha_mean
         b = bias_mean*np.ones(len(space_X))
         sigma = np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X))
-        sigma_inv = np.linalg.inv(sigma + noise * np.eye(len(sigma)))
+        sigma_inv = np.linalg.inv(sigma + noise**2 * np.eye(len(sigma)))
 
         N_sensors = len(space_X)
         N_time = len(time_X)

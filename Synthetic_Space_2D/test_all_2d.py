@@ -146,14 +146,14 @@ for i in range(0, N_trials):
     # gp_error = gp.print_error(alpha, sensor_bias, underlyingData, estimate, true_data, gt_estimate)
     # # gp.display(gaussian.space, space_points, gaussian.time, estimate, "Basic GP on the received data")
     #
-    # # Building a GP that predicts alpha given bias
-    # calc_alpha = Calc_Alpha.CalcAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-    #                                   space_kernel, time_kernel, kernel, noise, theta_not, alpha_mean, alpha_variance,
-    #                                   sensor_bias, bias_kernel)
-    # calc_alpha_estimate = calc_alpha.build(gaussian.space, gaussian.time, space_points)
-    # calc_alpha_gt_estimate = calc_alpha.build(true_sensors, true_sensor_time, N_true_sensors)
-    # calc_alpha_errors += calc_alpha.print_error(alpha, sensor_bias, underlyingData, calc_alpha_estimate, true_data, calc_alpha_gt_estimate)
-    #
+    # Building a GP that predicts alpha given bias
+    calc_alpha = Calc_Alpha.CalcAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                                      space_kernel, time_kernel, kernel, noise, theta_not, alpha_mean, alpha_variance,
+                                      sensor_bias, bias_kernel)
+    calc_alpha_estimate = calc_alpha.build(gaussian.space, gaussian.time, space_points)
+    calc_alpha_gt_estimate = calc_alpha.build(true_sensors, true_sensor_time, N_true_sensors)
+    calc_alpha_errors += calc_alpha.print_error(alpha, sensor_bias, underlyingData, calc_alpha_estimate, true_data, calc_alpha_gt_estimate)
+
     # # Building a GP that predicts the bias but is given alpha
     # bias_gp = Constant_Bias.ConstantBias(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
     #                                      space_kernel, time_kernel, kernel, noise, theta_not, bias_variance, bias_mean,
