@@ -11,6 +11,7 @@ from Synthetic_Space_2D import MAPEstimate
 class OptTheta(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
                  noise, theta_not, bias_kernel, alpha_mean, alpha_variance):
+        torch.set_default_dtype(torch.float64)
         N_sensors = len(space_X)
         N_time = len(time_X)
         space_X = torch.tensor(space_X)
@@ -82,7 +83,7 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                         k_star = self.kernel(Xt[i].reshape(1, -1), self.X).T
                         divisor = (theta_not - k_star.T @ sigma_hat_inv @ k_star)
                         holder = k_star.T @ sigma_hat_inv @ y_min_bias
-                        alpha_poly[4] += ((holder) ** 2 / divisor).item()
+                        alpha_poly[4] += (holder ** 2 / divisor).item()
                         alpha_poly[3] -= ((Yt[i] * holder) / divisor).item()
 
                     roots = np.roots(alpha_poly.detach().numpy())  # maybe?
@@ -104,7 +105,6 @@ class OptTheta(Gaussian_Process.GaussianProcess):
             # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
                 self.calcboth(Xt, Yt)
-                print(self.alpha)
                 sigma = torch.kron(self.space_kernel(space_X, space_X), self.time_kernel(time_X, time_X))
                 bias_sigma = torch.kron(torch.eye(len(space_X)), torch.tensor(bias_kernel(time_X, time_X)))
                 return MAPEstimate.map_estimate_torch(self.X, self.Y, Xt, Yt, self.bias.T, self.alpha, noise, sigma,
@@ -121,13 +121,14 @@ class OptTheta(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         theta_model = theta_opt(X, Y.T, len(space_X), len(time_X))
-        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.02)
+        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.01)
         smallest_loss = 1000
-        for i in range(1000):
+        for i in range(300):
             optimizer.zero_grad()
             loss = -theta_model.forward(Xt, Yt.T)
             if loss < smallest_loss:
                 smallest_loss = loss
+            if i % 100 == 0:
                 print(loss)
             loss.backward()
             optimizer.step()
@@ -146,8 +147,8 @@ class OptTheta(Gaussian_Process.GaussianProcess):
         self.bias = np.reshape(theta_model.bias.detach().numpy(), (N_sensors, N_sensors, N_time))
         self.Y = (_Y - self.bias) / self.alpha  # np.concatenate(((_Y - self.bias)/self.alpha, _Yt))
         self.noise = noise
-        self.space_kernel = theta_model.space_kernel
-        self.time_kernel = theta_model.time_kernel
+        self.space_kernel = theta_model.space_kernel.detach()
+        self.time_kernel = theta_model.time_kernel.detach()
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
         self.L = np.linalg.cholesky(self.Sigma + self.noise ** 2 * np.eye(len(self.Sigma)))
         self.loss = -smallest_loss

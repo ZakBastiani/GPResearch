@@ -46,6 +46,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
             # Inverse A and multiply it by C
             b = C @  np.linalg.inv(A)
 
+
             alpha_poly = np.zeros(5)
             y_min_bias = (Y - b).T
             alpha_poly[4] = y_min_bias.T @ sigma_inv @ y_min_bias
