@@ -87,6 +87,5 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
         self.L = np.linalg.cholesky(self.Sigma + noise**2 * np.eye(len(self.Sigma)))
         self.loss = MAPEstimate.map_estimate_torch(X, Y.T, Xt, Yt.T, zaks_model.bias, zaks_model.alpha, noise,
                                                    zaks_model.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
-                                                   zaks_model.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
                                                    alpha_variance, torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float(),
                                                    len(space_X), len(time_X), theta_not)
