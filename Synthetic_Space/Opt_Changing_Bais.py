@@ -25,7 +25,7 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
             # Maximizing the predicted bias based on direct function. This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
                 return MAPEstimate.map_estimate_torch(X, Y.T, Xt, Yt, self.bias, self.alpha, noise,
-                                                      torch.tensor(self.Sigma), space_kernel, time_kernel, kernel, alpha_mean,
+                                                      self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
                                                       alpha_variance, torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float(),
                                                       len(space_X), len(time_X), theta_not)
 
