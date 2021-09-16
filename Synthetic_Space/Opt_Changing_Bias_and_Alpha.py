@@ -39,7 +39,7 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
             # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
                 return MAPEstimate.map_estimate_torch(X, Y.T, Xt, Yt, self.bias, self.alpha, noise,
-                                                      torch.tensor(self.Sigma), space_kernel, time_kernel, kernel, alpha_mean,
+                                                      self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
                                                       alpha_variance, torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float(),
                                                       len(space_X), len(time_X), theta_not)
 
@@ -86,6 +86,6 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
         self.L = np.linalg.cholesky(self.Sigma + noise**2 * np.eye(len(self.Sigma)))
         self.loss = MAPEstimate.map_estimate_torch(X, Y.T, Xt, Yt.T, zaks_model.bias, zaks_model.alpha, noise,
-                                                   torch.tensor(zaks_model.Sigma), space_kernel, time_kernel, kernel, alpha_mean,
+                                                   zaks_model.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
                                                    alpha_variance, torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float(),
                                                    len(space_X), len(time_X), theta_not)
