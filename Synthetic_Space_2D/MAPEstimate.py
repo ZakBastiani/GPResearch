@@ -9,7 +9,7 @@ def map_estimate_torch(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, ti
     Sigma_hat = Sigma + noise**2*torch.eye(N_sensors*N_time)
     bias_sigma = bias_sigma + jitter*torch.eye(len(bias_sigma))
 
-    chunk1 = -(1/2) * (  # torch.log(torch.det(alpha**2 * Sigma_hat)) # currently giving -inf
+    chunk1 = -(1/2) * (torch.logdet(alpha**2 * Sigma_hat + jitter*torch.eye(len(Sigma_hat))) # currently giving -inf
                        + (Y - bias).T @ torch.inverse(alpha**2 * Sigma_hat) @ (Y - bias)
                        + N_sensors * math.log(2 * math.pi))
 
@@ -47,7 +47,8 @@ def map_estimate_numpy(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, ti
                        alpha_variance, bias_sigma, N_sensors, N_time, theta_not):
     Sigma_hat = Sigma + noise**2 * np.eye(N_sensors*N_time)
     bias_sigma = bias_sigma + jitter*np.eye(len(bias_sigma))
-    chunk1 = -(1/2) * (# np.log(np.linalg.det(alpha**2 * Sigma_hat)) # Currently giving inf
+    print(np.linalg.det(Sigma_hat))
+    chunk1 = -(1/2) * (np.log(np.linalg.det(alpha**2 * Sigma_hat)) # Currently giving inf
                        + (Y - bias).T @ np.linalg.inv(alpha**2 * Sigma_hat) @ (Y - bias)
                        + N_sensors * math.log(2 * math.pi))
 
