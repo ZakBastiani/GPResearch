@@ -1,13 +1,14 @@
 import math
-
 import numpy as np
 import matplotlib.pyplot as plt
 from Synthetic_Space_2D import Gaussian_Process
+from Synthetic_Space_2D import MAPEstimate
 
 
 class ConstantBias(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
-                 space_kernel, time_kernel, kernel, noise, theta_not, bias_variance, bias_mean, alpha):
+                 space_kernel, time_kernel, kernel, noise, theta_not, bias_variance, bias_mean, alpha,
+                 alpha_mean, alpha_variance, bias_kernel):
         sigma = np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X))
         sigma_hat_inv = np.linalg.inv(sigma + (noise**2) * np.eye(len(sigma)))
 
@@ -53,7 +54,7 @@ class ConstantBias(Gaussian_Process.GaussianProcess):
         b = C @ A_inverse
 
         N_sensors = int(math.sqrt(N_sensors))
-        self.type = "Gaussian Process Regression with a calculated bias and a provided alpha"
+        self.type = "Gaussian Process Regression with a calculated constant bias and a provided alpha"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.alpha = alpha
@@ -63,4 +64,11 @@ class ConstantBias(Gaussian_Process.GaussianProcess):
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
-        self.L = np.linalg.cholesky((self.Sigma + noise * np.eye(len(self.Sigma))))
+        self.L = np.linalg.cholesky((self.Sigma + noise**2 * np.eye(len(self.Sigma))))
+        self.loss = MAPEstimate.map_estimate_numpy(X, Y, true_X, true_Y, self.bias.flatten(), alpha, noise,
+                                                   self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
+                                                   alpha_variance,
+                                                   np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X)),
+                                                   len(space_X), len(time_X), theta_not)
+
+

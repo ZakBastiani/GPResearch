@@ -17,6 +17,7 @@ class GaussianProcess:
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
         self.L = np.linalg.cholesky(self.Sigma + noise * np.eye(len(self.Sigma)))
+        self.loss = -1
 
     def build(self, space_points, time_points, N_space):
 
@@ -71,6 +72,7 @@ class GaussianProcess:
         print("Avg L2 error at Ground Truth Points: " + str(gt_error))
         error = sum(((true_y - guess_y) ** 2).flatten()) / (len(guess_y.flatten()))
         print("Avg L2 error at Test Points: " + str(error))
+        print("Loss: " + str(self.loss))
         print("")
 
         return np.array([alpha_error, bias_error, gt_error, error], dtype=float)

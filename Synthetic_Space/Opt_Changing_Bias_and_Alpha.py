@@ -9,8 +9,6 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise, theta_not,
                  bias_variance, bias_mean, bias_kernel, alpha_mean, alpha_variance, alpha, bias):
 
-        # Opimization module used to maximaxize Wei's equation
-        # should get similar results to the above model
         class zak_gpr(nn.Module):
             def __init__(self, X, Y, K, N_sensors, N_time):
                 super(zak_gpr, self).__init__()
@@ -63,7 +61,7 @@ class OptChangingBiasAndAlpha(Gaussian_Process.GaussianProcess):
                                      lr=0.05)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
         guess_bias = []
-        for i in range(2000):
+        for i in range(1000):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             if loss < smallest_loss:
