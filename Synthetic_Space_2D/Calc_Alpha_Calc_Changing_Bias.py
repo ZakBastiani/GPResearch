@@ -45,7 +45,6 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
 
             # Inverse A and multiply it by C
             A_inverse = np.linalg.inv(A)
-            print(A_inverse)
             b = C @ A_inverse
 
             alpha_poly = np.zeros(5)
@@ -61,7 +60,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
                 alpha_poly[3] -= (Yt[i] * k_star.T @ sigma_inv @ y_min_bias) / divisor
 
             roots = np.roots(alpha_poly)
-            # print(roots)
+            print(roots)
             real_roots = []
             for root in roots:
                 if root.imag == 0:
@@ -72,7 +71,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
                 for r in real_roots:
                     if abs(closest - alpha_mean) > abs(r - alpha_mean):
                         closest = r
-                alpha = (closest + alpha)/2
+                alpha = closest
 
         N_sensors = int(math.sqrt((N_sensors)))
 

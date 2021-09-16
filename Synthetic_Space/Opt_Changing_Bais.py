@@ -45,7 +45,7 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
         optimizer = torch.optim.Adam(zaks_model.parameters(),
                                      lr=0.05)  # lr is very important, lr>0.1 lead to failure
         smallest_loss = 1000
-        for i in range(1500):
+        for i in range(1000):
             optimizer.zero_grad()
             loss = -zaks_model.forward(Xt, Yt.T)
             if loss < smallest_loss:
@@ -68,9 +68,9 @@ class OptChangingBias(Gaussian_Process.GaussianProcess):
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
-        self.L = np.linalg.cholesky(self.Sigma + noise * np.eye(len(self.Sigma)))
+        self.L = np.linalg.cholesky(self.Sigma + noise**2 * np.eye(len(self.Sigma)))
         self.loss = MAPEstimate.map_estimate_torch(X, Y.T, Xt, Yt.T, zaks_model.bias, zaks_model.alpha, noise,
-                                                   torch.tensor(zaks_model.Sigma), space_kernel, time_kernel, kernel, alpha_mean,
+                                                   zaks_model.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
                                                    alpha_variance, torch.tensor(np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X))).float(),
                                                    len(space_X), len(time_X), theta_not)
 

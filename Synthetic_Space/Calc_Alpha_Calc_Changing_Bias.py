@@ -59,7 +59,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
                 alpha_poly[3] -= (Yt[i]*k_star.T @ sigma_inv @ y_min_bias) / divisor
 
             roots = np.roots(alpha_poly)  # The algorithm relies on computing the eigenvalues of the companion matrix
-            # print(roots)
+            print(roots)
             real_roots = []
             alpha = 1
             for root in roots:
