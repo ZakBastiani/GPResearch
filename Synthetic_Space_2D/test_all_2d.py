@@ -23,7 +23,7 @@ noise = 0.01  # random noise in the system Standard Deviation
 
 space_range = 10
 time_range = 10
-space_points = 15
+space_points = 20
 time_points = 25
 
 # Hyper-parameters
@@ -41,8 +41,8 @@ alpha_variance = 0.25
 torch.set_default_dtype(torch.float64)
 
 # setting the seed for the program
-# seed = np.random.randint(100000000)
-seed = 36096893
+seed = np.random.randint(100000000)
+# seed = 36096893
 np.random.seed(seed)
 print("Seed: " + str(seed))
 
@@ -83,13 +83,15 @@ def bias_kernel(X, Y):
 
 
 N_trials = 1
-gp_error = np.zeros(4)
-calc_alpha_errors = np.zeros(4)
-calc_constant_bias_errors = np.zeros(4)
-calc_changing_bias_error = np.zeros(4)
-calc_changing_int_bias_error = np.zeros(4)
-calc_both_error = np.zeros(4)
-
+gp_error = np.zeros(5)
+calc_alpha_errors = np.zeros(5)
+calc_constant_bias_errors = np.zeros(5)
+calc_changing_bias_error = np.zeros(5)
+calc_changing_int_bias_error = np.zeros(5)
+calc_both_error = np.zeros(5)
+opt_theta_error = np.zeros(5)
+opt_all_error = np.zeros(5)
+theta_errors = torch.zeros(4)
 
 for i in range(0, N_trials):
     # Building the function
@@ -141,7 +143,8 @@ for i in range(0, N_trials):
 
     # Building a basic GP
     gp = Gaussian_Process.GaussianProcess(sensors, sensor_time, data, true_sensors, true_sensor_time, true_data,
-                                          space_kernel, time_kernel, noise, N_sensors)
+                                          space_kernel, time_kernel, kernel, noise, N_sensors, alpha_variance,
+                                          alpha_mean, bias_kernel, theta_not)
     estimate = gp.build(gaussian.space, gaussian.time, space_points)
     gt_estimate = gp.build(true_sensors, true_sensor_time, N_true_sensors)
     gp_error = gp.print_error(alpha, sensor_bias, underlyingData, estimate, true_data, gt_estimate)
@@ -155,14 +158,14 @@ for i in range(0, N_trials):
     calc_alpha_gt_estimate = calc_alpha.build(true_sensors, true_sensor_time, N_true_sensors)
     calc_alpha_errors += calc_alpha.print_error(alpha, sensor_bias, underlyingData, calc_alpha_estimate, true_data, calc_alpha_gt_estimate)
 
-    # # Building a GP that predicts the bias but is given alpha
-    # bias_gp = Constant_Bias.ConstantBias(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-    #                                      space_kernel, time_kernel, kernel, noise, theta_not, bias_variance, bias_mean,
-    #                                      alpha, alpha_mean, alpha_variance, bias_kernel)
-    # constant_bias_estimate = bias_gp.build(gaussian.space, gaussian.time, space_points)
-    # constant_bias_gt_estimate = bias_gp.build(true_sensors, true_sensor_time, N_true_sensors)
-    # calc_constant_bias_errors += bias_gp.print_error(alpha, sensor_bias, underlyingData, constant_bias_estimate, true_data, constant_bias_gt_estimate)
-    #
+    # Building a GP that predicts the bias but is given alpha
+    bias_gp = Constant_Bias.ConstantBias(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                                         space_kernel, time_kernel, kernel, noise, theta_not, bias_variance, bias_mean,
+                                         alpha, alpha_mean, alpha_variance, bias_kernel)
+    constant_bias_estimate = bias_gp.build(gaussian.space, gaussian.time, space_points)
+    constant_bias_gt_estimate = bias_gp.build(true_sensors, true_sensor_time, N_true_sensors)
+    calc_constant_bias_errors += bias_gp.print_error(alpha, sensor_bias, underlyingData, constant_bias_estimate, true_data, constant_bias_gt_estimate)
+
     # # # Building a GP that predicts both bias and alpha using lagging variables
     # # calc_both = Calc_Alpha_Calc_Constant_Bias.CalcBoth(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
     # #                                      space_kernel, time_kernel, kernel, noise, theta_not, bias_variance, bias_mean, alpha_mean, alpha_variance)
@@ -185,16 +188,16 @@ for i in range(0, N_trials):
     # # # opt_both_gt_estimate = opt_both.build(true_sensors, true_sensor_time)
     # # # opt_both.print_error(alpha, sensor_bias.T[0], gaussian.matrix2d, opt_both_estimate, true_data, opt_both_gt_estimate)
     #
-    # # Building a GP that predicts the bias but is given alpha
-    # changing_bias_gp = Calc_Bias_Changing_In_Time.ChangingBias(sensors, sensor_time, data, true_sensors, sensor_time,
-    #                                                            true_data, space_kernel, time_kernel, kernel, noise,
-    #                                                            theta_not, bias_variance, bias_mean, bias_kernel, alpha,
-    #                                                            alpha_mean, alpha_variance)
-    # changing_bias_estimate = changing_bias_gp.build(gaussian.space, gaussian.time, space_points)
-    # changing_bias_gt_estimate = changing_bias_gp.build(true_sensors, true_sensor_time, N_true_sensors)
-    # calc_changing_bias_error += changing_bias_gp.print_error(alpha, sensor_bias, underlyingData, changing_bias_estimate, true_data, changing_bias_gt_estimate)
-    # # changing_bias_gp.display(gaussian.space, space_points, gaussian.time, changing_bias_estimate,
-    # #                          "GP with given alpha assuming the bias is changing in time")
+    # Building a GP that predicts the bias but is given alpha
+    changing_bias_gp = Calc_Bias_Changing_In_Time.ChangingBias(sensors, sensor_time, data, true_sensors, sensor_time,
+                                                               true_data, space_kernel, time_kernel, kernel, noise,
+                                                               theta_not, bias_variance, bias_mean, bias_kernel, alpha,
+                                                               alpha_mean, alpha_variance)
+    changing_bias_estimate = changing_bias_gp.build(gaussian.space, gaussian.time, space_points)
+    changing_bias_gt_estimate = changing_bias_gp.build(true_sensors, true_sensor_time, N_true_sensors)
+    calc_changing_bias_error += changing_bias_gp.print_error(alpha, sensor_bias, underlyingData, changing_bias_estimate, true_data, changing_bias_gt_estimate)
+    # changing_bias_gp.display(gaussian.space, space_points, gaussian.time, changing_bias_estimate,
+    #                          "GP with given alpha assuming the bias is changing in time")
     # #
     # # # # Building a GP that predicts the bias and applies a GP but is given alpha
     # # # changing_bias_plus_gp = Calc_Bias_Changing_In_Time_Plus_GP.ChangingBiasPlusGP(sensors, sensor_time, data, true_sensors, sensor_time,
@@ -206,16 +209,16 @@ for i in range(0, N_trials):
     # # # # changing_bias_plus_gp.display(gaussian.space, gaussian.time, changing_bias_plus_estimate,
     # # # #                               "GP with given alpha assuming the bias is changing in time plus applied GP")
     # #
-    # # Building a GP that predicts the bias using an integrated GP but is given alpha
-    # changing_bias_int_gp = Calc_Bias_Changing_In_Time_Integrated_GP.ChangingBiasIntGP(sensors, sensor_time, data, true_sensors, sensor_time,
-    #                                                            true_data, space_kernel, time_kernel, kernel, noise,
-    #                                                            theta_not, bias_variance, bias_mean, bias_kernel, alpha, alpha_mean, alpha_variance)
-    # changing_bias_int_estimate = changing_bias_int_gp.build(gaussian.space, gaussian.time, space_points)
-    # changing_bias_int_gt_estimate = changing_bias_int_gp.build(true_sensors, true_sensor_time, N_true_sensors)
-    # calc_changing_int_bias_error += changing_bias_int_gp.print_error(alpha, sensor_bias, underlyingData, changing_bias_int_estimate, true_data, changing_bias_int_gt_estimate)
-    # # changing_bias_int_gp.display(gaussian.space, space_points, gaussian.time, changing_bias_int_estimate,
-    # #                              "GP with given alpha assuming the bias is changing in time with integrated GP")
-    #
+    # Building a GP that predicts the bias using an integrated GP but is given alpha
+    changing_bias_int_gp = Calc_Bias_Changing_In_Time_Integrated_GP.ChangingBiasIntGP(sensors, sensor_time, data, true_sensors, sensor_time,
+                                                               true_data, space_kernel, time_kernel, kernel, noise,
+                                                               theta_not, bias_variance, bias_mean, bias_kernel, alpha, alpha_mean, alpha_variance)
+    changing_bias_int_estimate = changing_bias_int_gp.build(gaussian.space, gaussian.time, space_points)
+    changing_bias_int_gt_estimate = changing_bias_int_gp.build(true_sensors, true_sensor_time, N_true_sensors)
+    calc_changing_int_bias_error += changing_bias_int_gp.print_error(alpha, sensor_bias, underlyingData, changing_bias_int_estimate, true_data, changing_bias_int_gt_estimate)
+    # changing_bias_int_gp.display(gaussian.space, space_points, gaussian.time, changing_bias_int_estimate,
+    #                              "GP with given alpha assuming the bias is changing in time with integrated GP")
+
     # # # # Building a GP that opt the bias but is given alpha
     # # # opt_changing_bias_gp = Opt_Changing_Bais.OptChangingBias(sensors, sensor_time, data, true_sensors, sensor_time,
     # # #                                                            true_data, space_kernel, time_kernel, kernel, noise,
@@ -236,19 +239,24 @@ for i in range(0, N_trials):
     #                              "GP calculating both a changing bias and alpha with int gp")
     plt.show()
 
-    # # Using an optimizer to find theta_time and theta_space
-    # opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-    #                                noise, theta_not, bias_kernel, alpha_mean, alpha_variance)
-    # print(opt_theta.space_theta)
-    # print(opt_theta.time_theta)
+    # Using an optimizer to find theta_time and theta_space
+    opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                                   noise, theta_not, bias_kernel, alpha_mean, alpha_variance)
+    opt_theta_estimate = opt_theta.build(gaussian.space, gaussian.time, space_points)
+    opt_theta_gt_estimate = opt_theta.build(true_sensors, true_sensor_time, N_true_sensors)
+    opt_theta_error += opt_theta.print_error(alpha, sensor_bias, underlyingData, opt_theta_estimate, true_data, opt_theta_gt_estimate)
+    theta_errors[0] += theta_space - opt_theta.space_theta
+    theta_errors[1] += theta_time - opt_theta.time_theta
 
     # Letting an optimizer do all the work
     opt_all = Opt_All.OptAll(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
                                     noise, theta_not, bias_kernel, alpha_mean, alpha_variance)
-    print(opt_all.alpha)
-    print(opt_all.bias)
-    print(opt_all.time_theta)
-    print(opt_all.space_theta)
+    opt_all_estimate = opt_all.build(gaussian.space, gaussian.time, space_points)
+    opt_all_gt_estimate = opt_all.build(true_sensors, true_sensor_time, N_true_sensors)
+    opt_all_error += opt_all.print_error(alpha, sensor_bias, underlyingData, opt_all_estimate, true_data, opt_all_gt_estimate)
+    theta_errors[2] += theta_time - opt_all.time_theta
+    theta_errors[3] += theta_time - opt_all.time_theta
+
     print(i)
 
 
@@ -257,6 +265,8 @@ calc_constant_bias_errors = calc_constant_bias_errors/N_trials
 calc_changing_bias_error = calc_changing_bias_error/N_trials
 calc_changing_int_bias_error = calc_changing_int_bias_error/N_trials
 calc_both_error = calc_both_error/N_trials
+opt_theta_error = theta_errors / N_trials
+opt_all_error = opt_all_error/N_trials
 
 print("Number of trails: " + str(N_trials))
 print("Number of sensors: " + str(N_sensors**2))
@@ -267,3 +277,6 @@ print(calc_constant_bias_errors)
 print(calc_changing_bias_error)
 print(calc_changing_int_bias_error)
 print(calc_both_error)
+print(opt_theta_error)
+print(opt_all_error)
+print(theta_errors / N_trials)

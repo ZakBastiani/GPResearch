@@ -1,11 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import imageio
+import torch
 import math
+from Synthetic_Space_2D import MAPEstimate
 
 
 class GaussianProcess:
-    def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, noise, N_space):
+    def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise, N_space,
+                 alpha_variance, alpha_mean, bias_kernel, theta_not):
         self.type = "Basic Gaussian Process Regression"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
@@ -17,7 +20,21 @@ class GaussianProcess:
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
         self.L = np.linalg.cholesky(self.Sigma + noise * np.eye(len(self.Sigma)))
-        self.loss = -1
+
+        # Need to alter the sensor matrix and the data matrix
+        X = np.concatenate((np.repeat(space_X, len(time_X), axis=0),
+                            np.tile(time_X, len(space_X)).reshape((-1, 1))), axis=1)
+        Y = _Y.flatten()
+
+        Xt = np.concatenate((np.repeat(space_Xt, len(time_Xt), axis=0),
+                             np.tile(time_Xt, len(space_Xt)).reshape((-1, 1))), axis=1)
+        Yt = _Yt.flatten()
+
+        self.loss = self.loss = MAPEstimate.map_estimate_numpy(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise,
+                                                               self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
+                                                               alpha_variance,
+                                                               np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X)),
+                                                               len(space_X), len(time_X), theta_not)
 
     def build(self, space_points, time_points, N_space):
 
@@ -75,5 +92,5 @@ class GaussianProcess:
         print("Loss: " + str(self.loss))
         print("")
 
-        return np.array([alpha_error, bias_error, gt_error, error], dtype=float)
+        return np.array([alpha_error, bias_error, gt_error, error, float(self.loss)], dtype=float)
 

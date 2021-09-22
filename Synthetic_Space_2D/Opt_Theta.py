@@ -123,7 +123,7 @@ class OptTheta(Gaussian_Process.GaussianProcess):
         theta_model = theta_opt(X, Y.T, len(space_X), len(time_X))
         optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.01)
         smallest_loss = 1000
-        for i in range(300):
+        for i in range(500):
             optimizer.zero_grad()
             loss = -theta_model.forward(Xt, Yt.T)
             if loss < smallest_loss:
@@ -138,21 +138,32 @@ class OptTheta(Gaussian_Process.GaussianProcess):
 
         N_sensors = int(math.sqrt((N_sensors)))
 
-        self.type = "Gaussian Process Regression calculating both a changing bias and alpha"
+        self.type = "Gaussian Process Regression Optimizing Theta Calc Alpha Bias"
         self.space_theta = theta_model.theta_space
         self.time_theta = theta_model.theta_time
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.alpha = theta_model.alpha.item()
         self.bias = np.reshape(theta_model.bias.detach().numpy(), (N_sensors, N_sensors, N_time))
-        print(self.alpha)
-        print(self.bias)
-        print(self.time_theta)
-        print(self.space_theta)
         self.Y = (_Y - self.bias) / self.alpha  # np.concatenate(((_Y - self.bias)/self.alpha, _Yt))
         self.noise = noise
         self.space_kernel = theta_model.space_kernel
         self.time_kernel = theta_model.time_kernel
         self.Sigma = torch.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
-        self.L = np.linalg.cholesky(self.Sigma.detach().numpy() + self.noise ** 2 * np.eye(len(self.Sigma)))
+        self.L = torch.linalg.cholesky(self.Sigma + self.noise ** 2 * torch.eye(len(self.Sigma)))
         self.loss = -smallest_loss
+
+    def build(self, space_points, time_points, N_space):
+        l_inv = torch.inverse(self.L)
+        Lk = l_inv @ torch.kron(self.space_kernel(self.space_X, torch.tensor(space_points)),
+                                             self.time_kernel(self.time_X, torch.tensor(time_points))).T
+        mu = Lk.T @ l_inv @ torch.tensor(self.Y.flatten())
+
+        # Should just be able to use reshape fix later
+        # mu = np.reshape([mu], (test_space, test_time))
+        holder = np.ndarray(shape=(N_space, N_space, len(time_points)))
+        for i in range(0, N_space):
+            for k in range(0, N_space):
+                for j in range(0, len(time_points)):
+                    holder[i][k][j] = mu[i * N_space * len(time_points) + k * len(time_points) + j].item()
+        return holder

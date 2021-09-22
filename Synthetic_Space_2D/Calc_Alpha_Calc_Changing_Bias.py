@@ -79,7 +79,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.alpha = alpha
-        self.bias =  np.reshape(b, (N_sensors, N_sensors, N_time))
+        self.bias = np.reshape(b, (N_sensors, N_sensors, N_time))
         self.Y = (_Y - self.bias)/self.alpha  # np.concatenate(((_Y - self.bias)/self.alpha, _Yt))
         self.noise = noise
         self.space_kernel = space_kernel
