@@ -2,18 +2,14 @@ import numpy as np
 import math
 import torch
 import matplotlib.pyplot as plt
-from Synthetic_Space_2D import Gaussian_Process
-from Synthetic_Space_2D import Random_Gaussian
-from Synthetic_Space_2D import Constant_Bias
-from Synthetic_Space_2D import Calc_Alpha
-from Synthetic_Space_2D import Calc_Alpha_Calc_Constant_Bias
-from Synthetic_Space_2D import Wei_Model
-from Synthetic_Space_2D import Calc_Bias_Changing_In_Time
-from Synthetic_Space_2D import Calc_Bias_Changing_In_Time_Plus_GP
-from Synthetic_Space_2D import Calc_Bias_Changing_In_Time_Integrated_GP
-from Synthetic_Space_2D import Calc_Alpha_Calc_Changing_Bias
-from Synthetic_Space_2D import Opt_Theta
-from Synthetic_Space_2D import Opt_All
+from Final_Space import Gaussian_Process
+from Final_Space import Random_Gaussian
+from Final_Space import Calc_Alpha
+from Final_Space import Calc_Bias_Changing_In_Time
+from Final_Space import Calc_Bias_Changing_In_Time_Integrated_GP
+from Final_Space import Calc_Alpha_Calc_Changing_Bias
+from Final_Space import Opt_Theta
+from Final_Space import Opt_All
 
 # Variables that control the space
 N_sensors = 8  # Number of sensors

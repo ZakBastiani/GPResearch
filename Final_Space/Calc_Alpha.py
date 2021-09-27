@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Synthetic_Space_2D import Gaussian_Process
-from Synthetic_Space_2D import MAPEstimate
+from Final_Space import Gaussian_Process
+from Final_Space import MAPEstimate
+
 
 class CalcAlpha(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,

@@ -19,7 +19,7 @@ class GaussianProcess:
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
-        self.L = np.linalg.cholesky(self.Sigma + noise * np.eye(len(self.Sigma)))
+        self.L = np.linalg.cholesky(self.Sigma + noise**2 * np.eye(len(self.Sigma)))
 
         # Need to alter the sensor matrix and the data matrix
         X = np.concatenate((np.repeat(space_X, len(time_X), axis=0),
