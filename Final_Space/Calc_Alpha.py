@@ -6,8 +6,8 @@ from Final_Space import MAPEstimate
 
 class CalcAlpha(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
-                 space_kernel, time_kernel, kernel, noise, theta_not, alpha_mean, alpha_variance, bias, bias_kernel):
-        sigma_inv = np.linalg.inv(np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X)) + (noise**2) * np.eye(
+                 space_kernel, time_kernel, kernel, noise_sd, theta_not, alpha_mean, alpha_variance, bias, bias_kernel):
+        sigma_inv = np.linalg.inv(np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X)) + (noise_sd ** 2) * np.eye(
             len(space_X) * len(time_X)))
 
         # Need to alter the sensor matrix and the data matrix
@@ -52,12 +52,12 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
         self.alpha = alpha
         self.bias = bias
         self.Y = (_Y - bias) / self.alpha  # np.concatenate(((_Y - bias) / self.alpha, _Yt))
-        self.noise = noise
+        self.noise = noise_sd
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
-        self.L = np.linalg.cholesky((self.Sigma + noise**2 * np.eye(len(self.Sigma))))
-        self.loss = MAPEstimate.map_estimate_numpy(X, Y, Xt, Yt, bias.flatten(), alpha, noise, self.Sigma, space_kernel,
+        self.L = np.linalg.cholesky((self.Sigma + noise_sd ** 2 * np.eye(len(self.Sigma))))
+        self.loss = MAPEstimate.map_estimate_numpy(X, Y, Xt, Yt, bias.flatten(), alpha, noise_sd, self.Sigma, space_kernel,
                                                    time_kernel, kernel, alpha_mean,
                                                    alpha_variance,
                                                    np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X)),

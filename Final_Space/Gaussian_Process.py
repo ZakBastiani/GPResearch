@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import imageio
 import torch
 import math
-from Synthetic_Space_2D import MAPEstimate
+from Final_Space import MAPEstimate
 
 
 class GaussianProcess:
-    def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise, N_space,
+    def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise_sd, N_space,
                  alpha_variance, alpha_mean, bias_kernel, theta_not):
         self.type = "Basic Gaussian Process Regression"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
@@ -15,11 +15,11 @@ class GaussianProcess:
         self.Y = _Y  # np.concatenate((_Y, _Yt))
         self.alpha = 1
         self.bias = np.zeros(shape=(N_space, N_space, len(time_X)))
-        self.noise = noise
+        self.noise = noise_sd
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
-        self.L = np.linalg.cholesky(self.Sigma + noise**2 * np.eye(len(self.Sigma)))
+        self.L = np.linalg.cholesky(self.Sigma + noise_sd ** 2 * np.eye(len(self.Sigma)))
 
         # Need to alter the sensor matrix and the data matrix
         X = np.concatenate((np.repeat(space_X, len(time_X), axis=0),
@@ -30,11 +30,11 @@ class GaussianProcess:
                              np.tile(time_Xt, len(space_Xt)).reshape((-1, 1))), axis=1)
         Yt = _Yt.flatten()
 
-        self.loss = self.loss = MAPEstimate.map_estimate_numpy(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise,
-                                                               self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
-                                                               alpha_variance,
-                                                               np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X)),
-                                                               len(space_X), len(time_X), theta_not)
+        self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise_sd,
+                                                   self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
+                                                   alpha_variance,
+                                                   np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X)),
+                                                   len(space_X), len(time_X), theta_not)
 
     def build(self, space_points, time_points, N_space):
 
