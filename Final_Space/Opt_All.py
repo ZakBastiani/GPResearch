@@ -28,23 +28,23 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 self.alpha = nn.Parameter(torch.eye(1))
                 self.theta_space = nn.Parameter(torch.tensor(2.0))
                 self.theta_time = nn.Parameter(torch.tensor(1.0))
+        def space_kernel(self, X, Y):
+            kernel = theta_not * torch.exp(
+                -((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
+                - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2))
+            return kernel
 
-            def space_kernel(self, X, Y):
-                kernel = theta_not * torch.exp(
-                    -((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
-                    - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2))
-                return kernel
+        def time_kernel(self, X, Y):
+            kernel = torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
+            return kernel
 
-            def time_kernel(self, X, Y):
-                kernel = torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
-                return kernel
+        def kernel(self, X, Y):
+            kern = theta_not * torch.exp(
+                - ((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
+                - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
+                - ((X.T[2].repeat(len(Y), 1) - Y.T[2].repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
+            return kern.T
 
-            def kernel(self, X, Y):
-                kern = theta_not * torch.exp(
-                    - ((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
-                    - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
-                    - ((X.T[2].repeat(len(Y), 1) - Y.T[2].repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
-                return kern.T
 
             # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
