@@ -11,8 +11,6 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
 
         self.points = torch.cat((space_X.repeat(len(time_X), 1), time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
 
-        sigma_inv = torch.linalg.inv(kernel(self.points, self.points) + (noise_sd ** 2) * np.eye(len(space_X) * len(time_X)))
-
         # Need to alter the sensor matrix and the data matrix
         X = torch.cat((space_X.repeat(len(time_Xt), 1),
                        time_Xt.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
@@ -22,33 +20,36 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
                         time_X.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
         Yt = _Yt.flatten()
 
+        alpha = alpha_mean
+        for i in range(5):
+            noise_lag = noise_sd/alpha
+            sigma_inv = torch.linalg.inv(kernel(self.points, self.points) + (noise_lag ** 2) * np.eye(len(space_X) * len(time_X)))
+            alpha_poly = torch.zeros(5)
+            y_min_bias = (Y - bias.flatten()).T
+            alpha_poly[4] = y_min_bias.T @ sigma_inv @ y_min_bias
+            alpha_poly[2] = -len(space_X) * len(time_X)
+            alpha_poly[1] = alpha_mean / (alpha_sd ** 2)
+            alpha_poly[0] = -1 / (alpha_sd ** 2)
+            for i in range(len(Xt)):
+                k_star = kernel(Xt[i].unsqueeze(0), X).T
+                divisor = (theta_not - k_star.T @ sigma_inv @ k_star)
+                alpha_poly[4] += ((k_star.T @ sigma_inv @ y_min_bias) ** 2 / divisor).item()
+                alpha_poly[3] -= ((Yt[i] * k_star.T @ sigma_inv @ y_min_bias) / divisor).item()
 
-        alpha_poly = torch.zeros(5)
-        y_min_bias = (Y - bias.flatten()).T
-        alpha_poly[4] = y_min_bias.T @ sigma_inv @ y_min_bias
-        alpha_poly[2] = -len(space_X) * len(time_X)
-        alpha_poly[1] = alpha_mean / (alpha_sd ** 2)
-        alpha_poly[0] = -1 / (alpha_sd ** 2)
-        for i in range(len(Xt)):
-            k_star = kernel(Xt[i].unsqueeze(0), X).T
-            divisor = (theta_not - k_star.T @ sigma_inv @ k_star)
-            alpha_poly[4] += ((k_star.T @ sigma_inv @ y_min_bias) ** 2 / divisor).item()
-            alpha_poly[3] -= ((Yt[i] * k_star.T @ sigma_inv @ y_min_bias) / divisor).item()
+            roots = np.roots(alpha_poly.detach().numpy())  # The algorithm relies on computing the eigenvalues of the companion matrix
+            # print(roots)
+            real_roots = []
 
-        roots = np.roots(alpha_poly.detach().numpy())  # The algorithm relies on computing the eigenvalues of the companion matrix
-        # print(roots)
-        real_roots = []
-        alpha = 1
-        for root in roots:
-            if root.imag == 0:
-                real_roots.append(root.real)
+            for root in roots:
+                if root.imag == 0:
+                    real_roots.append(root.real)
 
-        if len(real_roots) != 0:
-            closest = real_roots[0]
-            for r in real_roots:
-                if abs(closest - alpha_mean) > abs(r - alpha_mean):
-                    closest = r
-            alpha = closest
+            if len(real_roots) != 0:
+                closest = real_roots[0]
+                for r in real_roots:
+                    if abs(closest - alpha_mean) > abs(r - alpha_mean):
+                        closest = r
+                alpha = closest
 
         self.type = "Gaussian Process Regression calculating alpha with a provided bias"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
