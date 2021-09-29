@@ -120,9 +120,8 @@ for i in range(0, N_trials):
     sensor_bias = sensor_dist.sample((N_sensors,)).flatten()
 
     # Data received with sensor bias
-    # data = gaussian.function(sensors, sensor_time, N_sensors) + noise*np.random.randn(N_sensors, N_sensors, N_time)
-    # data = alpha * gaussian.sensor_data + sensor_bias + noise_sd * torch.randn(N_sensors * N_time)
-    data = gaussian.sensor_data
+    # data = gaussian.sensor_data
+    data = alpha * gaussian.sensor_data + sensor_bias + noise_sd * torch.randn(N_sensors * N_time)
     true_data = gaussian.gt_sensor_data
 
     # print(sensors)
