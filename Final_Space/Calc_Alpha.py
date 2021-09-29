@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 import matplotlib.pyplot as plt
 from Final_Space import Gaussian_Process
 from Final_Space import MAPEstimate
@@ -6,32 +7,35 @@ from Final_Space import MAPEstimate
 
 class CalcAlpha(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
-                 space_kernel, time_kernel, kernel, noise_sd, theta_not, alpha_mean, alpha_variance, bias, bias_kernel):
-        sigma_inv = np.linalg.inv(np.kron(space_kernel(space_X, space_X), time_kernel(time_X, time_X)) + (noise_sd ** 2) * np.eye(
-            len(space_X) * len(time_X)))
+                 space_kernel, time_kernel, kernel, noise_sd, theta_not, alpha_mean, alpha_sd, bias, bias_kernel):
+
+        self.points = torch.cat((space_X.repeat(len(time_X), 1), time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
+
+        sigma_inv = torch.linalg.inv(kernel(self.points, self.points) + (noise_sd ** 2) * np.eye(len(space_X) * len(time_X)))
 
         # Need to alter the sensor matrix and the data matrix
-        X = np.concatenate((np.repeat(space_X, len(time_X), axis=0),
-                            np.tile(time_X, len(space_X)).reshape((-1, 1))), axis=1)
+        X = torch.cat((space_X.repeat(len(time_Xt), 1),
+                       time_Xt.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
         Y = _Y.flatten()
 
-        Xt = np.concatenate((np.repeat(space_Xt, len(time_Xt), axis=0),
-                             np.tile(time_Xt, len(space_Xt)).reshape((-1, 1))), axis=1)
+        Xt = torch.cat((space_Xt.repeat(len(time_X), 1),
+                        time_X.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
         Yt = _Yt.flatten()
 
-        alpha_poly = np.zeros(5)
+
+        alpha_poly = torch.zeros(5)
         y_min_bias = (Y - bias.flatten()).T
         alpha_poly[4] = y_min_bias.T @ sigma_inv @ y_min_bias
         alpha_poly[2] = -len(space_X) * len(time_X)
-        alpha_poly[1] = alpha_mean / (alpha_variance ** 2)
-        alpha_poly[0] = -1 / (alpha_variance ** 2)
+        alpha_poly[1] = alpha_mean / (alpha_sd ** 2)
+        alpha_poly[0] = -1 / (alpha_sd ** 2)
         for i in range(len(Xt)):
-            k_star = kernel([Xt[i]], X).T
+            k_star = kernel(Xt[i].unsqueeze(0), X).T
             divisor = (theta_not - k_star.T @ sigma_inv @ k_star)
-            alpha_poly[4] += (k_star.T @ sigma_inv @ y_min_bias) ** 2 / divisor
-            alpha_poly[3] -= (Yt[i] * k_star.T @ sigma_inv @ y_min_bias) / divisor
+            alpha_poly[4] += ((k_star.T @ sigma_inv @ y_min_bias) ** 2 / divisor).item()
+            alpha_poly[3] -= ((Yt[i] * k_star.T @ sigma_inv @ y_min_bias) / divisor).item()
 
-        roots = np.roots(alpha_poly)  # The algorithm relies on computing the eigenvalues of the companion matrix
+        roots = np.roots(alpha_poly.detach().numpy())  # The algorithm relies on computing the eigenvalues of the companion matrix
         # print(roots)
         real_roots = []
         alpha = 1
@@ -49,17 +53,18 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
         self.type = "Gaussian Process Regression calculating alpha with a provided bias"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
-        self.alpha = alpha
+        self.alpha = torch.tensor(alpha)
         self.bias = bias
         self.Y = (_Y - bias) / self.alpha  # np.concatenate(((_Y - bias) / self.alpha, _Yt))
-        self.noise = noise_sd
+        self.noise_sd = noise_sd
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
-        self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
-        self.L = np.linalg.cholesky((self.Sigma + noise_sd ** 2 * np.eye(len(self.Sigma))))
-        self.loss = MAPEstimate.map_estimate_numpy(X, Y, Xt, Yt, bias.flatten(), alpha, noise_sd, self.Sigma, space_kernel,
+        self.kernel = kernel
+        self.Sigma = self.kernel(self.points, self.points) + noise_sd ** 2 * torch.eye(len(self.points))
+        self.L = torch.linalg.cholesky(self.Sigma)
+        self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, bias.flatten(), alpha, noise_sd, self.Sigma, space_kernel,
                                                    time_kernel, kernel, alpha_mean,
-                                                   alpha_variance,
-                                                   np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X)),
+                                                   alpha_sd,
+                                                   torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
                                                    len(space_X), len(time_X), theta_not)
 

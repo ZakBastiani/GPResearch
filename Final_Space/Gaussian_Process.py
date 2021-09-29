@@ -9,55 +9,50 @@ from Final_Space import MAPEstimate
 class GaussianProcess:
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise_sd, N_space,
                  alpha_variance, alpha_mean, bias_kernel, theta_not):
+        torch.set_default_dtype(torch.float64)
         self.type = "Basic Gaussian Process Regression"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.Y = _Y  # np.concatenate((_Y, _Yt))
-        self.alpha = 1
-        self.bias = np.zeros(shape=(N_space, N_space, len(time_X)))
-        self.noise = noise_sd
+        self.alpha = alpha_mean
+        self.bias = torch.zeros((N_space * len(time_X)))
+        self.noise_sd = noise_sd
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
-        self.Sigma = np.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
-        self.L = np.linalg.cholesky(self.Sigma + noise_sd ** 2 * np.eye(len(self.Sigma)))
+        self.kernel = kernel
+        self.points = torch.cat((self.space_X.repeat(len(self.time_X), 1), self.time_X.repeat_interleave(N_space).repeat(1, 1).T), 1)
+        self.Sigma = kernel(self.points, self.points) + noise_sd ** 2 * torch.eye(len(space_X)*len(time_X))
+        self.L = torch.linalg.cholesky(self.Sigma)
 
         # Need to alter the sensor matrix and the data matrix
-        X = np.concatenate((np.repeat(space_X, len(time_X), axis=0),
-                            np.tile(time_X, len(space_X)).reshape((-1, 1))), axis=1)
+        X = torch.cat((space_X.repeat(len(time_Xt), 1),
+                       time_Xt.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
         Y = _Y.flatten()
 
-        Xt = np.concatenate((np.repeat(space_Xt, len(time_Xt), axis=0),
-                             np.tile(time_Xt, len(space_Xt)).reshape((-1, 1))), axis=1)
+        Xt = torch.cat((space_Xt.repeat(len(time_X), 1),
+                        time_X.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
         Yt = _Yt.flatten()
 
         self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise_sd,
                                                    self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
                                                    alpha_variance,
-                                                   np.kron(np.eye(len(space_X)), bias_kernel(time_X, time_X)),
+                                                   torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
                                                    len(space_X), len(time_X), theta_not)
 
-    def build(self, space_points, time_points, N_space):
+    def build(self, space_points, time_points):
+        points = torch.cat((space_points.repeat(len(time_points), 1), time_points.repeat_interleave(len(space_points)).repeat(1, 1).T), 1)
+        Lk = torch.linalg.solve(self.L, self.kernel(self.points, points))
+        mu = Lk.T @ torch.linalg.solve(self.L, self.Y.flatten())
 
-        Lk = np.linalg.solve(self.L, np.kron(self.space_kernel(self.space_X, space_points),
-                                             self.time_kernel(self.time_X, time_points)))
-        mu = np.dot(Lk.T, np.linalg.solve(self.L, self.Y.flatten()))
-
-        # Should just be able to use reshape fix later
-        # mu = np.reshape([mu], (test_space, test_time))
-        holder = np.ndarray(shape=(N_space, N_space, len(time_points)))
-        for i in range(0, N_space):
-            for k in range(0, N_space):
-                for j in range(0, len(time_points)):
-                    holder[i][k][j] = mu[i * N_space * len(time_points) + k * len(time_points) + j]
-        return holder
+        return mu.detach().numpy()
 
     @staticmethod
-    def display(space_points, N_space, time_points, data, title):
+    def display(space_points, time_points, data, N_space, N_time, title):
         plt.ion()
         fig = plt.figure(figsize=(8, 6), dpi=80)
+        data = data.reshape(N_space, N_space, N_time)
         ax = fig.add_subplot(111, projection='3d')
         images = []
-        data = np.transpose(data, (2, 0, 1))
         for k in range(0, len(data)):
             ax.cla()
             ax.set_xlabel('X')

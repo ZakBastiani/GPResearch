@@ -26,7 +26,7 @@ class RandomGaussian:
         self.dist = torch.distributions.multivariate_normal.MultivariateNormal(torch.zeros(len(kern)), kern)
         self.ret_matrix = self.dist.sample()
 
-        self.underlying_data = self.ret_matrix[:(N_time*N_space*N_space)].reshape((N_time, N_space, N_space)).detach().numpy()
+        self.underlying_data = self.ret_matrix[:(N_time*N_space*N_space)].detach().numpy()
         self.sensor_data = self.ret_matrix[(N_time*N_space*N_space):(N_time*N_space*N_space + len(sensor_points))]
         self.gt_sensor_data = self.ret_matrix[(N_time*N_space*N_space + len(sensor_points)):]
 
@@ -34,10 +34,10 @@ class RandomGaussian:
         plt.ion()
         fig = plt.figure(figsize=(8, 6), dpi=80)
         ax = fig.add_subplot(111, projection='3d')
-        data = np.transpose(self.underlying_data, (0, 1, 2))
+        data = self.underlying_data.reshape((self.N_time, self.N_space, self.N_space))
         images = []
         time = self.time.detach().numpy()
-        for k in range(0, len(self.underlying_data[0][0])):
+        for k in range(0, self.N_time):
             ax.cla()
             ax.set_xlabel('X')
             ax.set_ylabel('Y')
@@ -54,4 +54,4 @@ class RandomGaussian:
             plt.savefig("graphs/" + title + str(k))
             plt.pause(0.5)
             images.append(imageio.imread("graphs/" + title + str(k) + '.png'))
-        imageio.mimsave("graphs/" + str(title) + '.gif', images[1:], duration=10/len(self.underlying_data[0][0]))
+        imageio.mimsave("graphs/" + str(title) + '.gif', images[1:], duration=10/self.N_time)
