@@ -31,7 +31,7 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
             alpha_poly[1] = alpha_mean / (alpha_sd ** 2)
             alpha_poly[0] = -1 / (alpha_sd ** 2)
             for i in range(len(Xt)):
-                k_star = kernel(Xt[i].unsqueeze(0), X).T
+                k_star = kernel(Xt[i].unsqueeze(0), X)
                 divisor = (theta_not - k_star.T @ sigma_inv @ k_star)
                 alpha_poly[4] += ((k_star.T @ sigma_inv @ y_min_bias) ** 2 / divisor).item()
                 alpha_poly[3] -= ((Yt[i] * k_star.T @ sigma_inv @ y_min_bias) / divisor).item()

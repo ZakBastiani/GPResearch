@@ -31,7 +31,7 @@ class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
         C = torch.zeros((1, N_sensors * N_time))
         current_C = 0
         for n in range(len(Xt)):
-            k_star = kernel(Xt[n].unsqueeze(0), X).T
+            k_star = kernel(Xt[n].unsqueeze(0), X)
             holder = (k_star.T @ sigma_hat_inv @ k_star)[0][0]
             holder2 = (k_star.T @ sigma_hat_inv).T @ (k_star.T @ sigma_hat_inv)
             A += holder2 / (theta_not - holder)

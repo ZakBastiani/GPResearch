@@ -12,8 +12,8 @@ from Final_Space import Opt_Theta
 from Final_Space import Opt_All
 
 # Variables that control the space
-N_sensors = 50  # Number of sensors
-N_true_sensors = 4  # Number of ground truth sensor points
+N_sensors = 75  # Number of sensors
+N_true_sensors = 2  # Number of ground truth sensor points
 N_time = 10  # Number of time samples
 N_true_time = 10  # Number of gt time samples
 noise_sd = 0.01  # random noise in the system Standard Deviation
@@ -61,7 +61,7 @@ def kernel(X, Y):
         - ((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * theta_space ** 2)
         - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * theta_space ** 2)
         - ((X.T[2].repeat(len(Y), 1) - Y.T[2].repeat(len(X), 1).T) ** 2) / (2 * theta_time ** 2))
-    return kern.T
+    return kern
 
 
 def bias_kernel(X, Y):

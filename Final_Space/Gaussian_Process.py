@@ -41,7 +41,7 @@ class GaussianProcess:
 
     def build(self, space_points, time_points):
         points = torch.cat((space_points.repeat(len(time_points), 1), time_points.repeat_interleave(len(space_points)).repeat(1, 1).T), 1)
-        Lk = torch.linalg.solve(self.L, self.kernel(self.points, points))
+        Lk = torch.linalg.solve(self.L, self.kernel(points, self.points))
         mu = Lk.T @ torch.linalg.solve(self.L, self.Y.flatten())
 
         return mu.detach().numpy()

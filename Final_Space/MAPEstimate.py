@@ -8,11 +8,11 @@ jitter = 0.000001
 def map_estimate_torch(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, time_kernel, kernel, alpha_mean,
                        alpha_variance, bias_sigma, N_sensors, N_time, theta_not):
     torch.set_default_dtype(torch.float64)
-    Sigma_hat = Sigma + (noise**2) * torch.eye(N_sensors*N_time)
+    Sigma_hat = alpha**2 * Sigma + (noise**2) * torch.eye(N_sensors*N_time)
     bias_sigma = bias_sigma + jitter*torch.eye(len(bias_sigma))
 
-    chunk1 = -(1/2) * (torch.logdet(alpha**2 * Sigma_hat)  # currently giving -inf
-                       + (Y - bias).T @ torch.inverse(alpha**2 * Sigma_hat) @ (Y - bias)
+    chunk1 = -(1/2) * (torch.logdet(Sigma_hat)  # currently giving -inf
+                       + (Y - bias).T @ torch.inverse(Sigma_hat) @ (Y - bias)
                        + N_sensors * math.log(2 * math.pi))
 
     prob_a = -(1/2) * (((alpha - alpha_mean) ** 2 / (alpha_variance**2)) + math.log((alpha_variance**2) * 2 * math.pi))
@@ -22,15 +22,15 @@ def map_estimate_torch(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, ti
     chunk2 = prob_a + prob_b
 
     def v(x):
-        k = kernel(x.reshape(1, -1), X).T
-        output = theta_not - k.T @ torch.inverse(Sigma_hat) @ k
+        k = kernel(x.reshape(1, -1), X)
+        output = theta_not - (alpha * k.T) @ torch.inverse(Sigma_hat) @ (alpha * k)
         if output < 0:
             print('Error')
         return output
 
     def mu(x):
-        k = kernel(x.reshape(1, -1), X).T
-        return k.T @ torch.inverse(Sigma_hat) @ ((Y - bias)/alpha)
+        k = kernel(x.reshape(1, -1), X)
+        return (alpha * k.T) @ torch.inverse(Sigma_hat) @ ((Y - bias)/alpha)
 
     chunk3 = 0
     for i in range(0, len(Xt)):
