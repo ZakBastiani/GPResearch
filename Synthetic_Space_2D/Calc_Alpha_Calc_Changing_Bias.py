@@ -24,7 +24,6 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
                                  np.tile(time_Xt, len(space_Xt)).reshape((-1, 1))), axis=1)
         Y = _Y.flatten()
         Yt = _Yt.flatten()
-        sigma_hat_inv = np.linalg.inv(sigma + (noise ** 2) * np.eye(len(sigma)))
 
         for counter in range(5):
             # Build and calc A and C
@@ -33,15 +32,15 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
             current_C = 0
             for n in range(len(Xt)):
                 k_star = kernel([Xt[n]], X).T
-                holder = (k_star.T @ sigma_hat_inv @ k_star)[0][0]
-                holder2 = (k_star.T @ sigma_hat_inv).T @ (k_star.T @ sigma_hat_inv)
+                holder = (k_star.T @ sigma_inv @ k_star)[0][0]
+                holder2 = (k_star.T @ sigma_inv).T @ (k_star.T @ sigma_inv)
                 A += holder2 / (theta_not - holder)
-                current_C += ((k_star.T @ sigma_hat_inv @ Y) * (k_star.T @ sigma_hat_inv)
-                              - alpha * Yt[n] * (k_star.T @ sigma_hat_inv)) / (theta_not - holder)
-            A += (sigma_hat_inv).T
+                current_C += ((k_star.T @ sigma_inv @ Y) * (k_star.T @ sigma_inv)
+                              - alpha * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
+            A += (sigma_inv).T
 
             A += (alpha ** 2) * np.linalg.inv(bias_sigma)
-            C[0] = Y.T @ sigma_hat_inv + current_C
+            C[0] = Y.T @ sigma_inv + current_C
 
             # Inverse A and multiply it by C
             b = C @  np.linalg.inv(A)

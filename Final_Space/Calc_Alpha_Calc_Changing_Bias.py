@@ -2,8 +2,8 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
-from Synthetic_Space_2D import Gaussian_Process
-from Synthetic_Space_2D import MAPEstimate
+from Final_Space import Gaussian_Process
+from Final_Space import MAPEstimate
 
 
 class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
@@ -18,12 +18,17 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         N_sensors = len(space_X)
         N_time = len(time_X)
 
-        X = np.concatenate((np.repeat(space_X, len(time_X), axis=0),
-                            np.tile(time_X, len(space_X)).reshape((-1, 1))), axis=1)
-        Xt = np.concatenate((np.repeat(space_Xt, len(time_Xt), axis=0),
-                                 np.tile(time_Xt, len(space_Xt)).reshape((-1, 1))), axis=1)
+        self.points = torch.cat((space_X.repeat(len(time_X), 1), time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
+
+        # Need to alter the sensor matrix and the data matrix
+        X = torch.cat((space_X.repeat(len(time_Xt), 1),
+                       time_Xt.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
         Y = _Y.flatten()
+
+        Xt = torch.cat((space_Xt.repeat(len(time_X), 1),
+                        time_X.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
         Yt = _Yt.flatten()
+
         sigma_hat_inv = np.linalg.inv(sigma + (noise ** 2) * np.eye(len(sigma)))
 
         for counter in range(5):
