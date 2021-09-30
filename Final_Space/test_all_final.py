@@ -69,7 +69,7 @@ def bias_kernel(X, Y):
     return kern
 
 
-N_trials = 1
+N_trials = 30
 gp_error = np.zeros(5)
 calc_alpha_errors = np.zeros(5)
 calc_constant_bias_errors = np.zeros(5)
@@ -172,15 +172,15 @@ for i in range(0, N_trials):
     calc_changing_int_bias_error += changing_bias_int_gp.print_error(alpha, sensor_bias, gaussian.underlying_data, changing_bias_int_estimate, true_data, changing_bias_int_gt_estimate)
     changing_bias_int_gp.display(gaussian.space, gaussian.time, changing_bias_int_estimate, space_points, time_points,
                                  "GP with given alpha assuming the bias is changing in time with integrated GP")
-#
-#     # Building a GP that predicts both bias and alpha using lagging variables
-#     calc_both_changing_bias_gp = Calc_Alpha_Calc_Changing_Bias.CalcBothChangingBias(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-#                                                                                     space_kernel, time_kernel, kernel, noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
-#     calc_both_changing_bias_estimate = calc_both_changing_bias_gp.build(gaussian.space, gaussian.time, space_points)
-#     calc_both_changing_bias_gt_estimate = calc_both_changing_bias_gp.build(true_sensors, true_sensor_time, N_true_sensors)
-#     calc_both_error += calc_both_changing_bias_gp.print_error(alpha, sensor_bias, gaussian.underlying_data, calc_both_changing_bias_estimate, true_data, calc_both_changing_bias_gt_estimate)
-#     # changing_bias_int_gp.display(gaussian.space, space_points, gaussian.time, calc_both_changing_bias_estimate,
-#     #                              "GP calculating both a changing bias and alpha with int gp")
+
+    # Building a GP that predicts both bias and alpha using lagging variables
+    calc_both_changing_bias_gp = Calc_Alpha_Calc_Changing_Bias.CalcBothChangingBias(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                                                                                    space_kernel, time_kernel, kernel, noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
+    calc_both_changing_bias_estimate = calc_both_changing_bias_gp.build(gaussian.space, gaussian.time)
+    calc_both_changing_bias_gt_estimate = calc_both_changing_bias_gp.build(true_sensors, true_sensor_time)
+    calc_both_error += calc_both_changing_bias_gp.print_error(alpha, sensor_bias, gaussian.underlying_data, calc_both_changing_bias_estimate, true_data, calc_both_changing_bias_gt_estimate)
+    changing_bias_int_gp.display(gaussian.space, gaussian.time, calc_both_changing_bias_estimate, space_points, time_points,
+                                 "GP calculating both a changing bias and alpha with int gp")
 
 #
 #     # Using an optimizer to find theta_time and theta_space
@@ -203,25 +203,25 @@ for i in range(0, N_trials):
 #
     print(i)
     plt.show()
-#
-#
-# calc_alpha_errors = calc_alpha_errors/N_trials
-# calc_constant_bias_errors = calc_constant_bias_errors/N_trials
-# calc_changing_bias_error = calc_changing_bias_error/N_trials
-# calc_changing_int_bias_error = calc_changing_int_bias_error/N_trials
-# calc_both_error = calc_both_error/N_trials
-# opt_theta_error = theta_errors / N_trials
-# opt_all_error = opt_all_error/N_trials
-#
-# print("Number of trails: " + str(N_trials))
-# print("Number of sensors: " + str(N_sensors**2))
-# print("Number of GT sensors: " + str(N_true_sensors**2))
-# print(gp_error)
-# print(calc_alpha_errors)
-# print(calc_constant_bias_errors)
-# print(calc_changing_bias_error)
-# print(calc_changing_int_bias_error)
-# print(calc_both_error)
-# print(opt_theta_error)
-# print(opt_all_error)
-# print(theta_errors / N_trials)
+
+
+calc_alpha_errors = calc_alpha_errors/N_trials
+calc_constant_bias_errors = calc_constant_bias_errors/N_trials
+calc_changing_bias_error = calc_changing_bias_error/N_trials
+calc_changing_int_bias_error = calc_changing_int_bias_error/N_trials
+calc_both_error = calc_both_error/N_trials
+opt_theta_error = theta_errors / N_trials
+opt_all_error = opt_all_error/N_trials
+
+print("Number of trails: " + str(N_trials))
+print("Number of sensors: " + str(N_sensors**2))
+print("Number of GT sensors: " + str(N_true_sensors**2))
+print(gp_error)
+print(calc_alpha_errors)
+print(calc_constant_bias_errors)
+print(calc_changing_bias_error)
+print(calc_changing_int_bias_error)
+print(calc_both_error)
+print(opt_theta_error)
+print(opt_all_error)
+print(theta_errors / N_trials)

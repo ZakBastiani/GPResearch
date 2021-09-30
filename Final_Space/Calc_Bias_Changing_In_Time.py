@@ -53,7 +53,7 @@ class ChangingBias(Gaussian_Process.GaussianProcess):
         self.alpha = alpha
         self.bias = b
         self.Y = (Y - self.bias)/self.alpha # np.concatenate(((_Y - self.bias)/self.alpha, _Yt))
-        self.noise = noise_sd
+        self.noise_sd = noise_sd
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.kernel = kernel
