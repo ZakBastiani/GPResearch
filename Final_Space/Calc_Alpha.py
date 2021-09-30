@@ -21,7 +21,7 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
         Yt = _Yt.flatten()
 
         alpha = alpha_mean
-        for i in range(20):
+        for i in range(5):
             noise_lag = noise_sd/alpha
             sigma_inv = torch.linalg.inv(kernel(self.points, self.points) + (noise_lag ** 2) * np.eye(len(space_X) * len(time_X)))
             alpha_poly = torch.zeros(5)
@@ -50,11 +50,12 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
                     if abs(closest - alpha_mean) > abs(r - alpha_mean):
                         closest = r
                 alpha = closest
+            alpha = torch.tensor(alpha)
 
         self.type = "Gaussian Process Regression calculating alpha with a provided bias"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
-        self.alpha = torch.tensor(alpha)
+        self.alpha = alpha
         self.bias = bias
         self.Y = (_Y - bias) / self.alpha  # np.concatenate(((_Y - bias) / self.alpha, _Yt))
         self.noise_sd = noise_sd

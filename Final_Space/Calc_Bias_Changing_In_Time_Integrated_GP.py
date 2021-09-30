@@ -58,7 +58,7 @@ class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.kernel = kernel
-        self.Sigma = self.kernel(self.points, self.points)+ noise_sd ** 2 * torch.eye(len(self.points))
+        self.Sigma = self.kernel(self.points, self.points) + noise_sd ** 2 * torch.eye(len(self.points))
         self.L = torch.linalg.cholesky(self.Sigma)
         self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), alpha, noise_sd,
                                                    self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
