@@ -8,11 +8,12 @@ from Final_Space import Calc_Alpha
 from Final_Space import Calc_Bias_Changing_In_Time
 from Final_Space import Calc_Bias_Changing_In_Time_Integrated_GP
 from Final_Space import Calc_Alpha_Calc_Changing_Bias
+from Final_Space import MAPEstimate
 from Final_Space import Opt_Theta
 from Final_Space import Opt_All
 
 # Variables that control the space
-N_sensors = 75  # Number of sensors
+N_sensors = 50  # Number of sensors
 N_true_sensors = 2  # Number of ground truth sensor points
 N_time = 10  # Number of time samples
 N_true_time = 10  # Number of gt time samples
@@ -96,11 +97,12 @@ for i in range(0, N_trials):
     all_true_sensor_points = torch.cat((true_sensors.repeat(N_true_time, 1),
                                         true_sensor_time.repeat_interleave(N_true_sensors).repeat(1, 1).T), 1)
 
-    # # Displaying sensor locations
-    # sca1 = plt.scatter(sensors.T[0], sensors.T[1], marker='o', color='blue')
-    # sca2 = plt.scatter(true_sensors.T[0], true_sensors.T[1], marker='o', color='red')
-    # plt.legend([sca1, sca2], ["Sensors", "GT Sensors"])
-    # plt.title("Sensor Locations")
+    # Displaying sensor locations
+    sca1 = plt.scatter(sensors.T[0], sensors.T[1], marker='o', color='blue')
+    sca2 = plt.scatter(true_sensors.T[0], true_sensors.T[1], marker='o', color='red')
+    plt.legend([sca1, sca2], ["Sensors", "GT Sensors"])
+    plt.title("Sensor Locations")
+    plt.show()
 
     # Building the function
     gaussian = Random_Gaussian.RandomGaussian(space_range,
