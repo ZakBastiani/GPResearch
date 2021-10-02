@@ -8,8 +8,10 @@ from Final_Space import MAPEstimate
 
 class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise_sd, theta_not,
-                 bias_variance, bias_mean, bias_kernel, alpha, alpha_variance, alpha_mean):
-        self.points = torch.cat((space_X.repeat(len(time_X), 1), time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
+                 bias_variance, bias_mean, bias_kernel, alpha, alpha_mean, alpha_sd):
+        torch.set_default_dtype(torch.float64)
+        self.points = torch.cat((space_X.repeat(len(time_X), 1),
+                                 time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
         sigma = kernel(self.points, self.points)
         noise_lag = noise_sd/alpha
         sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
@@ -18,12 +20,12 @@ class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
         N_sensors = len(space_X)
         N_time = len(time_X)
         # Need to alter the sensor matrix and the data matrix
-        X = torch.cat((space_X.repeat(len(time_Xt), 1),
-                       time_Xt.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
+        X = torch.cat((space_X.repeat(len(time_X), 1),
+                       time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
         Y = _Y.flatten()
 
-        Xt = torch.cat((space_Xt.repeat(len(time_X), 1),
-                        time_X.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
+        Xt = torch.cat((space_Xt.repeat(len(time_Xt), 1),
+                        time_Xt.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
         Yt = _Yt.flatten()
 
         # Build and calc A and C
@@ -58,11 +60,10 @@ class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.kernel = kernel
-        self.Sigma = self.kernel(self.points, self.points) + noise_sd ** 2 * torch.eye(len(self.points))
-        self.L = torch.linalg.cholesky(self.Sigma)
+        self.Sigma = self.kernel(self.points, self.points)
+        self.L = torch.linalg.cholesky(self.Sigma + noise_sd ** 2 * torch.eye(len(self.points)))
         self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), alpha, noise_sd,
-                                                   self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
-                                                   alpha_variance,
+                                                   self.Sigma, space_kernel, time_kernel, kernel, alpha_mean, alpha_sd,
                                                    torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
                                                    len(space_X), len(time_X), theta_not)
 

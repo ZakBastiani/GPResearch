@@ -12,17 +12,17 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
         self.points = torch.cat((space_X.repeat(len(time_X), 1), time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
 
         # Need to alter the sensor matrix and the data matrix
-        X = torch.cat((space_X.repeat(len(time_Xt), 1),
-                       time_Xt.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
+        X = torch.cat((space_X.repeat(len(time_X), 1),
+                       time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
         Y = _Y.flatten()
 
-        Xt = torch.cat((space_Xt.repeat(len(time_X), 1),
-                        time_X.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
+        Xt = torch.cat((space_Xt.repeat(len(time_Xt), 1),
+                        time_Xt.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
         Yt = _Yt.flatten()
 
         alpha = alpha_mean
         for i in range(5):
-            noise_lag = noise_sd/alpha
+            noise_lag = noise_sd / alpha
             sigma_inv = torch.linalg.inv(kernel(self.points, self.points) + (noise_lag ** 2) * np.eye(len(space_X) * len(time_X)))
             alpha_poly = torch.zeros(5)
             y_min_bias = (Y - bias.flatten()).T
@@ -62,8 +62,8 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel
         self.kernel = kernel
-        self.Sigma = self.kernel(self.points, self.points) + noise_sd ** 2 * torch.eye(len(self.points))
-        self.L = torch.linalg.cholesky(self.Sigma)
+        self.Sigma = self.kernel(self.points, self.points)
+        self.L = torch.linalg.cholesky(self.Sigma + noise_sd ** 2 * torch.eye(len(self.points)))
         self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, bias.flatten(), alpha, noise_sd, self.Sigma, space_kernel,
                                                    time_kernel, kernel, alpha_mean,
                                                    alpha_sd,

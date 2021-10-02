@@ -39,9 +39,8 @@ alpha_sd = 0.25
 torch.set_default_dtype(torch.float64)
 
 # setting the seed for the program
-# seed = torch.tensor(torch.rand(100000))
-# seed = 36096893
 seed = torch.seed()
+# seed = torch.manual_seed(0)
 print("Seed: " + str(seed))
 
 
@@ -97,12 +96,12 @@ for i in range(0, N_trials):
     all_true_sensor_points = torch.cat((true_sensors.repeat(N_true_time, 1),
                                         true_sensor_time.repeat_interleave(N_true_sensors).repeat(1, 1).T), 1)
 
-    # Displaying sensor locations
-    sca1 = plt.scatter(sensors.T[0], sensors.T[1], marker='o', color='blue')
-    sca2 = plt.scatter(true_sensors.T[0], true_sensors.T[1], marker='o', color='red')
-    plt.legend([sca1, sca2], ["Sensors", "GT Sensors"])
-    plt.title("Sensor Locations")
-    plt.show()
+    # # Displaying sensor locations
+    # sca1 = plt.scatter(sensors.T[0], sensors.T[1], marker='o', color='blue')
+    # sca2 = plt.scatter(true_sensors.T[0], true_sensors.T[1], marker='o', color='red')
+    # plt.legend([sca1, sca2], ["Sensors", "GT Sensors"])
+    # plt.title("Sensor Locations")
+    # plt.show()
 
     # Building the function
     gaussian = Random_Gaussian.RandomGaussian(space_range,
@@ -118,6 +117,7 @@ for i in range(0, N_trials):
 
     # SELECTING THE BIAS AND GAIN FOR THE SYSTEM
     # Constant alpha for the whole system
+    # alpha = torch.tensor(0.7)
     alpha = torch.normal(alpha_mean, torch.tensor(alpha_sd))
     # Smooth sensor bias in time
     sensor_time = torch.linspace(0, space_range, N_time)

@@ -3,9 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 from torch import nn
-from Synthetic_Space_2D import Gaussian_Process
-from Synthetic_Space_2D import Calc_Alpha_Calc_Changing_Bias
-from Synthetic_Space_2D import MAPEstimate
+from Final_Space import Gaussian_Process
+from Final_Space import MAPEstimate
 
 
 class OptAll(Gaussian_Process.GaussianProcess):
@@ -28,23 +27,23 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 self.alpha = nn.Parameter(torch.eye(1))
                 self.theta_space = nn.Parameter(torch.tensor(2.0))
                 self.theta_time = nn.Parameter(torch.tensor(1.0))
-        def space_kernel(self, X, Y):
-            kernel = theta_not * torch.exp(
-                -((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
-                - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2))
-            return kernel
 
-        def time_kernel(self, X, Y):
-            kernel = torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
-            return kernel
+            def space_kernel(self, X, Y):
+                kernel = theta_not * torch.exp(
+                    -((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
+                    - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2))
+                return kernel
 
-        def kernel(self, X, Y):
-            kern = theta_not * torch.exp(
-                - ((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
-                - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
-                - ((X.T[2].repeat(len(Y), 1) - Y.T[2].repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
-            return kern.T
+            def time_kernel(self, X, Y):
+                kernel = torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
+                return kernel
 
+            def kernel(self, X, Y):
+                kern = theta_not * torch.exp(
+                    - ((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
+                    - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
+                    - ((X.T[2].repeat(len(Y), 1) - Y.T[2].repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
+                return kern
 
             # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
@@ -56,12 +55,13 @@ class OptAll(Gaussian_Process.GaussianProcess):
                                                       bias_sigma.float(),
                                                       len(space_X), len(time_X), theta_not)
 
-        X = torch.tensor(np.concatenate((np.repeat(space_X, len(time_X), axis=0),
-                                         np.tile(time_X, len(space_X)).reshape((-1, 1))), axis=1))
-        Xt = torch.tensor(np.concatenate((np.repeat(space_Xt, len(time_Xt), axis=0),
-                                          np.tile(time_Xt, len(space_Xt)).reshape((-1, 1))), axis=1))
-        Y = torch.reshape(torch.tensor(_Y.flatten()), (1, -1))
-        Yt = torch.reshape(torch.tensor(_Yt.flatten()), (1, -1))
+        X = torch.cat((space_X.repeat(len(time_Xt), 1),
+                       time_Xt.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
+        Y = _Y.flatten()
+
+        Xt = torch.cat((space_Xt.repeat(len(time_X), 1),
+                        time_X.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
+        Yt = _Yt.flatten()
 
         # setting the model and then using torch to optimize
         theta_model = theta_opt(X, Y.T, len(space_X), len(time_X))

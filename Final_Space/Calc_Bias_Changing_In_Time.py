@@ -19,12 +19,12 @@ class ChangingBias(Gaussian_Process.GaussianProcess):
         N_time = len(time_X)
 
         # Need to alter the sensor matrix and the data matrix
-        X = torch.cat((space_X.repeat(len(time_Xt), 1),
-                       time_Xt.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
+        X = torch.cat((space_X.repeat(len(time_X), 1),
+                       time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
         Y = _Y.flatten()
 
-        Xt = torch.cat((space_Xt.repeat(len(time_X), 1),
-                        time_X.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
+        Xt = torch.cat((space_Xt.repeat(len(time_Xt), 1),
+                        time_Xt.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
         Yt = _Yt.flatten()
 
         # Build and calc A and C
