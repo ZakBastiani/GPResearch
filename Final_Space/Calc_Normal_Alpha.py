@@ -52,7 +52,7 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
                 alpha = closest
             alpha = torch.tensor(alpha)
 
-        self.type = "Gaussian Process Regression calculating alpha with a provided bias"
+        self.type = "Gaussian Process Regression calculating normal alpha with a provided bias"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.alpha = alpha

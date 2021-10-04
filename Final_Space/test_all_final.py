@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from Final_Space import Gaussian_Process
 from Final_Space import Random_Gaussian
 from Final_Space import Calc_Normal_Alpha
+from Final_Space import Calc_Chi_Alpha
 from Final_Space import Calc_Bias_Changing_In_Time
 from Final_Space import Calc_Bias_Changing_In_Time_Integrated_GP
 from Final_Space import Calc_Normal_Alpha_Calc_Changing_Bias
@@ -71,7 +72,8 @@ def bias_kernel(X, Y):
 
 N_trials = 1
 gp_error = np.zeros(5)
-calc_alpha_errors = np.zeros(5)
+calc_normal_alpha_errors = np.zeros(5)
+calc_chi_alpha_errors = np.zeros(5)
 calc_constant_bias_errors = np.zeros(5)
 calc_changing_bias_error = np.zeros(5)
 calc_changing_int_bias_error = np.zeros(5)
@@ -124,7 +126,7 @@ for i in range(0, N_trials):
     chi = torch.distributions.chi2.Chi2(N_sensors)
     alpha = N_sensors/chi.sample()
 
-# Smooth sensor bias in time
+    # Smooth sensor bias in time
     sensor_time = torch.linspace(0, space_range, N_time)
     sensor_dist = torch.distributions.multivariate_normal.MultivariateNormal(bias_mean * torch.ones(N_time),
                                                                              bias_kernel(sensor_time, sensor_time))
@@ -152,12 +154,20 @@ for i in range(0, N_trials):
     # gp.display(gaussian.space, gaussian.time, estimate, space_points, time_points, "Basic GP on the received data")
 
     # Building a GP that predicts alpha given bias
-    calc_alpha = Calc_Normal_Alpha.CalcAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-                                             space_kernel, time_kernel, kernel, noise_sd, theta_not, alpha_mean, alpha_sd,
-                                             sensor_bias, bias_kernel)
-    calc_alpha_estimate = calc_alpha.build(gaussian.space, gaussian.time)
-    calc_alpha_gt_estimate = calc_alpha.build(true_sensors, true_sensor_time)
-    calc_alpha_errors += calc_alpha.print_error(alpha, sensor_bias, gaussian.underlying_data, calc_alpha_estimate, true_data, calc_alpha_gt_estimate)
+    calc_normal_alpha = Calc_Normal_Alpha.CalcAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                                                    space_kernel, time_kernel, kernel, noise_sd, theta_not, alpha_mean, alpha_sd,
+                                                    sensor_bias, bias_kernel)
+    calc_normal_alpha_estimate = calc_normal_alpha.build(gaussian.space, gaussian.time)
+    calc_normal_alpha_gt_estimate = calc_normal_alpha.build(true_sensors, true_sensor_time)
+    calc_normal_alpha_errors += calc_normal_alpha.print_error(alpha, sensor_bias, gaussian.underlying_data, calc_normal_alpha_estimate, true_data, calc_normal_alpha_gt_estimate)
+
+    # Building a GP that predicts a inverse chi squared alpha given bias
+    calc_chi_alpha = Calc_Chi_Alpha.CalcAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                                                    space_kernel, time_kernel, kernel, noise_sd, theta_not, N_sensors, 1.0,
+                                                    sensor_bias, bias_kernel)
+    calc_chi_alpha_estimate = calc_chi_alpha.build(gaussian.space, gaussian.time)
+    calc_chi_alpha_gt_estimate = calc_chi_alpha.build(true_sensors, true_sensor_time)
+    calc_chi_alpha_errors += calc_chi_alpha.print_error(alpha, sensor_bias, gaussian.underlying_data, calc_chi_alpha_estimate, true_data, calc_chi_alpha_gt_estimate)
 
     # Building a GP that predicts the bias but is given alpha
     changing_bias_gp = Calc_Bias_Changing_In_Time.ChangingBias(sensors, sensor_time, data, true_sensors, sensor_time,
@@ -212,7 +222,7 @@ for i in range(0, N_trials):
     plt.show()
 
 
-calc_alpha_errors = calc_alpha_errors/N_trials
+calc_normal_alpha_errors = calc_normal_alpha_errors / N_trials
 calc_constant_bias_errors = calc_constant_bias_errors/N_trials
 calc_changing_bias_error = calc_changing_bias_error/N_trials
 calc_changing_int_bias_error = calc_changing_int_bias_error/N_trials
@@ -224,7 +234,7 @@ print("Number of trails: " + str(N_trials))
 print("Number of sensors: " + str(N_sensors))
 print("Number of GT sensors: " + str(N_true_sensors))
 print(gp_error)
-print(calc_alpha_errors)
+print(calc_normal_alpha_errors)
 print(calc_constant_bias_errors)
 print(calc_changing_bias_error)
 print(calc_changing_int_bias_error)
