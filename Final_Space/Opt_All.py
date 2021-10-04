@@ -9,11 +9,9 @@ from Final_Space import MAPEstimate
 
 class OptAll(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
-                 noise, theta_not, bias_kernel, alpha_mean, alpha_variance):
+                 noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd, alpha, bias):
         N_sensors = len(space_X)
         N_time = len(time_X)
-        space_X = torch.tensor(space_X)
-        time_X = torch.tensor(time_X)
 
         class theta_opt(nn.Module):
             def __init__(self, X, Y, N_sensors, N_time):
@@ -23,10 +21,10 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 self.Y = Y
                 self.N_sensors = N_sensors
                 self.N_time = N_time
-                self.bias = nn.Parameter(torch.zeros((N_time * N_sensors, 1)))
-                self.alpha = nn.Parameter(torch.eye(1))
-                self.theta_space = nn.Parameter(torch.tensor(2.0))
-                self.theta_time = nn.Parameter(torch.tensor(1.0))
+                self.bias = nn.Parameter(bias)
+                self.alpha = alpha
+                self.theta_space = torch.tensor(2.0)
+                self.theta_time = torch.tensor(1.0)
 
             def space_kernel(self, X, Y):
                 kernel = theta_not * torch.exp(
@@ -47,12 +45,11 @@ class OptAll(Gaussian_Process.GaussianProcess):
 
             # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
-                sigma = torch.kron(self.space_kernel(space_X, space_X), self.time_kernel(time_X, time_X))
-                bias_sigma = torch.kron(torch.eye(len(space_X)), torch.tensor(bias_kernel(time_X, time_X)))
-                return MAPEstimate.map_estimate_torch(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise,
+                sigma = self.kernel(self.X, self.X)
+                bias_sigma = torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X))
+                return MAPEstimate.map_estimate_torch(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise_sd,
                                                       sigma, self.space_kernel, self.time_kernel, self.kernel,
-                                                      alpha_mean, alpha_variance,
-                                                      bias_sigma.float(),
+                                                      alpha_mean, alpha_sd, bias_sigma,
                                                       len(space_X), len(time_X), theta_not)
 
         X = torch.cat((space_X.repeat(len(time_Xt), 1),
@@ -64,12 +61,12 @@ class OptAll(Gaussian_Process.GaussianProcess):
         Yt = _Yt.flatten()
 
         # setting the model and then using torch to optimize
-        theta_model = theta_opt(X, Y.T, len(space_X), len(time_X))
-        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.03)
+        theta_model = theta_opt(X, Y, len(space_X), len(time_X))
+        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.01)
         smallest_loss = 5000
-        for i in range(2000):
+        for i in range(1000):
             optimizer.zero_grad()
-            loss = -theta_model.forward(Xt, Yt.T)
+            loss = -theta_model.forward(Xt, Yt)
             if loss < smallest_loss:
                 smallest_loss = loss
             if i % 100 == 0:
@@ -80,34 +77,20 @@ class OptAll(Gaussian_Process.GaussianProcess):
         with torch.no_grad():
             holder = theta_model(Xt, Yt.T)
 
-        N_sensors = int(math.sqrt((N_sensors)))
-
         self.type = "Gaussian Process Regression Optimizing alpha, bias and Theta"
-        self.space_theta = theta_model.theta_space.detach().numpy()
-        self.time_theta = theta_model.theta_time.detach().numpy()
+        self.space_theta = theta_model.theta_space.detach().clone()
+        self.time_theta = theta_model.theta_time.detach().clone()
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.alpha = theta_model.alpha.item()
-        self.bias = np.reshape(theta_model.bias.detach().numpy(), (N_sensors, N_sensors, N_time))
+        self.bias = theta_model.bias.detach().clone()
         self.Y = (_Y - self.bias) / self.alpha  # np.concatenate(((_Y - self.bias)/self.alpha, _Yt))
-        self.noise = noise
+        self.noise = noise_sd
         self.space_kernel = theta_model.space_kernel
         self.time_kernel = theta_model.time_kernel
-        self.Sigma = torch.kron(self.space_kernel(self.space_X, self.space_X), self.time_kernel(self.time_X, self.time_X))
+        self.kernel = theta_model.kernel
+        self.points = torch.cat((space_X.repeat(len(time_X), 1),
+                                 time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
+        self.Sigma = self.kernel(self.points, self.points)
         self.L = torch.linalg.cholesky(self.Sigma + self.noise ** 2 * torch.eye(len(self.Sigma)))
         self.loss = -smallest_loss
-
-    def build(self, space_points, time_points, N_space):
-        l_inv = torch.inverse(self.L)
-        Lk = l_inv @ torch.kron(self.space_kernel(self.space_X, torch.tensor(space_points)),
-                                self.time_kernel(self.time_X, torch.tensor(time_points))).T
-        mu = Lk.T @ l_inv @ torch.tensor(self.Y.flatten())
-
-        # Should just be able to use reshape fix later
-        # mu = np.reshape([mu], (test_space, test_time))
-        holder = np.ndarray(shape=(N_space, N_space, len(time_points)))
-        for i in range(0, N_space):
-            for k in range(0, N_space):
-                for j in range(0, len(time_points)):
-                    holder[i][k][j] = mu[i * N_space * len(time_points) + k * len(time_points) + j].item()
-        return holder

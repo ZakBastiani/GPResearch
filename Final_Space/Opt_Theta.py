@@ -1,3 +1,5 @@
+
+
 import math
 import numpy as np
 import matplotlib.pyplot as plt
@@ -109,7 +111,7 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                 bias_sigma = torch.kron(torch.eye(len(space_X)), torch.tensor(bias_kernel(time_X, time_X)))
                 return MAPEstimate.map_estimate_torch(self.X, self.Y, Xt, Yt, self.bias.T, self.alpha, noise, sigma,
                                                       self.space_kernel, self.time_kernel, self.kernel, alpha_mean,
-                                                      alpha_variance, bias_sigma.float(), len(space_X), len(time_X),
+                                                      alpha_variance, bias_sigma, len(space_X), len(time_X),
                                                       theta_not)
 
         X = torch.tensor(np.concatenate((np.repeat(space_X, len(time_X), axis=0),

@@ -53,7 +53,6 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
             # Inverse A and multiply it by C
             b = C @  torch.linalg.inv(A)
 
-            sigma_inv = torch.linalg.inv(kernel(self.points, self.points) + (noise_lag ** 2) * np.eye(len(space_X) * len(time_X)))
             alpha_poly = torch.zeros(5)
             y_min_bias = (Y - b.flatten()).T
             alpha_poly[4] = y_min_bias.T @ sigma_inv @ y_min_bias
@@ -133,10 +132,12 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
             y.append(l)
             if l > ll:
                 ll = l
+        plt.figure(2)
         fig, ax = plt.subplots(figsize=(12, 6))
         ax.plot(alpha_range, y, 'b-')
         ax.plot(self.alpha, self.loss, marker='o')
         # plt.ylim([1000, 2500])
+        plt.title("Calc loss based on alpha in calc both")
         plt.show()
         print(ll)
 
