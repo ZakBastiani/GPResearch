@@ -150,7 +150,7 @@ class OptTheta(Gaussian_Process.GaussianProcess):
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.alpha = theta_model.alpha.item()
-        self.bias = theta_model.bias.detach().numpy()
+        self.bias = theta_model.bias.item()
         self.Y = (_Y - self.bias) / self.alpha  # np.concatenate(((_Y - self.bias)/self.alpha, _Yt))
         self.noise = noise_sd
         self.space_kernel = theta_model.space_kernel
