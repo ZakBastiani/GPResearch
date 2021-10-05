@@ -6,14 +6,14 @@ from Final_Space import Gaussian_Process
 from Final_Space import MAPEstimate
 
 
-class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
+class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
-                 space_kernel, time_kernel, kernel, noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd):
+                 space_kernel, time_kernel, kernel, noise_sd, theta_not, bias_kernel, v, t):
         torch.set_default_dtype(torch.float64)
         self.points = torch.cat((space_X.repeat(len(time_X), 1), time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
 
         # Let guess with alpha = mean
-        alpha = alpha_mean
+        alpha = 1.0
         b = torch.zeros((len(space_X) * len(time_X)))
         sigma = kernel(self.points, self.points)
 
@@ -30,10 +30,39 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         Xt = torch.cat((space_Xt.repeat(len(time_Xt), 1),
                         time_Xt.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
         Yt = _Yt.flatten()
+        noise_lag = noise_sd / alpha
+        for counter in range(100):
 
-        for counter in range(10):
-            noise_lag = noise_sd / alpha
             sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
+            # Calc Alpha
+            alpha_poly = torch.zeros(3)
+            y_min_bias = (Y - b.flatten()).T
+            alpha_poly[2] = y_min_bias.T @ sigma_inv @ y_min_bias
+            alpha_poly[0] = -len(space_X) * len(time_X)
+            alpha_poly[1] = v*(t**2)
+            alpha_poly[0] = -(1 + v/2)
+            for i in range(len(Xt)):
+                k_star = kernel(Xt[i].unsqueeze(0), X)
+                divisor = (theta_not - k_star.T @ sigma_inv @ k_star)
+                alpha_poly[2] += ((k_star.T @ sigma_inv @ y_min_bias) ** 2 / divisor).item()
+                alpha_poly[1] -= ((Yt[i] * k_star.T @ sigma_inv @ y_min_bias) / divisor).item()
+
+            roots = np.roots(alpha_poly.detach().numpy())  # The algorithm relies on computing the eigenvalues of the companion matrix
+            print(roots)
+            real_roots = []
+
+            for root in roots:
+                if root.imag == 0:
+                    real_roots.append(root.real)
+
+            if len(real_roots) != 0:
+                closest = real_roots[0]
+                for r in real_roots:
+                    if abs(closest - 1) > abs(r - 1):
+                        closest = r
+                alpha = closest
+            alpha = torch.tensor(alpha)
+
             # Build and calc A and C
             A = torch.zeros((N_sensors * N_time, N_sensors * N_time))
             C = torch.zeros((1, N_sensors * N_time))
@@ -53,34 +82,6 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
             # Inverse A and multiply it by C
             b = C @  torch.linalg.inv(A)
 
-            alpha_poly = torch.zeros(5)
-            y_min_bias = (Y - b.flatten()).T
-            alpha_poly[4] = y_min_bias.T @ sigma_inv @ y_min_bias
-            alpha_poly[2] = -len(space_X) * len(time_X)
-            alpha_poly[1] = alpha_mean / (alpha_sd ** 2)
-            alpha_poly[0] = -1 / (alpha_sd ** 2)
-            for i in range(len(Xt)):
-                k_star = kernel(Xt[i].unsqueeze(0), X)
-                divisor = (theta_not - k_star.T @ sigma_inv @ k_star)
-                alpha_poly[4] += ((k_star.T @ sigma_inv @ y_min_bias) ** 2 / divisor).item()
-                alpha_poly[3] -= ((Yt[i] * k_star.T @ sigma_inv @ y_min_bias) / divisor).item()
-
-            roots = np.roots(alpha_poly.detach().numpy())  # The algorithm relies on computing the eigenvalues of the companion matrix
-            # print(roots)
-            real_roots = []
-
-            for root in roots:
-                if root.imag == 0:
-                    real_roots.append(root.real)
-
-            if len(real_roots) != 0:
-                closest = real_roots[0]
-                for r in real_roots:
-                    if abs(closest - alpha_mean) > abs(r - alpha_mean):
-                        closest = r
-                alpha = closest
-            alpha = torch.tensor(alpha)
-
         self.type = "Gaussian Process Regression calculating both a changing bias and alpha"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
@@ -94,7 +95,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         self.Sigma = self.kernel(self.points, self.points)
         self.L = torch.linalg.cholesky(self.Sigma + noise_sd**2 * torch.eye(len(self.points)))
         self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), alpha, noise_sd,
-                                                   self.Sigma, space_kernel, time_kernel, kernel, alpha_mean, alpha_sd,
+                                                   self.Sigma, space_kernel, time_kernel, kernel, 1.0, 0.25,
                                                    torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
                                                    len(space_X), len(time_X), theta_not)
 
@@ -126,7 +127,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         #     b = C @ A_inverse
         #
         #     l = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, b.flatten(), alpha, noise_sd,
-        #                                        self.Sigma, space_kernel, time_kernel, kernel, alpha_mean, alpha_sd,
+        #                                        self.Sigma, space_kernel, time_kernel, kernel, 1.0, 0.25,
         #                                        torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
         #                                        len(space_X), len(time_X), theta_not)
         #     y.append(l)

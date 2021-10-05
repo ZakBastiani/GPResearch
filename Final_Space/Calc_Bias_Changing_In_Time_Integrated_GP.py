@@ -65,50 +65,50 @@ class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
                                                    torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
                                                    len(space_X), len(time_X), theta_not)
 
-        # Building a graph showing the loss function for values of alpha to see how good our calc_both is
-        alpha_range = torch.linspace(0.5, 1.5, 100)
-        y = []
-        ll = 0
-        for a in alpha_range:
-            noise_lag = noise_sd / a
-            sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
-            # Build and calc A and C
-            A = torch.zeros((N_sensors * N_time, N_sensors * N_time))
-            C = torch.zeros((1, N_sensors * N_time))
-            current_C = 0
-            for n in range(len(Xt)):
-                k_star = kernel(Xt[n].unsqueeze(0), X)
-                holder = (k_star.T @ sigma_inv @ k_star)[0][0]
-                holder2 = (k_star.T @ sigma_inv).T @ (k_star.T @ sigma_inv)
-                A += holder2 / (theta_not - holder)
-                current_C += ((k_star.T @ sigma_inv @ Y) * (k_star.T @ sigma_inv)
-                              - alpha * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
-            A += (sigma_inv).T
-
-            A += (alpha ** 2) * torch.linalg.inv(bias_sigma)
-            C[0] = Y.T @ sigma_inv + current_C
-
-            # Inverse A and multiply it by C
-            A_inverse = torch.linalg.inv(A)
-            b = C @ A_inverse
-
-            l = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, b.flatten(), alpha, noise_sd,
-                                               self.Sigma, space_kernel, time_kernel, kernel, alpha_mean, alpha_sd,
-                                               torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
-                                               len(space_X), len(time_X), theta_not)
-            y.append(l)
-            if l > ll:
-                ll = l
-        plt.figure(1)
-        fig, ax = plt.subplots(figsize=(12, 6))
-        ax.plot(alpha_range, y, 'b-')
-        ax.plot(self.alpha, self.loss, marker='o')
-        plt.title("Calc loss based on calc int")
-        plt.show()
-
-
-        # plt.ylim([1000, 2500])
-        print(ll)
+        # # Building a graph showing the loss function for values of alpha to see how good our calc_both is
+        # alpha_range = torch.linspace(0.5, 1.5, 100)
+        # y = []
+        # ll = 0
+        # for a in alpha_range:
+        #     noise_lag = noise_sd / a
+        #     sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
+        #     # Build and calc A and C
+        #     A = torch.zeros((N_sensors * N_time, N_sensors * N_time))
+        #     C = torch.zeros((1, N_sensors * N_time))
+        #     current_C = 0
+        #     for n in range(len(Xt)):
+        #         k_star = kernel(Xt[n].unsqueeze(0), X)
+        #         holder = (k_star.T @ sigma_inv @ k_star)[0][0]
+        #         holder2 = (k_star.T @ sigma_inv).T @ (k_star.T @ sigma_inv)
+        #         A += holder2 / (theta_not - holder)
+        #         current_C += ((k_star.T @ sigma_inv @ Y) * (k_star.T @ sigma_inv)
+        #                       - alpha * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
+        #     A += (sigma_inv).T
+        #
+        #     A += (alpha ** 2) * torch.linalg.inv(bias_sigma)
+        #     C[0] = Y.T @ sigma_inv + current_C
+        #
+        #     # Inverse A and multiply it by C
+        #     A_inverse = torch.linalg.inv(A)
+        #     b = C @ A_inverse
+        #
+        #     l = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, b.flatten(), alpha, noise_sd,
+        #                                        self.Sigma, space_kernel, time_kernel, kernel, alpha_mean, alpha_sd,
+        #                                        torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
+        #                                        len(space_X), len(time_X), theta_not)
+        #     y.append(l)
+        #     if l > ll:
+        #         ll = l
+        # plt.figure(1)
+        # fig, ax = plt.subplots(figsize=(12, 6))
+        # ax.plot(alpha_range, y, 'b-')
+        # ax.plot(self.alpha, self.loss, marker='o')
+        # plt.title("Calc loss based on calc int")
+        # plt.show()
+        #
+        #
+        # # plt.ylim([1000, 2500])
+        # print(ll)
 
 
 

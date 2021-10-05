@@ -9,6 +9,7 @@ from Final_Space import Calc_Chi_Alpha
 from Final_Space import Calc_Bias_Changing_In_Time
 from Final_Space import Calc_Bias_Changing_In_Time_Integrated_GP
 from Final_Space import Calc_Normal_Alpha_Calc_Changing_Bias
+from Final_Space import Calc_Chi_Alpha_Calc_Bias
 from Final_Space import MAPEstimate
 from Final_Space import Opt_Theta
 from Final_Space import Opt_All
@@ -36,12 +37,14 @@ bias_mean = 0
 theta_sensor_time_bias = 8
 alpha_mean = 1
 alpha_sd = 0.25
+v = N_sensors*N_time
+t2 = 1.0
 
 torch.set_default_dtype(torch.float64)
 
 # setting the seed for the program
-seed = torch.seed()
-# seed = torch.manual_seed(0)
+# seed = torch.seed()
+seed = torch.manual_seed(185545686495700)
 print("Seed: " + str(seed))
 
 
@@ -78,6 +81,7 @@ calc_constant_bias_errors = np.zeros(5)
 calc_changing_bias_error = np.zeros(5)
 calc_changing_int_bias_error = np.zeros(5)
 calc_both_error = np.zeros(5)
+calc_both_chi_alpha_error = np.zeros(5)
 opt_theta_error = np.zeros(5)
 opt_all_error = np.zeros(5)
 theta_errors = torch.zeros(4)
@@ -123,8 +127,8 @@ for i in range(0, N_trials):
     # Normal Distribution
     # alpha = torch.normal(alpha_mean, torch.tensor(alpha_sd))
     # Scaled inverse chi squared distribution
-    chi = torch.distributions.chi2.Chi2(N_sensors)
-    alpha = N_sensors/chi.sample()
+    scaled_inv_chi2= torch.distributions.gamma.Gamma(v/2, v*t2/2)
+    alpha = 1/scaled_inv_chi2.sample()
 
     # Smooth sensor bias in time
     sensor_time = torch.linspace(0, space_range, N_time)
@@ -163,7 +167,7 @@ for i in range(0, N_trials):
 
     # Building a GP that predicts a inverse chi squared alpha given bias
     calc_chi_alpha = Calc_Chi_Alpha.CalcAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-                                                    space_kernel, time_kernel, kernel, noise_sd, theta_not, N_sensors, 1.0,
+                                                    space_kernel, time_kernel, kernel, noise_sd, theta_not, v, t2,
                                                     sensor_bias, bias_kernel)
     calc_chi_alpha_estimate = calc_chi_alpha.build(gaussian.space, gaussian.time)
     calc_chi_alpha_gt_estimate = calc_chi_alpha.build(true_sensors, true_sensor_time)
@@ -199,16 +203,25 @@ for i in range(0, N_trials):
     # changing_bias_int_gp.display(gaussian.space, gaussian.time, calc_both_changing_bias_estimate, space_points, time_points,
     #                              "GP calculating both a changing bias and alpha with int gp")
 
-#
-#     # Using an optimizer to find theta_time and theta_space
-#     opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-#                                    noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
-#     opt_theta_estimate = opt_theta.build(gaussian.space, gaussian.time, space_points)
-#     opt_theta_gt_estimate = opt_theta.build(true_sensors, true_sensor_time, N_true_sensors)
-#     opt_theta_error += opt_theta.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_theta_estimate, true_data, opt_theta_gt_estimate)
-#     theta_errors[0] += theta_space - opt_theta.space_theta
-#     theta_errors[1] += theta_time - opt_theta.time_theta
-#
+    # Building a GP that predicts both bias and alpha using lagging variables
+    calc_both_chi_alpha_gp = Calc_Chi_Alpha_Calc_Bias.CalcBothChiAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                                                                                           space_kernel, time_kernel, kernel, noise_sd, theta_not, bias_kernel, v, t2)
+    calc_both_chi_alpha_estimate = calc_both_chi_alpha_gp.build(gaussian.space, gaussian.time)
+    calc_both_chi_alpha_gt_estimate = calc_both_chi_alpha_gp.build(true_sensors, true_sensor_time)
+    calc_both_chi_alpha_error += calc_both_chi_alpha_gp.print_error(alpha, sensor_bias, gaussian.underlying_data, calc_both_chi_alpha_estimate, true_data, calc_both_chi_alpha_gt_estimate)
+    # changing_bias_int_gp.display(gaussian.space, gaussian.time, calc_both_chi_alpha_estimate, space_points, time_points,
+    #                              "GP calculating both a changing bias and alpha with int gp")
+
+
+    # Using an optimizer to find theta_time and theta_space
+    opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                                   noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
+    opt_theta_estimate = opt_theta.build(gaussian.space, gaussian.time, space_points)
+    opt_theta_gt_estimate = opt_theta.build(true_sensors, true_sensor_time, N_true_sensors)
+    opt_theta_error += opt_theta.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_theta_estimate, true_data, opt_theta_gt_estimate)
+    theta_errors[0] += theta_space - opt_theta.space_theta
+    theta_errors[1] += theta_time - opt_theta.time_theta
+
     # Letting an optimizer do all the work
     opt_all = Opt_All.OptAll(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
                              noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd, alpha, sensor_bias)
