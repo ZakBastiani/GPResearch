@@ -127,7 +127,7 @@ for i in range(0, N_trials):
     # Normal Distribution
     # alpha = torch.normal(alpha_mean, torch.tensor(alpha_sd))
     # Scaled inverse chi squared distribution
-    scaled_inv_chi2= torch.distributions.gamma.Gamma(v/2, v*t2/2)
+    scaled_inv_chi2 = torch.distributions.gamma.Gamma(v/2, v*t2/2)
     alpha = 1/scaled_inv_chi2.sample()
 
     # Smooth sensor bias in time

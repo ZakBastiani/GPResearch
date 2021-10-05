@@ -21,10 +21,10 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 self.Y = Y
                 self.N_sensors = N_sensors
                 self.N_time = N_time
-                self.bias = nn.Parameter(bias)
-                self.alpha = alpha
-                self.theta_space = torch.tensor(2.0)
-                self.theta_time = torch.tensor(1.0)
+                self.bias = bias
+                self.alpha = nn.Parameter(torch.tensor(1.0))
+                self.theta_space = nn.Parameter(torch.tensor(1.0))
+                self.theta_time = nn.Parameter(torch.tensor(1.0))
 
             def space_kernel(self, X, Y):
                 kernel = theta_not * torch.exp(
@@ -46,7 +46,30 @@ class OptAll(Gaussian_Process.GaussianProcess):
             # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
                 sigma = self.kernel(self.X, self.X)
+                noise_lag = noise_sd/alpha
+                sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
                 bias_sigma = torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X))
+                # Build and calc A and C
+                A = torch.zeros((N_sensors * N_time, N_sensors * N_time))
+                C = torch.zeros((1, N_sensors * N_time))
+                current_C = 0
+                for n in range(len(Xt)):
+                    k_star = self.kernel(Xt[n].unsqueeze(0), X)
+                    holder = (k_star.T @ sigma_inv @ k_star)[0][0]
+                    holder2 = (k_star.T @ sigma_inv).T @ (k_star.T @ sigma_inv)
+                    A += holder2 / (theta_not - holder)
+                    current_C += ((k_star.T @ sigma_inv @ Y) * (k_star.T @ sigma_inv)
+                                  - alpha * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
+                A += (sigma_inv).T
+
+                A += (alpha ** 2) * torch.linalg.inv(bias_sigma)
+                C[0] = Y.T @ sigma_inv + current_C
+
+                # Inverse A and multiply it by C
+                A_inverse = torch.linalg.inv(A)
+                b = C @ A_inverse
+                self.bias = b.flatten()
+
                 return MAPEstimate.map_estimate_torch(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise_sd,
                                                       sigma, self.space_kernel, self.time_kernel, self.kernel,
                                                       alpha_mean, alpha_sd, bias_sigma,
@@ -85,12 +108,12 @@ class OptAll(Gaussian_Process.GaussianProcess):
         self.alpha = theta_model.alpha.item()
         self.bias = theta_model.bias.detach().clone()
         self.Y = (_Y - self.bias) / self.alpha  # np.concatenate(((_Y - self.bias)/self.alpha, _Yt))
-        self.noise = noise_sd
+        self.noise_sd = noise_sd
         self.space_kernel = theta_model.space_kernel
         self.time_kernel = theta_model.time_kernel
         self.kernel = theta_model.kernel
         self.points = torch.cat((space_X.repeat(len(time_X), 1),
                                  time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
         self.Sigma = self.kernel(self.points, self.points)
-        self.L = torch.linalg.cholesky(self.Sigma + self.noise ** 2 * torch.eye(len(self.Sigma)))
+        self.L = torch.linalg.cholesky(self.Sigma + self.noise_sd ** 2 * torch.eye(len(self.Sigma)))
         self.loss = -smallest_loss

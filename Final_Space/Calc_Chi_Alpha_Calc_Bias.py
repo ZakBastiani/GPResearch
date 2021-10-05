@@ -48,7 +48,7 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
                 alpha_poly[1] -= ((Yt[i] * k_star.T @ sigma_inv @ y_min_bias) / divisor).item()
 
             roots = np.roots(alpha_poly.detach().numpy())  # The algorithm relies on computing the eigenvalues of the companion matrix
-            print(roots)
+            #  print(roots)
             real_roots = []
 
             for root in roots:
@@ -82,7 +82,7 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
             # Inverse A and multiply it by C
             b = C @  torch.linalg.inv(A)
 
-        self.type = "Gaussian Process Regression calculating both a changing bias and alpha"
+        self.type = "Gaussian Process Regression calculating both a changing bias and a chi alpha"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.alpha = alpha

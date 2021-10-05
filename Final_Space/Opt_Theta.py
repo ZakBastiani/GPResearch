@@ -24,7 +24,7 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                 self.N_time = N_time
                 self.bias = torch.zeros((N_time * N_sensors, 1))
                 self.alpha = torch.eye(1) * alpha_mean
-                self.theta_space = nn.Parameter(torch.tensor(2.0))
+                self.theta_space = nn.Parameter(torch.tensor(1.0))
                 self.theta_time = nn.Parameter(torch.tensor(1.0))
                 self.points = torch.cat((space_X.repeat(len(time_X), 1),
                                          time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
@@ -50,8 +50,8 @@ class OptTheta(Gaussian_Process.GaussianProcess):
                 alpha = self.alpha
                 b = self.bias
                 sigma = self.kernel(self.points, self.points)
-                bias_sigma = torch.kron(torch.eye(len(space_X)),bias_kernel(time_X, time_X))
-                for counter in range(10):
+                bias_sigma = torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X))
+                for counter in range(5):
                     noise_lag = noise_sd / alpha
                     sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
                     # Build and calc A and C
@@ -150,7 +150,7 @@ class OptTheta(Gaussian_Process.GaussianProcess):
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.alpha = theta_model.alpha.item()
-        self.bias = theta_model.bias.item()
+        self.bias = theta_model.bias.detach().clone()
         self.Y = (_Y - self.bias) / self.alpha  # np.concatenate(((_Y - self.bias)/self.alpha, _Yt))
         self.noise = noise_sd
         self.space_kernel = theta_model.space_kernel
