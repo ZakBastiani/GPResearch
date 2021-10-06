@@ -133,7 +133,6 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
         #     y.append(l)
         #     if l > ll:
         #         ll = l
-        # plt.figure(2)
         # fig, ax = plt.subplots(figsize=(12, 6))
         # ax.plot(alpha_range, y, 'b-')
         # ax.plot(self.alpha, self.loss, marker='o')

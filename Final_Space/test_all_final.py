@@ -37,7 +37,7 @@ bias_mean = 0
 theta_sensor_time_bias = 8
 alpha_mean = 1
 alpha_sd = 0.25
-v = N_sensors*N_time
+v = N_sensors
 t2 = 1.0
 
 torch.set_default_dtype(torch.float64)
@@ -123,12 +123,12 @@ for i in range(0, N_trials):
 
     # SELECTING THE BIAS AND GAIN FOR THE SYSTEM
     # Constant alpha for the whole system
-    alpha = torch.tensor(1.7)
+    # alpha = torch.tensor(1.7)
     # Normal Distribution
     # alpha = torch.normal(alpha_mean, torch.tensor(alpha_sd))
     # Scaled inverse chi squared distribution
     scaled_inv_chi2 = torch.distributions.gamma.Gamma(v/2, v*t2/2)
-    # alpha = 1/scaled_inv_chi2.sample()
+    alpha = 1/scaled_inv_chi2.sample()
 
     # Smooth sensor bias in time
     sensor_time = torch.linspace(0, space_range, N_time)
@@ -213,15 +213,15 @@ for i in range(0, N_trials):
     #                              "GP calculating both a changing bias and alpha with int gp")
 
 
-    # # Using an optimizer to find theta_time and theta_space
-    # opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-    #                                noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
-    # opt_theta_estimate = opt_theta.build(gaussian.space, gaussian.time)
-    # opt_theta_gt_estimate = opt_theta.build(true_sensors, true_sensor_time)
-    # opt_theta_error += opt_theta.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_theta_estimate, true_data, opt_theta_gt_estimate)
-    # theta_errors[0] += theta_space - opt_theta.space_theta
-    # theta_errors[1] += theta_time - opt_theta.time_theta
-    #
+    # Using an optimizer to find theta_time and theta_space
+    opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                                   noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
+    opt_theta_estimate = opt_theta.build(gaussian.space, gaussian.time)
+    opt_theta_gt_estimate = opt_theta.build(true_sensors, true_sensor_time)
+    opt_theta_error += opt_theta.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_theta_estimate, true_data, opt_theta_gt_estimate)
+    theta_errors[0] += theta_space - opt_theta.space_theta
+    theta_errors[1] += theta_time - opt_theta.time_theta
+
     # # Letting an optimizer do all the work
     # opt_all = Opt_All.OptAll(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
     #                          noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd, alpha, sensor_bias)

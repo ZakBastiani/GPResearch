@@ -129,7 +129,7 @@ class OptTheta(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         theta_model = theta_opt(X, Y, len(space_X), len(time_X))
-        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.01)
+        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.02)
         smallest_loss = 1000
         for i in range(1000):
             optimizer.zero_grad()
