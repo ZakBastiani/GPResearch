@@ -57,7 +57,7 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
             y_min_bias = (Y - b.flatten()).T
             alpha_poly[2] += y_min_bias.T @ sigma_inv @ y_min_bias
             alpha_poly[0] += -len(space_X) * len(time_X)
-            alpha_poly[1] += v*(t**2)
+            alpha_poly[1] += v*(t**2)/2
             alpha_poly[0] += -(1 + v/2)
             for i in range(len(Xt)):
                 k_star = kernel(Xt[i].unsqueeze(0), X)
@@ -127,7 +127,7 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
         #     b = C @ A_inverse
         #
         #     l = MAPEstimate.map_estimate_torch_chi2(X, Y, Xt, Yt, b.flatten(), alpha, noise_sd,
-        #                                             self.Sigma, space_kernel, time_kernel, kernel, 1.0, 0.25,
+        #                                             self.Sigma, space_kernel, time_kernel, kernel, v, t,
         #                                             torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
         #                                             len(space_X), len(time_X), theta_not)
         #     y.append(l)

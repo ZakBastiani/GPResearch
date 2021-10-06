@@ -70,23 +70,22 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
                                                    torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
                                                    len(space_X), len(time_X), theta_not)
 
-        # # Building a graph showing the loss function for values of alpha to see how good our calc_alpha is
-        # alpha_range = torch.linspace(0.1, 1.9, 50)
-        # y = []
-        # ll = 0
-        # for a in alpha_range:
-        #     l = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, bias.flatten(), a, noise_sd, self.Sigma, space_kernel,
-        #                                        time_kernel, kernel, alpha_mean,
-        #                                        alpha_sd,
-        #                                        torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
-        #                                        len(space_X), len(time_X), theta_not)
-        #     y.append(l)
-        #     if l > ll:
-        #         ll = l
-        # fig, ax = plt.subplots(figsize=(12, 6))
-        # ax.plot(alpha_range, y, 'b-')
-        # ax.plot(self.alpha, self.loss, marker='o')
-        # plt.ylim([-5000, 5000])
-        # plt.show()
-        # print(ll)
+        # Building a graph showing the loss function for values of alpha to see how good our calc_alpha is
+        alpha_range = torch.linspace(0.95, 1.15, 50)
+        y = []
+        ll = 0
+        for a in alpha_range:
+            l = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, bias.flatten(), a, noise_sd, self.Sigma, space_kernel,
+                                               time_kernel, kernel, alpha_mean,
+                                               alpha_sd,
+                                               torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
+                                               len(space_X), len(time_X), theta_not)
+            y.append(l)
+            if l > ll:
+                ll = l
+        fig, ax = plt.subplots(figsize=(12, 6))
+        ax.plot(alpha_range, y, 'b-')
+        ax.plot(self.alpha, self.loss, marker='o')
+        plt.show()
+        print(ll)
 

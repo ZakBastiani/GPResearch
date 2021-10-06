@@ -13,6 +13,7 @@ from Final_Space import Calc_Chi_Alpha_Calc_Bias
 from Final_Space import MAPEstimate
 from Final_Space import Opt_Theta
 from Final_Space import Opt_All_but_bias
+from Final_Space import Opt_all_but_bias_chi2
 
 # Variables that control the space
 N_sensors = 50  # Number of sensors
@@ -73,7 +74,7 @@ def bias_kernel(X, Y):
     return kern
 
 
-N_trials = 30
+N_trials = 1
 gp_error = np.zeros(5)
 calc_normal_alpha_errors = np.zeros(5)
 calc_chi_alpha_errors = np.zeros(5)
@@ -84,7 +85,8 @@ calc_both_error = np.zeros(5)
 calc_both_chi_alpha_error = np.zeros(5)
 opt_theta_error = np.zeros(5)
 opt_all_error = np.zeros(5)
-theta_errors = torch.zeros(4)
+opt_all_chi2_error = np.zeros(5)
+theta_errors = torch.zeros(6)
 
 for i in range(0, N_trials):
     # Select the location of the sensors, and extend them through time as they are constant
@@ -222,27 +224,37 @@ for i in range(0, N_trials):
     # theta_errors[0] += theta_space - opt_theta.space_theta
     # theta_errors[1] += theta_time - opt_theta.time_theta
 
-    # # Letting an optimizer do all the work
-    # opt_all = Opt_All.OptAll(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-    #                          noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd, alpha, sensor_bias)
-    # opt_all_estimate = opt_all.build(gaussian.space, gaussian.time)
-    # opt_all_gt_estimate = opt_all.build(true_sensors, true_sensor_time)
-    # opt_all_error += opt_all.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_all_estimate, true_data, opt_all_gt_estimate)
-    # theta_errors[2] += theta_time - opt_all.time_theta
-    # theta_errors[3] += theta_time - opt_all.time_theta
-#
+    # Letting an optimizer do all the work
+    opt_all = Opt_All_but_bias.OptAll(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                             noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd, alpha, sensor_bias)
+    opt_all_estimate = opt_all.build(gaussian.space, gaussian.time)
+    opt_all_gt_estimate = opt_all.build(true_sensors, true_sensor_time)
+    opt_all_error += opt_all.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_all_estimate, true_data, opt_all_gt_estimate)
+    theta_errors[2] += theta_time - opt_all.time_theta
+    theta_errors[3] += theta_time - opt_all.time_theta
+
+    # Letting an optimizer do all the work
+    opt_all_chi2 = Opt_all_but_bias_chi2.OptAll(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                             noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd, alpha, sensor_bias)
+    opt_all_chi2_estimate = opt_all_chi2.build(gaussian.space, gaussian.time)
+    opt_all_chi2_gt_estimate = opt_all_chi2.build(true_sensors, true_sensor_time)
+    opt_all_chi2_error += opt_all_chi2.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_all_chi2_estimate, true_data, opt_all_chi2_gt_estimate)
+    theta_errors[4] += theta_time - opt_all_chi2.time_theta
+    theta_errors[5] += theta_time - opt_all_chi2.time_theta
+
     print(i)
     plt.show()
 
 
 calc_normal_alpha_errors = calc_normal_alpha_errors / N_trials
-calc_chi_alpha_errors = calc_normal_alpha_errors / N_trials
+calc_chi_alpha_errors = calc_chi_alpha_errors / N_trials
 calc_constant_bias_errors = calc_constant_bias_errors/N_trials
 calc_changing_bias_error = calc_changing_bias_error/N_trials
 calc_changing_int_bias_error = calc_changing_int_bias_error/N_trials
 calc_both_error = calc_both_error/N_trials
-calc_both_chi_alpha_error = calc_normal_alpha_errors / N_trials
-opt_theta_error = theta_errors / N_trials
+calc_both_chi_alpha_error = calc_both_chi_alpha_error / N_trials
+opt_theta_error = opt_theta_error / N_trials
+opt_all_chi2_error = opt_all_chi2_error / N_trials
 opt_all_error = opt_all_error/N_trials
 
 print("Number of trails: " + str(N_trials))
