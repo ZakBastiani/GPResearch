@@ -156,7 +156,7 @@ for i in range(0, N_trials):
                                           alpha_mean, bias_kernel, theta_not)
     estimate = gp.build(gaussian.space, gaussian.time)
     gt_estimate = gp.build(true_sensors, true_sensor_time)
-    gp_error = gp.print_error(alpha, sensor_bias, gaussian.underlying_data, estimate, gaussian.gt_sensor_data, gt_estimate)
+    gp_error += gp.print_error(alpha, sensor_bias, gaussian.underlying_data, estimate, gaussian.gt_sensor_data, gt_estimate)
     # gp.display(gaussian.space, gaussian.time, estimate, space_points, time_points, "Basic GP on the received data")
 
     # Building a GP that predicts alpha given bias
@@ -245,7 +245,7 @@ for i in range(0, N_trials):
     print(i)
     plt.show()
 
-
+gp_error = gp_error / N_trials
 calc_normal_alpha_errors = calc_normal_alpha_errors / N_trials
 calc_chi_alpha_errors = calc_chi_alpha_errors / N_trials
 calc_constant_bias_errors = calc_constant_bias_errors/N_trials
