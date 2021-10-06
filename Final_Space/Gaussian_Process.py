@@ -14,7 +14,7 @@ class GaussianProcess:
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.Y = _Y  # np.concatenate((_Y, _Yt))
-        self.alpha = alpha_mean
+        self.alpha = torch.tensor(alpha_mean)
         self.bias = torch.zeros((N_space * len(time_X)))
         self.noise_sd = noise_sd
         self.space_kernel = space_kernel

@@ -2,7 +2,7 @@ import torch
 import scipy
 import matplotlib.pyplot as plt
 
-v = 50
+v = 500
 t2 = 1
 chi = torch.distributions.chi2.Chi2(v)
 # data = v/chi.sample((5000,))

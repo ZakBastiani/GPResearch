@@ -21,7 +21,7 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 self.Y = Y
                 self.N_sensors = N_sensors
                 self.N_time = N_time
-                self.bias = bias
+                self.bias = np.zeros(len(space_X) * len(time_X))
                 self.alpha = nn.Parameter(torch.tensor(1.0))
                 self.theta_space = nn.Parameter(torch.tensor(1.0))
                 self.theta_time = nn.Parameter(torch.tensor(1.0))
@@ -85,7 +85,7 @@ class OptAll(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         theta_model = theta_opt(X, Y, len(space_X), len(time_X))
-        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.001)
+        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.01)
         smallest_loss = 5000
         for i in range(1000):
             optimizer.zero_grad()

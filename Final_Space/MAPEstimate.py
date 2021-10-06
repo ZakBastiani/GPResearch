@@ -15,7 +15,8 @@ def map_estimate_torch(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, ti
                        + (Y - bias).T @ torch.inverse(Sigma_hat) @ (Y - bias)
                        + N_sensors * math.log(2 * math.pi))
 
-    prob_a = -(1/2) * (((alpha - alpha_mean) ** 2 / (alpha_sd ** 2)) + math.log((alpha_sd ** 2) * 2 * math.pi))
+    normal = torch.distributions.normal.Normal(alpha_mean, torch.tensor(alpha_sd))
+    prob_a = normal.log_prob(alpha)
     prob_b = -(1/2) * (torch.logdet(bias_sigma)
                        + bias.T @ torch.inverse(bias_sigma) @ bias
                        + len(bias) * math.log(2 * math.pi))

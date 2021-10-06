@@ -32,8 +32,26 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
         Yt = _Yt.flatten()
         noise_lag = noise_sd / alpha
         for counter in range(100):
-
             sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
+
+            # Build and calc A and C
+            A = torch.zeros((N_sensors * N_time, N_sensors * N_time))
+            C = torch.zeros((1, N_sensors * N_time))
+            current_C = 0
+            for n in range(len(Xt)):
+                k_star = kernel(Xt[n].unsqueeze(0), X)
+                holder = (k_star.T @ sigma_inv @ k_star)[0][0]
+                holder2 = (k_star.T @ sigma_inv).T @ (k_star.T @ sigma_inv)
+                A += holder2 / (theta_not - holder)
+                current_C += ((k_star.T @ sigma_inv @ Y) * (k_star.T @ sigma_inv)
+                              - alpha * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
+            A += (sigma_inv).T
+
+            A += (alpha ** 2) * torch.linalg.inv(bias_sigma)
+            C[0] = Y.T @ sigma_inv + current_C
+
+            # Inverse A and multiply it by C
+            b = C @  torch.linalg.inv(A)
             # Calc Alpha
             alpha_poly = torch.zeros(3)
             y_min_bias = (Y - b.flatten()).T
@@ -63,24 +81,6 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
                 alpha = closest
             alpha = torch.tensor(alpha)
 
-            # Build and calc A and C
-            A = torch.zeros((N_sensors * N_time, N_sensors * N_time))
-            C = torch.zeros((1, N_sensors * N_time))
-            current_C = 0
-            for n in range(len(Xt)):
-                k_star = kernel(Xt[n].unsqueeze(0), X)
-                holder = (k_star.T @ sigma_inv @ k_star)[0][0]
-                holder2 = (k_star.T @ sigma_inv).T @ (k_star.T @ sigma_inv)
-                A += holder2 / (theta_not - holder)
-                current_C += ((k_star.T @ sigma_inv @ Y) * (k_star.T @ sigma_inv)
-                              - alpha * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
-            A += (sigma_inv).T
-
-            A += (alpha ** 2) * torch.linalg.inv(bias_sigma)
-            C[0] = Y.T @ sigma_inv + current_C
-
-            # Inverse A and multiply it by C
-            b = C @  torch.linalg.inv(A)
 
         self.type = "Gaussian Process Regression calculating both a changing bias and a chi alpha"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
@@ -126,10 +126,10 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
         #     A_inverse = torch.linalg.inv(A)
         #     b = C @ A_inverse
         #
-        #     l = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, b.flatten(), alpha, noise_sd,
-        #                                        self.Sigma, space_kernel, time_kernel, kernel, 1.0, 0.25,
-        #                                        torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
-        #                                        len(space_X), len(time_X), theta_not)
+        #     l = MAPEstimate.map_estimate_torch_chi2(X, Y, Xt, Yt, b.flatten(), alpha, noise_sd,
+        #                                             self.Sigma, space_kernel, time_kernel, kernel, 1.0, 0.25,
+        #                                             torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
+        #                                             len(space_X), len(time_X), theta_not)
         #     y.append(l)
         #     if l > ll:
         #         ll = l
@@ -138,7 +138,7 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
         # ax.plot(alpha_range, y, 'b-')
         # ax.plot(self.alpha, self.loss, marker='o')
         # # plt.ylim([1000, 2500])
-        # plt.title("Calc loss based on alpha in calc both")
+        # plt.title("Calc loss based on chi2 alpha in calc both")
         # plt.show()
         # print(ll)
 
