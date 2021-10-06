@@ -70,10 +70,10 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 b = C @ A_inverse
                 self.bias = b.flatten()
 
-                return MAPEstimate.map_estimate_torch(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise_sd,
-                                                      sigma, self.space_kernel, self.time_kernel, self.kernel,
-                                                      alpha_mean, alpha_sd, bias_sigma,
-                                                      len(space_X), len(time_X), theta_not)
+                return MAPEstimate.map_estimate_torch_chi2(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise_sd,
+                                                          sigma, self.space_kernel, self.time_kernel, self.kernel,
+                                                          alpha_mean, alpha_sd, bias_sigma,
+                                                            len(space_X), len(time_X), theta_not)
 
         X = torch.cat((space_X.repeat(len(time_Xt), 1),
                        time_Xt.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
@@ -85,7 +85,7 @@ class OptAll(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         theta_model = theta_opt(X, Y, len(space_X), len(time_X))
-        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.01)
+        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.02)
         smallest_loss = 5000
         for i in range(1000):
             optimizer.zero_grad()

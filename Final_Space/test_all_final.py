@@ -12,7 +12,7 @@ from Final_Space import Calc_Normal_Alpha_Calc_Changing_Bias
 from Final_Space import Calc_Chi_Alpha_Calc_Bias
 from Final_Space import MAPEstimate
 from Final_Space import Opt_Theta
-from Final_Space import Opt_All
+from Final_Space import Opt_All_but_bias
 
 # Variables that control the space
 N_sensors = 50  # Number of sensors
@@ -213,14 +213,14 @@ for i in range(0, N_trials):
     #                              "GP calculating both a changing bias and alpha with int gp")
 
 
-    # Using an optimizer to find theta_time and theta_space
-    opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-                                   noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
-    opt_theta_estimate = opt_theta.build(gaussian.space, gaussian.time)
-    opt_theta_gt_estimate = opt_theta.build(true_sensors, true_sensor_time)
-    opt_theta_error += opt_theta.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_theta_estimate, true_data, opt_theta_gt_estimate)
-    theta_errors[0] += theta_space - opt_theta.space_theta
-    theta_errors[1] += theta_time - opt_theta.time_theta
+    # # Using an optimizer to find theta_time and theta_space
+    # opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+    #                                noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
+    # opt_theta_estimate = opt_theta.build(gaussian.space, gaussian.time)
+    # opt_theta_gt_estimate = opt_theta.build(true_sensors, true_sensor_time)
+    # opt_theta_error += opt_theta.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_theta_estimate, true_data, opt_theta_gt_estimate)
+    # theta_errors[0] += theta_space - opt_theta.space_theta
+    # theta_errors[1] += theta_time - opt_theta.time_theta
 
     # # Letting an optimizer do all the work
     # opt_all = Opt_All.OptAll(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
