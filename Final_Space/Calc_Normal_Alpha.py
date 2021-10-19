@@ -21,7 +21,7 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
         Yt = _Yt.flatten()
 
         alpha = alpha_mean
-        for i in range(5):
+        for i in range(20):
             noise_lag = noise_sd / alpha
             sigma_inv = torch.linalg.inv(kernel(self.points, self.points) + (noise_lag ** 2) * np.eye(len(space_X) * len(time_X)))
             alpha_poly = torch.zeros(5)

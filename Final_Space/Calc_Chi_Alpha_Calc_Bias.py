@@ -30,8 +30,8 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
         Xt = torch.cat((space_Xt.repeat(len(time_Xt), 1),
                         time_Xt.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
         Yt = _Yt.flatten()
-        noise_lag = noise_sd / alpha
         for counter in range(100):
+            noise_lag = noise_sd / alpha
             sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
 
             # Build and calc A and C

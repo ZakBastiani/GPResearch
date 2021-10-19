@@ -31,7 +31,8 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
                         time_Xt.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
         Yt = _Yt.flatten()
 
-        for counter in range(5):
+        for counter in range(100):
+            # print(alpha)
             noise_lag = noise_sd / alpha
             sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
             # Build and calc A and C
