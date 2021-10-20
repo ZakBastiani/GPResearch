@@ -10,6 +10,7 @@ jitter = 0.00000001
 class RandomGaussian:
     def __init__(self, space_range, time_range, N_space, N_time, space_kernel, time_kernel, kernel, sensor_points,
                  gt_sensor_points):
+
         # Displaying the function that we are trying to model.
         self.space_kernel = space_kernel
         self.time_kernel = time_kernel

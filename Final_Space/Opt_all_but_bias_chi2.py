@@ -25,6 +25,7 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 self.alpha = nn.Parameter(torch.tensor(1.0))
                 self.theta_space = nn.Parameter(torch.tensor(1.0))
                 self.theta_time = nn.Parameter(torch.tensor(1.0))
+                self.theta_not = theta_not
 
             def space_kernel(self, X, Y):
                 kernel = theta_not * torch.exp(
@@ -46,7 +47,7 @@ class OptAll(Gaussian_Process.GaussianProcess):
             # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
                 sigma = self.kernel(self.X, self.X)
-                noise_lag = noise_sd/alpha
+                noise_lag = noise_sd/self.alpha
                 sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
                 bias_sigma = torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X))
                 # Build and calc A and C
@@ -57,9 +58,9 @@ class OptAll(Gaussian_Process.GaussianProcess):
                     k_star = self.kernel(Xt[n].unsqueeze(0), X)
                     holder = (k_star.T @ sigma_inv @ k_star)[0][0]
                     holder2 = (k_star.T @ sigma_inv).T @ (k_star.T @ sigma_inv)
-                    A += holder2 / (theta_not - holder)
+                    A += holder2 / (self.theta_not - holder)
                     current_C += ((k_star.T @ sigma_inv @ Y) * (k_star.T @ sigma_inv)
-                                  - alpha * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
+                                  - alpha * Yt[n] * (k_star.T @ sigma_inv)) / (self.theta_not - holder)
                 A += (sigma_inv).T
 
                 A += (alpha ** 2) * torch.linalg.inv(bias_sigma)
@@ -73,7 +74,8 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 return MAPEstimate.map_estimate_torch_chi2(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise_sd,
                                                           sigma, self.space_kernel, self.time_kernel, self.kernel,
                                                           alpha_mean, alpha_sd, bias_sigma,
-                                                            len(space_X), len(time_X), theta_not)
+                                                            len(space_X), len(time_X), self.theta_not)
+
 
         X = torch.cat((space_X.repeat(len(time_Xt), 1),
                        time_Xt.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)

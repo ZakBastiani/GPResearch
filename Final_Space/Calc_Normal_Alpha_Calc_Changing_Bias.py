@@ -13,7 +13,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         self.points = torch.cat((space_X.repeat(len(time_X), 1), time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
 
         # Let guess with alpha = mean
-        alpha = alpha_mean
+        alpha = torch.tensor(alpha_mean)
         b = torch.zeros((len(space_X) * len(time_X)))
         sigma = kernel(self.points, self.points)
 
@@ -31,7 +31,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
                         time_Xt.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
         Yt = _Yt.flatten()
 
-        for counter in range(100):
+        for counter in range(20):
             # print(alpha)
             noise_lag = noise_sd / alpha
             sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
@@ -53,6 +53,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
 
             # Inverse A and multiply it by C
             b = C @  torch.linalg.inv(A)
+            # b = torch.round(b * 10**2) / 10**2
 
             alpha_poly = torch.zeros(5)
             y_min_bias = (Y - b.flatten()).T
@@ -79,8 +80,10 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
                 for r in real_roots:
                     if abs(closest - alpha_mean) > abs(r - alpha_mean):
                         closest = r
-                alpha = closest
-            alpha = torch.tensor(alpha)
+            # if abs(closest - alpha) < 0.001:
+            #     break
+            alpha = (closest + alpha)/2
+
 
         self.type = "Gaussian Process Regression calculating both a changing bias and a normal alpha"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
@@ -94,8 +97,8 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         self.kernel = kernel
         self.Sigma = self.kernel(self.points, self.points)
         self.L = torch.linalg.cholesky(self.Sigma + noise_sd**2 * torch.eye(len(self.points)))
-        self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), alpha, noise_sd,
-                                                   self.Sigma , space_kernel, time_kernel, kernel, alpha_mean, alpha_sd,
+        self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise_sd,
+                                                   self.Sigma, space_kernel, time_kernel, kernel, alpha_mean, alpha_sd,
                                                    torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
                                                    len(space_X), len(time_X), theta_not)
 
@@ -105,7 +108,7 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         # ll = 0
         # for a in alpha_range:
         #     noise_lag = noise_sd / a
-        #     sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
+        #     sigma_inv = torch.inverse(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
         #     # Build and calc A and C
         #     A = torch.zeros((N_sensors * N_time, N_sensors * N_time))
         #     C = torch.zeros((1, N_sensors * N_time))
@@ -119,11 +122,11 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         #                       - a * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
         #     A += (sigma_inv).T
         #
-        #     A += (a ** 2) * torch.linalg.inv(bias_sigma)
+        #     A += (a ** 2) * torch.inverse(bias_sigma)
         #     C[0] = Y.T @ sigma_inv + current_C
         #
         #     # Inverse A and multiply it by C
-        #     A_inverse = torch.linalg.inv(A)
+        #     A_inverse = torch.inverse(A)
         #     b = C @ A_inverse
         #
         #     l = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, b.flatten(), a, noise_sd,
@@ -183,7 +186,31 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         # plt.title("Calc loss based on a normal alpha in calc both")
         # plt.show()
         # print(ll)
-
+        # bias = self.bias.flatten()
+        # ll = 0
+        # alpha_range = torch.linspace(0.8, 1.2, 50).repeat(50, 1)
+        # bias_range = torch.linspace(bias[0] - 0.2, bias[0] + 0.2, 50).repeat(50, 1).T
+        # data = torch.zeros((50, 50))
+        # for i in range(50):
+        #     for j in range(50):
+        #         bias[0] = bias_range[i][j]
+        #         l = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, bias, alpha_range[i][j], noise_sd,
+        #                                            sigma, space_kernel,
+        #                                            time_kernel, kernel, alpha_mean, alpha_sd,
+        #                                            torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
+        #                                            len(space_X), len(time_X), theta_not)
+        #         data[i][j] = l
+        #         if l > ll:
+        #             ll = l
+        # fig = plt.figure(figsize=(8, 6), dpi=80)
+        # ax = fig.add_subplot(111, projection='3d')
+        # ax.set_xlabel('Alpha')
+        # ax.set_ylabel('Bias')
+        # ax.set_zlabel('Data')
+        # ax.set_title('Loss with respect to alpha and bias[0]')
+        # ax.plot_surface(alpha_range.detach().numpy(), bias_range.detach().numpy(), data.detach().numpy(), cmap='viridis', edgecolor='none')
+        # plt.show()
+        # print(ll)
 
 
 

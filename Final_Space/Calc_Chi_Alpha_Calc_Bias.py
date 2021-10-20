@@ -78,14 +78,16 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
                 for r in real_roots:
                     if abs(closest - 1) > abs(r - 1):
                         closest = r
-                alpha = closest
+                # if abs(closest - alpha) < 0.001:
+                #     break
+                alpha = (alpha + closest)/2
             alpha = torch.tensor(alpha)
 
 
         self.type = "Gaussian Process Regression calculating both a changing bias and a chi alpha"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
-        self.alpha = alpha
+        self.alpha = torch.tensor(alpha)
         self.bias = b
         self.Y = (_Y - self.bias)/self.alpha  # np.concatenate(((_Y - self.bias)/self.alpha, _Yt))
         self.noise_sd = noise_sd
@@ -94,7 +96,7 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
         self.kernel = kernel
         self.Sigma = self.kernel(self.points, self.points)
         self.L = torch.linalg.cholesky(self.Sigma + noise_sd**2 * torch.eye(len(self.points)))
-        self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), alpha, noise_sd,
+        self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise_sd,
                                                    self.Sigma, space_kernel, time_kernel, kernel, 1.0, 0.25,
                                                    torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
                                                    len(space_X), len(time_X), theta_not)

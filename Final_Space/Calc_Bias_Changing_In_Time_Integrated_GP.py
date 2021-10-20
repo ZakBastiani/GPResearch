@@ -70,7 +70,7 @@ class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
                                                    len(space_X), len(time_X), theta_not)
 
         # # Building a graph showing the loss function for values of alpha to see how good our calc_both is
-        # alpha_range = torch.linspace(0.5, 1.5, 100)
+        # alpha_range = torch.linspace(0.9, 1.1, 100)
         # y = []
         # ll = 0
         # for a in alpha_range:
@@ -86,10 +86,10 @@ class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
         #         holder2 = (k_star.T @ sigma_inv).T @ (k_star.T @ sigma_inv)
         #         A += holder2 / (theta_not - holder)
         #         current_C += ((k_star.T @ sigma_inv @ Y) * (k_star.T @ sigma_inv)
-        #                       - alpha * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
+        #                       - a * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
         #     A += (sigma_inv).T
         #
-        #     A += (alpha ** 2) * torch.linalg.inv(bias_sigma)
+        #     A += (a ** 2) * torch.linalg.inv(bias_sigma)
         #     C[0] = Y.T @ sigma_inv + current_C
         #
         #     # Inverse A and multiply it by C
@@ -97,7 +97,8 @@ class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
         #     b = C @ A_inverse
         #
         #     l = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, b.flatten(), a, noise_sd,
-        #                                        sigma, space_kernel, time_kernel, kernel, alpha_mean, alpha_sd,
+        #                                        sigma, space_kernel,
+        #                                        time_kernel, kernel, alpha_mean, alpha_sd,
         #                                        torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
         #                                        len(space_X), len(time_X), theta_not)
         #     y.append(l)
@@ -106,13 +107,10 @@ class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
         # fig, ax = plt.subplots(figsize=(12, 6))
         # ax.plot(alpha_range, y, 'b-')
         # ax.plot(self.alpha, self.loss, marker='o')
-        # plt.title("Calc loss based on calc int")
-        # plt.show()# Building a graph showing the loss function for values of alpha to see how good our calc_both is
-        #
-        #
-        # plt.ylim([1000, 2500])
+        # # plt.ylim([1000, 2500])
+        # plt.title("Calc loss based on a normal alpha in calc both")
+        # plt.show()
         # print(ll)
-        #
 
 
 
