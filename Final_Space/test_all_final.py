@@ -15,6 +15,7 @@ from Final_Space import Opt_Theta
 from Final_Space import Opt_All_but_bias
 from Final_Space import Opt_all_but_bias_chi2
 from Final_Space import Opt_Bias
+from Final_Space import Opt_bias_alpha_pingpong
 
 # Variables that control the space
 N_sensors = 50  # Number of sensors
@@ -251,6 +252,13 @@ for i in range(0, N_trials):
     # opt_bias_gt_estimate = opt_bias.build(true_sensors, true_sensor_time)
     # opt_bias_error += opt_bias.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_bias_estimate, true_data, opt_bias_gt_estimate)
     #
+    # Letting an optimizer do all the work
+    opt_pingpong = Opt_bias_alpha_pingpong.OptPingPog(sensors, sensor_time, data, true_sensors, sensor_time, true_data, kernel,
+                                                      noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
+    opt_pingpong_estimate = opt_pingpong.build(gaussian.space, gaussian.time)
+    opt_pingpong_gt_estimate = opt_pingpong.build(true_sensors, true_sensor_time)
+    opt_bias_error += opt_pingpong.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_pingpong_estimate, true_data, opt_pingpong_gt_estimate)
+
 
     print(i)
     plt.show()
