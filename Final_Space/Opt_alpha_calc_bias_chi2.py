@@ -7,7 +7,7 @@ from Final_Space import Gaussian_Process
 from Final_Space import MAPEstimate
 
 
-class OptAll(Gaussian_Process.GaussianProcess):
+class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
                  noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd):
         N_sensors = len(space_X)
@@ -23,8 +23,8 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 self.N_time = N_time
                 self.bias = np.zeros(len(space_X) * len(time_X))
                 self.alpha = nn.Parameter(torch.tensor(1.0))
-                self.theta_space = nn.Parameter(torch.tensor(1.0))
-                self.theta_time = nn.Parameter(torch.tensor(1.0))
+                self.theta_space = torch.tensor(1.0)
+                self.theta_time = torch.tensor(2.0)
                 self.theta_not = theta_not
 
             def space_kernel(self, X, Y):
@@ -72,9 +72,9 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 self.bias = b.flatten()
 
                 return MAPEstimate.map_estimate_torch_chi2(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise_sd,
-                                                          sigma, self.space_kernel, self.time_kernel, self.kernel,
-                                                          alpha_mean, alpha_sd, bias_sigma,
-                                                            len(space_X), len(time_X), self.theta_not)
+                                                           sigma, self.space_kernel, self.time_kernel, self.kernel,
+                                                           alpha_mean, alpha_sd, bias_sigma,
+                                                           len(space_X), len(time_X), self.theta_not)
 
 
         X = torch.cat((space_X.repeat(len(time_Xt), 1),

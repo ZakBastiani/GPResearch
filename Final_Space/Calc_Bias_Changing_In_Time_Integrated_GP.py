@@ -1,5 +1,4 @@
 import math
-
 import matplotlib.pyplot as plt
 import torch
 from Final_Space import Gaussian_Process
@@ -8,7 +7,7 @@ from Final_Space import MAPEstimate
 
 class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise_sd, theta_not,
-                bias_kernel, alpha, alpha_mean, alpha_sd):
+                bias_kernel, alpha, alpha_mean, alpha_sd, true_bias):
         torch.set_default_dtype(torch.float64)
         self.points = torch.cat((space_X.repeat(len(time_X), 1),
                                  time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
@@ -51,6 +50,10 @@ class ChangingBiasIntGP(Gaussian_Process.GaussianProcess):
         # Inverse A and multiply it by C
         A_inverse = torch.linalg.inv(A)
         b = C @ A_inverse
+
+        print(torch.norm(b))
+        print("Error: " + str(torch.norm(C - (b @ A))))
+        print('True Bias Error: ' + str(torch.norm(C - (true_bias.T @ A))))
 
         self.type = "Gaussian Process Regression with a calculated changing bias using an integrated GP and a provided alpha"
         self.space_X = space_X # np.concatenate((space_X, space_Xt))

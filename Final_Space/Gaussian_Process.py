@@ -8,7 +8,7 @@ from Final_Space import MAPEstimate
 
 class GaussianProcess:
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt, space_kernel, time_kernel, kernel, noise_sd, N_space,
-                 alpha_variance, alpha_mean, bias_kernel, theta_not):
+               alpha, alpha_mean, alpha_sd, bias_kernel, theta_not):
         torch.set_default_dtype(torch.float64)
         self.type = "Basic Gaussian Process Regression"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
@@ -21,7 +21,7 @@ class GaussianProcess:
         self.time_kernel = time_kernel
         self.kernel = kernel
         self.points = torch.cat((self.space_X.repeat(len(self.time_X), 1), self.time_X.repeat_interleave(N_space).repeat(1, 1).T), 1)
-        self.Sigma = kernel(self.points, self.points) + noise_sd ** 2 * torch.eye(len(space_X)*len(time_X))
+        self.Sigma = (alpha**2)*kernel(self.points, self.points) + noise_sd ** 2 * torch.eye(len(space_X)*len(time_X))
         self.L = torch.linalg.cholesky(self.Sigma)
 
         # Need to alter the sensor matrix and the data matrix
@@ -34,8 +34,7 @@ class GaussianProcess:
         Yt = _Yt.flatten()
 
         self.loss = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise_sd,
-                                                   self.Sigma, space_kernel, time_kernel, kernel, alpha_mean,
-                                                   alpha_variance,
+                                                   self.Sigma, space_kernel, time_kernel, kernel, alpha_mean, alpha_sd,
                                                    torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
                                                    len(space_X), len(time_X), theta_not)
 

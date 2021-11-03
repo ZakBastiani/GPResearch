@@ -87,7 +87,7 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
         self.type = "Gaussian Process Regression calculating both a changing bias and a chi alpha"
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
-        self.alpha = torch.tensor(alpha)
+        self.alpha = alpha
         self.bias = b
         self.Y = (_Y - self.bias)/self.alpha  # np.concatenate(((_Y - self.bias)/self.alpha, _Yt))
         self.noise_sd = noise_sd

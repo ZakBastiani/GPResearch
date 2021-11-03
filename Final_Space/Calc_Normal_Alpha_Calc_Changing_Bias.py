@@ -187,36 +187,36 @@ class CalcBothChangingBias(Gaussian_Process.GaussianProcess):
         # plt.show()
         # print(ll)
 
-        bias = self.bias.clone().flatten()
-        ll = -10000
-        alpha_range = torch.linspace(0.8, 1.2, 20).repeat(20, 1)
-        bias_range = torch.linspace(bias[0].item() - 0.2, bias[0].item() + 0.2, 20).repeat(20, 1).T
-        data = torch.zeros((20, 20))
-        for i in range(20):
-            for j in range(20):
-                bias[0] = bias_range[i][j]
-                l = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, bias, alpha_range[i][j], noise_sd,
-                                                   self.Sigma, space_kernel,
-                                                   time_kernel, kernel, alpha_mean, alpha_sd,
-                                                   torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
-                                                   len(space_X), len(time_X), theta_not)
-                data[i][j] = l
-                if l > ll:
-                    ll = l
-        fig = plt.figure(figsize=(8, 6), dpi=80)
-        ax = fig.add_subplot(111, projection='3d')
-        ax.set_xlabel('Alpha')
-        ax.set_ylabel('Bias')
-        ax.set_zlabel('Data')
-        ax.set_title('Loss with respect to alpha and bias[0]')
-        ax.plot_surface(alpha_range.detach().numpy(), bias_range.detach().numpy(), data.detach().numpy(), cmap='viridis', edgecolor='none')
-        plt.show()
-        print(ll)
-        print(MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise_sd,
-                                             self.Sigma, space_kernel,
-                                             time_kernel, kernel, alpha_mean, alpha_sd,
-                                             torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
-                                             len(space_X), len(time_X), theta_not))
-
+        # bias = self.bias.clone().flatten()
+        # ll = -10000
+        # alpha_range = torch.linspace(0.8, 1.2, 20).repeat(20, 1)
+        # bias_range = torch.linspace(bias[0].item() - 0.2, bias[0].item() + 0.2, 20).repeat(20, 1).T
+        # data = torch.zeros((20, 20))
+        # for i in range(20):
+        #     for j in range(20):
+        #         bias[0] = bias_range[i][j]
+        #         l = MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, bias, alpha_range[i][j], noise_sd,
+        #                                            self.Sigma, space_kernel,
+        #                                            time_kernel, kernel, alpha_mean, alpha_sd,
+        #                                            torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
+        #                                            len(space_X), len(time_X), theta_not)
+        #         data[i][j] = l
+        #         if l > ll:
+        #             ll = l
+        # fig = plt.figure(figsize=(8, 6), dpi=80)
+        # ax = fig.add_subplot(111, projection='3d')
+        # ax.set_xlabel('Alpha')
+        # ax.set_ylabel('Bias')
+        # ax.set_zlabel('Data')
+        # ax.set_title('Loss with respect to alpha and bias[0]')
+        # ax.plot_surface(alpha_range.detach().numpy(), bias_range.detach().numpy(), data.detach().numpy(), cmap='viridis', edgecolor='none')
+        # plt.show()
+        # print(ll)
+        # print(MAPEstimate.map_estimate_torch(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise_sd,
+        #                                      self.Sigma, space_kernel,
+        #                                      time_kernel, kernel, alpha_mean, alpha_sd,
+        #                                      torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
+        #                                      len(space_X), len(time_X), theta_not))
+        #
 
 
