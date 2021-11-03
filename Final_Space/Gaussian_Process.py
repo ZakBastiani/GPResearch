@@ -21,7 +21,7 @@ class GaussianProcess:
         self.time_kernel = time_kernel
         self.kernel = kernel
         self.points = torch.cat((self.space_X.repeat(len(self.time_X), 1), self.time_X.repeat_interleave(N_space).repeat(1, 1).T), 1)
-        self.Sigma = (alpha**2)*kernel(self.points, self.points) + noise_sd ** 2 * torch.eye(len(space_X)*len(time_X))
+        self.Sigma = kernel(self.points, self.points) + noise_sd ** 2 * torch.eye(len(space_X)*len(time_X))
         self.L = torch.linalg.cholesky(self.Sigma)
 
         # Need to alter the sensor matrix and the data matrix

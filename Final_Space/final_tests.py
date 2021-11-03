@@ -10,7 +10,7 @@ from Final_Space import Opt_all_but_bias_chi2
 
 # Variables that control the space
 N_sensors = 50  # Number of sensors
-N_true_sensors = 2  # Number of ground truth sensor points
+N_true_sensors = 1  # Number of ground truth sensor points
 N_time = 10  # Number of time samples
 N_true_time = 10  # Number of gt time samples
 noise_sd = 0.01  # random noise in the system Standard Deviation
@@ -137,7 +137,6 @@ for i in range(0, N_trials):
     opt_alpha_chi2_gt_estimate = opt_alpha_chi2.build(true_sensors, true_sensor_time)
     opt_alpha_chi2_error += opt_alpha_chi2.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_alpha_chi2_estimate, true_data, opt_alpha_chi2_gt_estimate)
 
-
     # Letting an optimizer do all the work
     opt_all_chi2 = Opt_all_but_bias_chi2.OptAll(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
                                                 noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
@@ -148,7 +147,6 @@ for i in range(0, N_trials):
     theta_errors[1] += theta_time - opt_all_chi2.time_theta
 
     print(i)
-    plt.show()
 
 gp_error = gp_error / N_trials
 calc_both_chi_alpha_error = calc_both_chi_alpha_error / N_trials

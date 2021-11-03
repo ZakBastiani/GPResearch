@@ -9,7 +9,7 @@ from Final_Space import MAPEstimate
 
 class OptAll(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
-                 noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd, alpha, bias):
+                 noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd):
         N_sensors = len(space_X)
         N_time = len(time_X)
 
@@ -59,10 +59,10 @@ class OptAll(Gaussian_Process.GaussianProcess):
                     holder2 = (k_star.T @ sigma_inv).T @ (k_star.T @ sigma_inv)
                     A += holder2 / (theta_not - holder)
                     current_C += ((k_star.T @ sigma_inv @ Y) * (k_star.T @ sigma_inv)
-                                  - alpha * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
+                                  - self.alpha * Yt[n] * (k_star.T @ sigma_inv)) / (theta_not - holder)
                 A += (sigma_inv).T
 
-                A += (alpha ** 2) * torch.linalg.inv(bias_sigma)
+                A += (self.alpha ** 2) * torch.linalg.inv(bias_sigma)
                 C[0] = Y.T @ sigma_inv + current_C
 
                 # Inverse A and multiply it by C
