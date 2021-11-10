@@ -17,7 +17,6 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
             def __init__(self, X, Y, N_sensors, N_time):
                 super(theta_opt, self).__init__()
                 self.X = X
-                self.N_sensors = N_sensors
                 self.Y = Y
                 self.N_sensors = N_sensors
                 self.N_time = N_time

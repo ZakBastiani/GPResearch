@@ -18,7 +18,6 @@ class OptPingPog(Gaussian_Process.GaussianProcess):
             def __init__(self, X, Y, N_sensors, N_time, Xt, Yt, bias, alpha):
                 super(opt_bias, self).__init__()
                 self.X = X
-                self.N_sensors = N_sensors
                 self.Y = Y
                 self.theta_not = theta_not
                 self.N_sensors = N_sensors
@@ -60,7 +59,6 @@ class OptPingPog(Gaussian_Process.GaussianProcess):
             def __init__(self, X, Y, N_sensors, N_time, Xt, Yt, bias, alpha):
                 super(opt_alpha, self).__init__()
                 self.X = X
-                self.N_sensors = N_sensors
                 self.Y = Y
                 self.theta_not = theta_not
                 self.N_sensors = N_sensors
