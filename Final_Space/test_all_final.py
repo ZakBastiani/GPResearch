@@ -72,7 +72,7 @@ def kernel(X, Y):
 
 
 def bias_kernel(X, Y):
-    kern = (bias_sd ** 2) * torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T) ** 2) / (2 * theta_sensor_time_bias ** 2))
+    kern = bias_sd * torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T) ** 2) / (2 * theta_sensor_time_bias ** 2))
     return kern
 
 

@@ -8,9 +8,10 @@ from Final_Space import MAPEstimate
 
 
 class OptAll(Gaussian_Process.GaussianProcess):
-    def __init__(self, X, Y, Xt, Yt, noise_sd, theta_not, bias_kernel, v, t2):
-
-        N_x = len(X)
+    def __init__(self, space_X, time_X, _Y, Xt, _Yt,
+                 noise_sd, theta_not, bias_kernel, v, t2):
+        N_sensors = len(space_X)
+        N_time = len(time_X)
 
         class theta_opt(nn.Module):
             def __init__(self, X, Y, N_sensors, N_time):
@@ -19,7 +20,7 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 self.Y = Y
                 self.N_sensors = N_sensors
                 self.N_time = N_time
-                self.bias = np.zeros(N_x)
+                self.bias = np.zeros(len(space_X) * len(time_X))
                 self.alpha = nn.Parameter(torch.tensor(1.0))
                 self.theta_space = nn.Parameter(torch.tensor(1.0))
                 self.theta_time = nn.Parameter(torch.tensor(1.0))
@@ -49,8 +50,8 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
                 bias_sigma = torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X))
                 # Build and calc A and C
-                A = torch.zeros((N_x, N_x))
-                C = torch.zeros((1, N_x))
+                A = torch.zeros((N_sensors * N_time, N_sensors * N_time))
+                C = torch.zeros((1, N_sensors * N_time))
                 current_C = 0
                 for n in range(len(Xt)):
                     k_star = self.kernel(Xt[n].unsqueeze(0), X)
@@ -70,10 +71,16 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 self.bias = b.flatten()
 
                 return MAPEstimate.map_estimate_torch_chi2(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise_sd,
-                                                          sigma, self.space_kernel, self.time_kernel, self.kernel,
+                                                           sigma, self.space_kernel, self.time_kernel, self.kernel,
                                                            v, t2, bias_sigma,
-                                                            len(space_X), len(time_X), self.theta_not)
+                                                           len(space_X), len(time_X), self.theta_not)
 
+
+        X = torch.cat((space_X.repeat(len(time_X), 1),
+                       time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
+        Y = _Y.flatten()
+
+        Yt = _Yt.flatten()
 
         # setting the model and then using torch to optimize
         theta_model = theta_opt(X, Y, len(space_X), len(time_X))
