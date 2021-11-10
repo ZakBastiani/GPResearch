@@ -1,0 +1,2 @@
+time offset is 166643.25
+These are hours since:   datetime(2000, 1, 1, 0, 0, 0, 0, pytz.timezone('UTC'))
