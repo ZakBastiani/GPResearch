@@ -23,7 +23,7 @@ Y_sd = math.sqrt(sum(gt_data**2)/len(gt_data))  # Theta_not?
 noise_sd = 0.01  # Needs to be set by lab experiments
 bias_sd = 1  # Needs to be set by lab experiments
 theta_sensor_time_bias = 8  # Needs to be set by lab experiments
-v = 75  # IDK how we want to set this
+v = 75  # IDK how we want to set this, For tests this has been set to the number of sensors
 t2 = 1.0  # IDK how we want to set this
 theta_not = 1  # Needs to be calculated from the data
 
