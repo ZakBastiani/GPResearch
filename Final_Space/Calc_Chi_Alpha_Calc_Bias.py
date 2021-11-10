@@ -80,6 +80,7 @@ class CalcBothChiAlpha(Gaussian_Process.GaussianProcess):
                         closest = r
                 # if abs(closest - alpha) < 0.001:
                 #     break
+
                 alpha = (alpha + closest)/2
             alpha = torch.tensor(alpha)
 

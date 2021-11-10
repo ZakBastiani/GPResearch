@@ -10,7 +10,7 @@ from Final_Space import Opt_all_but_bias_chi2
 
 # Variables that control the space
 N_sensors = 50  # Number of sensors
-N_true_sensors = 1  # Number of ground truth sensor points
+N_true_sensors = 2  # Number of ground truth sensor points
 N_time = 10  # Number of time samples
 N_true_time = 10  # Number of gt time samples
 noise_sd = 0.01  # random noise in the system Standard Deviation
@@ -67,7 +67,7 @@ def bias_kernel(X, Y):
     return kern
 
 
-N_trials = 1
+N_trials = 5
 gp_error = np.zeros(5)
 calc_both_chi_alpha_error = np.zeros(5)
 opt_alpha_chi2_error = np.zeros(5)
@@ -143,8 +143,8 @@ for i in range(0, N_trials):
     opt_all_chi2_estimate = opt_all_chi2.build(gaussian.space, gaussian.time)
     opt_all_chi2_gt_estimate = opt_all_chi2.build(true_sensors, true_sensor_time)
     opt_all_chi2_error += opt_all_chi2.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_all_chi2_estimate, true_data, opt_all_chi2_gt_estimate)
-    theta_errors[0] += theta_time - opt_all_chi2.time_theta
-    theta_errors[1] += theta_time - opt_all_chi2.time_theta
+    theta_errors[0] += abs(theta_time - opt_all_chi2.time_theta)
+    theta_errors[1] += abs(theta_time - opt_all_chi2.time_theta)
 
     print(i)
 
@@ -154,7 +154,7 @@ opt_alpha_chi2_error = opt_alpha_chi2_error / N_trials
 opt_all_chi2_error = opt_all_chi2_error / N_trials
 theta_errors = theta_errors / N_trials
 
-print("Number of trails: " + str(N_trials))
+print("Number of trials: " + str(N_trials))
 print("Number of sensors: " + str(N_sensors))
 print("Number of GT sensors: " + str(N_true_sensors))
 print(gp_error)

@@ -9,7 +9,7 @@ from Final_Space import MAPEstimate
 
 class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
-                 noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd):
+                 noise_sd, theta_not, bias_kernel, v, t2):
         N_sensors = len(space_X)
         N_time = len(time_X)
 
@@ -73,7 +73,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
 
                 return MAPEstimate.map_estimate_torch_chi2(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise_sd,
                                                            sigma, self.space_kernel, self.time_kernel, self.kernel,
-                                                           alpha_mean, alpha_sd, bias_sigma,
+                                                           v, t2, bias_sigma,
                                                            len(space_X), len(time_X), self.theta_not)
 
 
