@@ -67,7 +67,7 @@ def bias_kernel(X, Y):
     return kern
 
 
-N_trials = 5
+N_trials = 30
 gp_error = np.zeros(5)
 calc_both_chi_alpha_error = np.zeros(5)
 opt_alpha_chi2_error = np.zeros(5)
@@ -132,14 +132,14 @@ for i in range(0, N_trials):
 
     # Letting an optimizer calc alpha
     opt_alpha_chi2 = Opt_alpha_calc_bias_chi2.OptAlphaCalcBias(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-                                                noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
+                                                noise_sd, theta_not, bias_kernel, v, t2)
     opt_alpha_chi2_estimate = opt_alpha_chi2.build(gaussian.space, gaussian.time)
     opt_alpha_chi2_gt_estimate = opt_alpha_chi2.build(true_sensors, true_sensor_time)
     opt_alpha_chi2_error += opt_alpha_chi2.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_alpha_chi2_estimate, true_data, opt_alpha_chi2_gt_estimate)
 
     # Letting an optimizer do all the work
     opt_all_chi2 = Opt_all_but_bias_chi2.OptAll(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-                                                noise_sd, theta_not, bias_kernel, alpha_mean, alpha_sd)
+                                                noise_sd, theta_not, bias_kernel, v, t2)
     opt_all_chi2_estimate = opt_all_chi2.build(gaussian.space, gaussian.time)
     opt_all_chi2_gt_estimate = opt_all_chi2.build(true_sensors, true_sensor_time)
     opt_all_chi2_error += opt_all_chi2.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_all_chi2_estimate, true_data, opt_all_chi2_gt_estimate)
