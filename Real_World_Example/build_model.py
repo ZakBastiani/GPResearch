@@ -35,4 +35,5 @@ def bias_kernel(X, Y):
 
 opt_all_chi2 = Opt_all_but_bias_chi2.OptAll(space, time, data, gt_readings, gt_data, noise_sd,
                                             theta_not, bias_kernel, v, t2)
+# Need to figure out how I want to save and validate the model
 print(opt_all_chi2.alpha)
