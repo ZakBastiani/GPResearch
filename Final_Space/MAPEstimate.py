@@ -9,10 +9,11 @@ def map_estimate_torch(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, ti
                        alpha_sd, bias_sigma, N_sensors, N_time, theta_not):
     torch.set_default_dtype(torch.float64)
     Sigma_hat = alpha**2 * Sigma + (noise**2) * torch.eye(N_sensors*N_time)
+    sigma_hat_inv = torch.inverse(Sigma_hat)
     bias_sigma = bias_sigma
 
     chunk1 = -(1/2) * (torch.logdet(Sigma_hat)  # currently giving -inf
-                       + (Y - bias).T @ torch.inverse(Sigma_hat) @ (Y - bias)
+                       + (Y - bias).T @ sigma_hat_inv @ (Y - bias)
                        + N_sensors * math.log(2 * math.pi))
 
     normal = torch.distributions.normal.Normal(alpha_mean, torch.tensor(alpha_sd))
@@ -24,14 +25,14 @@ def map_estimate_torch(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, ti
 
     def v(x):
         k = kernel(x.reshape(1, -1), X)
-        output = theta_not - (alpha * k.T) @ torch.inverse(Sigma_hat) @ (alpha * k)
+        output = theta_not - (alpha * k.T) @ sigma_hat_inv @ (alpha * k)
         if output < 0:
             print('Error')
         return output
 
     def mu(x):
         k = kernel(x.reshape(1, -1), X)
-        return (alpha * k.T) @ torch.inverse(Sigma_hat) @ (Y - bias)
+        return (alpha * k.T) @ sigma_hat_inv @ (Y - bias)
 
     chunk3 = 0
     for i in range(0, len(Xt)):
@@ -50,10 +51,11 @@ def map_estimate_torch_chi2(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kerne
                             t2, bias_sigma, N_sensors, N_time, theta_not):
     torch.set_default_dtype(torch.float64)
     Sigma_hat = alpha**2 * Sigma + (noise**2) * torch.eye(N_sensors*N_time)
+    sigma_hat_inv = torch.inverse(Sigma_hat)
     bias_sigma = bias_sigma
 
     chunk1 = -(1/2) * (torch.logdet(Sigma_hat)  # currently giving -inf
-                       + (Y - bias).T @ torch.inverse(Sigma_hat) @ (Y - bias)
+                       + (Y - bias).T @ sigma_hat_inv @ (Y - bias)
                        + N_sensors * math.log(2 * math.pi))
 
     chi2 = torch.distributions.gamma.Gamma(v/2, v*t2/2)
@@ -65,14 +67,14 @@ def map_estimate_torch_chi2(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kerne
 
     def v(x):
         k = kernel(x.reshape(1, -1), X)
-        output = theta_not - (alpha * k.T) @ torch.inverse(Sigma_hat) @ (alpha * k)
+        output = theta_not - (alpha * k.T) @ sigma_hat_inv @ (alpha * k)
         if output < 0:
             print('Error')
         return output
 
     def mu(x):
         k = kernel(x.reshape(1, -1), X)
-        return (alpha * k.T) @ torch.inverse(Sigma_hat) @ (Y - bias)
+        return (alpha * k.T) @ sigma_hat_inv @ (Y - bias)
 
     chunk3 = 0
     for i in range(0, len(Xt)):
