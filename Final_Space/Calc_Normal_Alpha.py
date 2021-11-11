@@ -89,3 +89,4 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
         # plt.show()
         # print(ll)
 
+

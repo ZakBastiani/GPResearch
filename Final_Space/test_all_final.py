@@ -22,7 +22,7 @@ N_sensors = 50  # Number of sensors
 N_true_sensors = 2  # Number of ground truth sensor points
 N_time = 10  # Number of time samples
 N_true_time = 10  # Number of gt time samples
-noise_sd = 0.01  # random noise in the system Standard Deviation
+noise_sd = 0.2  # random noise in the system Standard Deviation
 
 space_range = 10
 time_range = 10

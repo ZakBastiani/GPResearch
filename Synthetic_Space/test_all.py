@@ -41,9 +41,9 @@ N_space_test = 50
 N_time_test = 50
 
 # setting the seed for the program
-seed = np.random.randint(100000000)
+# seed = np.random.randint(100000000)
 # seed = 55169561
-# seed = 12306390
+seed = 12306390
 np.random.seed(seed)
 print("Seed: " + str(seed))
 
