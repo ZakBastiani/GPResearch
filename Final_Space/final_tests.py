@@ -10,7 +10,7 @@ from Final_Space import Opt_all_but_bias_chi2
 
 # Variables that control the space
 N_sensors = 50  # Number of sensors
-N_true_sensors = 2  # Number of ground truth sensor points
+N_true_sensors = 0  # Number of ground truth sensor points
 N_time = 10  # Number of time samples
 N_true_time = 10  # Number of gt time samples
 noise_sd = 0.01  # random noise in the system Standard Deviation
@@ -31,14 +31,14 @@ bias_mean = 0
 theta_sensor_time_bias = 8
 alpha_mean = 1
 alpha_sd = 0.25
-v = N_sensors
+v = 50
 t2 = 1.0
 
 torch.set_default_dtype(torch.float64)
 
 # setting the seed for the program
-# seed = torch.seed()
-seed = torch.manual_seed(185545686495700)
+seed = torch.seed()
+# seed = torch.manual_seed(185545686495700)
 print("Seed: " + str(seed))
 
 
@@ -122,6 +122,7 @@ for i in range(0, N_trials):
     estimate = gp.build(gaussian.space, gaussian.time)
     gt_estimate = gp.build(true_sensors, true_sensor_time)
     gp_error += gp.print_error(alpha, sensor_bias, gaussian.underlying_data, estimate, gaussian.gt_sensor_data, gt_estimate)
+    # gp.display(gaussian.space, gaussian.time, estimate, space_points, time_points, "Basic Gaussian Process Model")
 
     # Building a GP that predicts both bias and alpha using lagging variables
     calc_both_chi_alpha_gp = Calc_Chi_Alpha_Calc_Bias.CalcBothChiAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
@@ -129,6 +130,7 @@ for i in range(0, N_trials):
     calc_both_chi_alpha_estimate = calc_both_chi_alpha_gp.build(gaussian.space, gaussian.time)
     calc_both_chi_alpha_gt_estimate = calc_both_chi_alpha_gp.build(true_sensors, true_sensor_time)
     calc_both_chi_alpha_error += calc_both_chi_alpha_gp.print_error(alpha, sensor_bias, gaussian.underlying_data, calc_both_chi_alpha_estimate, true_data, calc_both_chi_alpha_gt_estimate)
+    # gp.display(gaussian.space, gaussian.time, calc_both_chi_alpha_estimate, space_points, time_points, "Ping-Pong Fixed Point Model")
 
     # Letting an optimizer calc alpha
     opt_alpha_chi2 = Opt_alpha_calc_bias_chi2.OptAlphaCalcBias(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
@@ -136,6 +138,7 @@ for i in range(0, N_trials):
     opt_alpha_chi2_estimate = opt_alpha_chi2.build(gaussian.space, gaussian.time)
     opt_alpha_chi2_gt_estimate = opt_alpha_chi2.build(true_sensors, true_sensor_time)
     opt_alpha_chi2_error += opt_alpha_chi2.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_alpha_chi2_estimate, true_data, opt_alpha_chi2_gt_estimate)
+    # gp.display(gaussian.space, gaussian.time, opt_alpha_chi2_estimate, space_points, time_points, "Optimizing Gain Model")
 
     # Letting an optimizer do all the work
     opt_all_chi2 = Opt_all_but_bias_chi2.OptAll(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
@@ -143,7 +146,8 @@ for i in range(0, N_trials):
     opt_all_chi2_estimate = opt_all_chi2.build(gaussian.space, gaussian.time)
     opt_all_chi2_gt_estimate = opt_all_chi2.build(true_sensors, true_sensor_time)
     opt_all_chi2_error += opt_all_chi2.print_error(alpha, sensor_bias, gaussian.underlying_data, opt_all_chi2_estimate, true_data, opt_all_chi2_gt_estimate)
-    theta_errors[0] += abs(theta_time - opt_all_chi2.time_theta)
+    # gp.display(gaussian.space, gaussian.time, opt_all_chi2_estimate, space_points, time_points, "Optimizing Gain and Bandwidth Model")
+    theta_errors[0] += abs(theta_space - opt_all_chi2.space_theta)
     theta_errors[1] += abs(theta_time - opt_all_chi2.time_theta)
 
     print(i)

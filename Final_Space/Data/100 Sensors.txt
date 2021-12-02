@@ -1,0 +1,1603 @@
+Seed: <torch._C.Generator object at 0x7fa4703260d0>
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.9548)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.0506)
+Avg L2 error at Ground Truth Points: tensor(14.9388)
+Avg L2 error at Test Points: 4.238928284254587
+Loss: tensor([[-1097383.1694]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.9548)
+Guess Alpha: tensor(0.7882)
+Avg L2 Bias Error: tensor(0.0269)
+Avg L2 error at Ground Truth Points: tensor(0.0019)
+Avg L2 error at Test Points: 0.08319619100017608
+Loss: tensor([[7776.0331]])
+
+tensor([[-7793.4974]], grad_fn=<NegBackward>)
+tensor([[-7797.0508]], grad_fn=<NegBackward>)
+tensor([[-7797.0208]], grad_fn=<NegBackward>)
+tensor([[-7796.8456]], grad_fn=<NegBackward>)
+tensor([[-7797.2657]], grad_fn=<NegBackward>)
+tensor([[-7796.8465]], grad_fn=<NegBackward>)
+tensor([[-7796.8596]], grad_fn=<NegBackward>)
+tensor([[-7796.6574]], grad_fn=<NegBackward>)
+tensor([[-7797.1538]], grad_fn=<NegBackward>)
+tensor([[-7796.8764]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9548)
+Guess Alpha: 0.9297571779399794
+Avg L2 Bias Error: tensor(0.0065)
+Avg L2 error at Ground Truth Points: tensor(0.0004)
+Avg L2 error at Test Points: 0.019989796540049974
+Loss: tensor([[7797.7547]], grad_fn=<NegBackward>)
+
+tensor([[-6474.7468]], grad_fn=<NegBackward>)
+tensor([[-7295.7184]], grad_fn=<NegBackward>)
+tensor([[-7483.7209]], grad_fn=<NegBackward>)
+tensor([[-7573.8595]], grad_fn=<NegBackward>)
+tensor([[-7629.7309]], grad_fn=<NegBackward>)
+tensor([[-7669.9868]], grad_fn=<NegBackward>)
+tensor([[-7699.4622]], grad_fn=<NegBackward>)
+tensor([[-7721.7788]], grad_fn=<NegBackward>)
+tensor([[-7738.7633]], grad_fn=<NegBackward>)
+tensor([[-7752.6998]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9548)
+Guess Alpha: 0.7838589180554736
+Avg L2 Bias Error: tensor(0.0301)
+Avg L2 error at Ground Truth Points: tensor(0.0020)
+Avg L2 error at Test Points: 0.08822105341986788
+Loss: tensor([[7762.9037]], grad_fn=<NegBackward>)
+
+0
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.0807)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.8949)
+Avg L2 error at Ground Truth Points: tensor(1.2136)
+Avg L2 error at Test Points: 7.051715575360262
+Loss: tensor([[-951644.1899]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.0807)
+Guess Alpha: tensor(1.0605)
+Avg L2 Bias Error: tensor(0.0010)
+Avg L2 error at Ground Truth Points: tensor(0.0001)
+Avg L2 error at Test Points: 0.015814263857621372
+Loss: tensor([[7922.1070]])
+
+tensor([[-7862.6109]], grad_fn=<NegBackward>)
+tensor([[-7925.6017]], grad_fn=<NegBackward>)
+tensor([[-7925.4651]], grad_fn=<NegBackward>)
+tensor([[-7925.4733]], grad_fn=<NegBackward>)
+tensor([[-7925.2275]], grad_fn=<NegBackward>)
+tensor([[-7925.3086]], grad_fn=<NegBackward>)
+tensor([[-7925.6061]], grad_fn=<NegBackward>)
+tensor([[-7925.6196]], grad_fn=<NegBackward>)
+tensor([[-7925.6987]], grad_fn=<NegBackward>)
+tensor([[-7925.5622]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0807)
+Guess Alpha: 1.0760192628023795
+Avg L2 Bias Error: tensor(0.0006)
+Avg L2 error at Ground Truth Points: tensor(4.8806e-05)
+Avg L2 error at Test Points: 0.015192073538924947
+Loss: tensor([[7925.9772]], grad_fn=<NegBackward>)
+
+tensor([[-6657.5228]], grad_fn=<NegBackward>)
+tensor([[-7337.3299]], grad_fn=<NegBackward>)
+tensor([[-7507.2231]], grad_fn=<NegBackward>)
+tensor([[-7631.4471]], grad_fn=<NegBackward>)
+tensor([[-7720.3581]], grad_fn=<NegBackward>)
+tensor([[-7782.7927]], grad_fn=<NegBackward>)
+tensor([[-7828.6977]], grad_fn=<NegBackward>)
+tensor([[-7860.5485]], grad_fn=<NegBackward>)
+tensor([[-7884.0026]], grad_fn=<NegBackward>)
+tensor([[-7900.8233]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0807)
+Guess Alpha: 1.0759432731817893
+Avg L2 Bias Error: tensor(0.0006)
+Avg L2 error at Ground Truth Points: tensor(5.2122e-05)
+Avg L2 error at Test Points: 0.01524560755783154
+Loss: tensor([[7912.4858]], grad_fn=<NegBackward>)
+
+1
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.2067)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.9013)
+Avg L2 error at Ground Truth Points: tensor(0.5716)
+Avg L2 error at Test Points: 11.314862510816305
+Loss: tensor([[-978296.6584]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.2067)
+Guess Alpha: tensor(1.1853)
+Avg L2 Bias Error: tensor(0.0004)
+Avg L2 error at Ground Truth Points: tensor(1.4078e-05)
+Avg L2 error at Test Points: 0.012159910768055775
+Loss: tensor([[7856.8209]])
+
+tensor([[-7289.0577]], grad_fn=<NegBackward>)
+tensor([[-7815.6111]], grad_fn=<NegBackward>)
+tensor([[-7850.9389]], grad_fn=<NegBackward>)
+tensor([[-7857.5031]], grad_fn=<NegBackward>)
+tensor([[-7858.8896]], grad_fn=<NegBackward>)
+tensor([[-7859.3795]], grad_fn=<NegBackward>)
+tensor([[-7859.1343]], grad_fn=<NegBackward>)
+tensor([[-7859.3938]], grad_fn=<NegBackward>)
+tensor([[-7859.3106]], grad_fn=<NegBackward>)
+tensor([[-7858.8463]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.2067)
+Guess Alpha: 1.1993294759310624
+Avg L2 Bias Error: tensor(0.0003)
+Avg L2 error at Ground Truth Points: tensor(6.9086e-06)
+Avg L2 error at Test Points: 0.011941862549136506
+Loss: tensor([[7860.0820]], grad_fn=<NegBackward>)
+
+tensor([[-6581.9865]], grad_fn=<NegBackward>)
+tensor([[-7231.1903]], grad_fn=<NegBackward>)
+tensor([[-7447.5693]], grad_fn=<NegBackward>)
+tensor([[-7576.1091]], grad_fn=<NegBackward>)
+tensor([[-7661.1821]], grad_fn=<NegBackward>)
+tensor([[-7721.7149]], grad_fn=<NegBackward>)
+tensor([[-7764.9475]], grad_fn=<NegBackward>)
+tensor([[-7795.7869]], grad_fn=<NegBackward>)
+tensor([[-7818.5767]], grad_fn=<NegBackward>)
+tensor([[-7835.0937]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.2067)
+Guess Alpha: 1.197730173954325
+Avg L2 Bias Error: tensor(0.0003)
+Avg L2 error at Ground Truth Points: tensor(7.1898e-06)
+Avg L2 error at Test Points: 0.012360688048147364
+Loss: tensor([[7846.6849]], grad_fn=<NegBackward>)
+
+2
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.1244)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.0496)
+Avg L2 error at Ground Truth Points: tensor(14.7030)
+Avg L2 error at Test Points: 2.842109686763
+Loss: tensor([[-976045.3782]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.1244)
+Guess Alpha: tensor(0.9879)
+Avg L2 Bias Error: tensor(0.0188)
+Avg L2 error at Ground Truth Points: tensor(0.0080)
+Avg L2 error at Test Points: 0.045016928587380496
+Loss: tensor([[7635.8693]])
+
+tensor([[-7639.4449]], grad_fn=<NegBackward>)
+tensor([[-7651.1061]], grad_fn=<NegBackward>)
+tensor([[-7651.5514]], grad_fn=<NegBackward>)
+tensor([[-7650.7604]], grad_fn=<NegBackward>)
+tensor([[-7650.9651]], grad_fn=<NegBackward>)
+tensor([[-7651.3463]], grad_fn=<NegBackward>)
+tensor([[-7651.3172]], grad_fn=<NegBackward>)
+tensor([[-7650.7299]], grad_fn=<NegBackward>)
+tensor([[-7650.8577]], grad_fn=<NegBackward>)
+tensor([[-7651.2117]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1244)
+Guess Alpha: 1.1048114547075625
+Avg L2 Bias Error: tensor(0.0010)
+Avg L2 error at Ground Truth Points: tensor(0.0023)
+Avg L2 error at Test Points: 0.0075252831256851374
+Loss: tensor([[7652.0567]], grad_fn=<NegBackward>)
+
+tensor([[-6432.0041]], grad_fn=<NegBackward>)
+tensor([[-7097.3242]], grad_fn=<NegBackward>)
+tensor([[-7268.1424]], grad_fn=<NegBackward>)
+tensor([[-7374.6213]], grad_fn=<NegBackward>)
+tensor([[-7448.9040]], grad_fn=<NegBackward>)
+tensor([[-7503.6514]], grad_fn=<NegBackward>)
+tensor([[-7543.9647]], grad_fn=<NegBackward>)
+tensor([[-7574.2685]], grad_fn=<NegBackward>)
+tensor([[-7598.1201]], grad_fn=<NegBackward>)
+tensor([[-7616.2791]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1244)
+Guess Alpha: 1.0496977534765102
+Avg L2 Bias Error: tensor(0.0057)
+Avg L2 error at Ground Truth Points: tensor(0.0044)
+Avg L2 error at Test Points: 0.01664044923107038
+Loss: tensor([[7629.5510]], grad_fn=<NegBackward>)
+
+3
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.1091)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.1135)
+Avg L2 error at Ground Truth Points: tensor(0.8455)
+Avg L2 error at Test Points: 5.739158719211881
+Loss: tensor([[-1210202.5937]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.1091)
+Guess Alpha: tensor(1.0092)
+Avg L2 Bias Error: tensor(0.0076)
+Avg L2 error at Ground Truth Points: tensor(3.6773e-05)
+Avg L2 error at Test Points: 0.02106008792897536
+Loss: tensor([[7772.4018]])
+
+tensor([[-7770.2177]], grad_fn=<NegBackward>)
+tensor([[-7781.5146]], grad_fn=<NegBackward>)
+tensor([[-7781.4259]], grad_fn=<NegBackward>)
+tensor([[-7781.4382]], grad_fn=<NegBackward>)
+tensor([[-7781.5567]], grad_fn=<NegBackward>)
+tensor([[-7781.3064]], grad_fn=<NegBackward>)
+tensor([[-7781.4802]], grad_fn=<NegBackward>)
+tensor([[-7782.0168]], grad_fn=<NegBackward>)
+tensor([[-7781.4864]], grad_fn=<NegBackward>)
+tensor([[-7781.5258]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1091)
+Guess Alpha: 1.0742728157709052
+Avg L2 Bias Error: tensor(0.0014)
+Avg L2 error at Ground Truth Points: tensor(1.1455e-05)
+Avg L2 error at Test Points: 0.013867562247999454
+Loss: tensor([[7782.6871]], grad_fn=<NegBackward>)
+
+tensor([[-6517.5816]], grad_fn=<NegBackward>)
+tensor([[-7256.2475]], grad_fn=<NegBackward>)
+tensor([[-7400.1411]], grad_fn=<NegBackward>)
+tensor([[-7495.0139]], grad_fn=<NegBackward>)
+tensor([[-7567.9789]], grad_fn=<NegBackward>)
+tensor([[-7625.7257]], grad_fn=<NegBackward>)
+tensor([[-7670.7551]], grad_fn=<NegBackward>)
+tensor([[-7705.6813]], grad_fn=<NegBackward>)
+tensor([[-7730.6722]], grad_fn=<NegBackward>)
+tensor([[-7748.7213]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1091)
+Guess Alpha: 1.0552057656430276
+Avg L2 Bias Error: tensor(0.0025)
+Avg L2 error at Ground Truth Points: tensor(1.6890e-05)
+Avg L2 error at Test Points: 0.015246636788550738
+Loss: tensor([[7762.2251]], grad_fn=<NegBackward>)
+
+4
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.9260)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.8672)
+Avg L2 error at Ground Truth Points: tensor(1.2022)
+Avg L2 error at Test Points: 4.267156085180574
+Loss: tensor([[-966016.4407]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.9260)
+Guess Alpha: tensor(0.9207)
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(8.4270e-05)
+Avg L2 error at Test Points: 0.023357168188018584
+Loss: tensor([[7883.9682]])
+
+tensor([[-7839.7807]], grad_fn=<NegBackward>)
+tensor([[-7884.7990]], grad_fn=<NegBackward>)
+tensor([[-7884.3080]], grad_fn=<NegBackward>)
+tensor([[-7884.1979]], grad_fn=<NegBackward>)
+tensor([[-7884.2852]], grad_fn=<NegBackward>)
+tensor([[-7884.4557]], grad_fn=<NegBackward>)
+tensor([[-7884.4357]], grad_fn=<NegBackward>)
+tensor([[-7884.2682]], grad_fn=<NegBackward>)
+tensor([[-7884.2861]], grad_fn=<NegBackward>)
+tensor([[-7884.1495]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9260)
+Guess Alpha: 0.9127950145414028
+Avg L2 Bias Error: tensor(0.0007)
+Avg L2 error at Ground Truth Points: tensor(8.3366e-05)
+Avg L2 error at Test Points: 0.023528689319612932
+Loss: tensor([[7885.1038]], grad_fn=<NegBackward>)
+
+tensor([[-6585.8334]], grad_fn=<NegBackward>)
+tensor([[-7350.0611]], grad_fn=<NegBackward>)
+tensor([[-7510.8691]], grad_fn=<NegBackward>)
+tensor([[-7615.2733]], grad_fn=<NegBackward>)
+tensor([[-7689.2236]], grad_fn=<NegBackward>)
+tensor([[-7743.3421]], grad_fn=<NegBackward>)
+tensor([[-7783.5036]], grad_fn=<NegBackward>)
+tensor([[-7813.8417]], grad_fn=<NegBackward>)
+tensor([[-7836.2675]], grad_fn=<NegBackward>)
+tensor([[-7852.8132]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9260)
+Guess Alpha: 0.9065917694321366
+Avg L2 Bias Error: tensor(0.0011)
+Avg L2 error at Ground Truth Points: tensor(9.5039e-05)
+Avg L2 error at Test Points: 0.02406098704068937
+Loss: tensor([[7864.8630]], grad_fn=<NegBackward>)
+
+5
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.1240)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.0460)
+Avg L2 error at Ground Truth Points: tensor(2.8792)
+Avg L2 error at Test Points: 4.804919999006324
+Loss: tensor([[-1081485.4107]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.1240)
+Guess Alpha: tensor(0.9209)
+Avg L2 Bias Error: tensor(0.0254)
+Avg L2 error at Ground Truth Points: tensor(0.0017)
+Avg L2 error at Test Points: 0.06639994243890439
+Loss: tensor([[7763.8459]])
+
+tensor([[-7781.0185]], grad_fn=<NegBackward>)
+tensor([[-7784.1974]], grad_fn=<NegBackward>)
+tensor([[-7784.1722]], grad_fn=<NegBackward>)
+tensor([[-7783.8653]], grad_fn=<NegBackward>)
+tensor([[-7784.1117]], grad_fn=<NegBackward>)
+tensor([[-7784.2840]], grad_fn=<NegBackward>)
+tensor([[-7784.2499]], grad_fn=<NegBackward>)
+tensor([[-7784.1080]], grad_fn=<NegBackward>)
+tensor([[-7783.8381]], grad_fn=<NegBackward>)
+tensor([[-7783.7948]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1240)
+Guess Alpha: 1.0538468237126972
+Avg L2 Bias Error: tensor(0.0036)
+Avg L2 error at Ground Truth Points: tensor(0.0004)
+Avg L2 error at Test Points: 0.01345267394862026
+Loss: tensor([[7784.7546]], grad_fn=<NegBackward>)
+
+tensor([[-6565.9202]], grad_fn=<NegBackward>)
+tensor([[-7276.5132]], grad_fn=<NegBackward>)
+tensor([[-7441.8917]], grad_fn=<NegBackward>)
+tensor([[-7536.8799]], grad_fn=<NegBackward>)
+tensor([[-7601.7883]], grad_fn=<NegBackward>)
+tensor([[-7649.0036]], grad_fn=<NegBackward>)
+tensor([[-7684.2977]], grad_fn=<NegBackward>)
+tensor([[-7710.8952]], grad_fn=<NegBackward>)
+tensor([[-7731.8800]], grad_fn=<NegBackward>)
+tensor([[-7747.4286]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1240)
+Guess Alpha: 0.9850489375012726
+Avg L2 Bias Error: tensor(0.0120)
+Avg L2 error at Ground Truth Points: tensor(0.0008)
+Avg L2 error at Test Points: 0.03129031332805053
+Loss: tensor([[7758.7834]], grad_fn=<NegBackward>)
+
+6
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.8884)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.8290)
+Avg L2 error at Ground Truth Points: tensor(0.7092)
+Avg L2 error at Test Points: 4.10289339465471
+Loss: tensor([[-863761.4826]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.8884)
+Guess Alpha: tensor(0.8932)
+Avg L2 Bias Error: tensor(0.0003)
+Avg L2 error at Ground Truth Points: tensor(8.2366e-06)
+Avg L2 error at Test Points: 0.014964319798738997
+Loss: tensor([[7967.8900]])
+
+tensor([[-7905.1620]], grad_fn=<NegBackward>)
+tensor([[-7968.3960]], grad_fn=<NegBackward>)
+tensor([[-7968.7602]], grad_fn=<NegBackward>)
+tensor([[-7968.6347]], grad_fn=<NegBackward>)
+tensor([[-7968.8705]], grad_fn=<NegBackward>)
+tensor([[-7969.0651]], grad_fn=<NegBackward>)
+tensor([[-7968.9769]], grad_fn=<NegBackward>)
+tensor([[-7969.0455]], grad_fn=<NegBackward>)
+tensor([[-7968.5919]], grad_fn=<NegBackward>)
+tensor([[-7968.5906]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.8884)
+Guess Alpha: 0.8803585688272351
+Avg L2 Bias Error: tensor(0.0004)
+Avg L2 error at Ground Truth Points: tensor(8.2077e-06)
+Avg L2 error at Test Points: 0.01499476635923831
+Loss: tensor([[7969.3035]], grad_fn=<NegBackward>)
+
+tensor([[-6655.7271]], grad_fn=<NegBackward>)
+tensor([[-7479.3886]], grad_fn=<NegBackward>)
+tensor([[-7623.2923]], grad_fn=<NegBackward>)
+tensor([[-7710.3107]], grad_fn=<NegBackward>)
+tensor([[-7776.8673]], grad_fn=<NegBackward>)
+tensor([[-7827.1011]], grad_fn=<NegBackward>)
+tensor([[-7865.5500]], grad_fn=<NegBackward>)
+tensor([[-7895.3661]], grad_fn=<NegBackward>)
+tensor([[-7916.6406]], grad_fn=<NegBackward>)
+tensor([[-7932.9192]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.8884)
+Guess Alpha: 0.8639340197275602
+Avg L2 Bias Error: tensor(0.0012)
+Avg L2 error at Ground Truth Points: tensor(1.0198e-05)
+Avg L2 error at Test Points: 0.01588858632839198
+Loss: tensor([[7944.8415]], grad_fn=<NegBackward>)
+
+7
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.8127)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.8390)
+Avg L2 error at Ground Truth Points: tensor(1.5608)
+Avg L2 error at Test Points: 5.214091517785692
+Loss: tensor([[-825917.6411]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.8127)
+Guess Alpha: tensor(0.8008)
+Avg L2 Bias Error: tensor(0.0006)
+Avg L2 error at Ground Truth Points: tensor(7.7146e-05)
+Avg L2 error at Test Points: 0.016981264417537556
+Loss: tensor([[7932.7838]])
+
+tensor([[-7480.7170]], grad_fn=<NegBackward>)
+tensor([[-7908.7676]], grad_fn=<NegBackward>)
+tensor([[-7931.8634]], grad_fn=<NegBackward>)
+tensor([[-7934.5345]], grad_fn=<NegBackward>)
+tensor([[-7934.0483]], grad_fn=<NegBackward>)
+tensor([[-7934.3106]], grad_fn=<NegBackward>)
+tensor([[-7934.1473]], grad_fn=<NegBackward>)
+tensor([[-7934.0558]], grad_fn=<NegBackward>)
+tensor([[-7934.0132]], grad_fn=<NegBackward>)
+tensor([[-7934.7204]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.8127)
+Guess Alpha: 0.8132793789999571
+Avg L2 Bias Error: tensor(0.0006)
+Avg L2 error at Ground Truth Points: tensor(4.7778e-05)
+Avg L2 error at Test Points: 0.016201597090362476
+Loss: tensor([[7934.7846]], grad_fn=<NegBackward>)
+
+tensor([[-6533.5553]], grad_fn=<NegBackward>)
+tensor([[-7397.5759]], grad_fn=<NegBackward>)
+tensor([[-7557.0053]], grad_fn=<NegBackward>)
+tensor([[-7664.1511]], grad_fn=<NegBackward>)
+tensor([[-7740.3454]], grad_fn=<NegBackward>)
+tensor([[-7795.6619]], grad_fn=<NegBackward>)
+tensor([[-7835.6493]], grad_fn=<NegBackward>)
+tensor([[-7864.8595]], grad_fn=<NegBackward>)
+tensor([[-7886.5605]], grad_fn=<NegBackward>)
+tensor([[-7902.2258]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.8127)
+Guess Alpha: 0.8095470582389167
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(5.3312e-05)
+Avg L2 error at Test Points: 0.01595646188835775
+Loss: tensor([[7913.9692]], grad_fn=<NegBackward>)
+
+8
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.9456)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.8465)
+Avg L2 error at Ground Truth Points: tensor(0.4312)
+Avg L2 error at Test Points: 9.752873397449024
+Loss: tensor([[-1011097.3058]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.9456)
+Guess Alpha: tensor(0.9231)
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(6.5407e-05)
+Avg L2 error at Test Points: 0.01795632304463103
+Loss: tensor([[7961.2402]])
+
+tensor([[-7927.9724]], grad_fn=<NegBackward>)
+tensor([[-7964.3918]], grad_fn=<NegBackward>)
+tensor([[-7964.7851]], grad_fn=<NegBackward>)
+tensor([[-7964.7000]], grad_fn=<NegBackward>)
+tensor([[-7964.5438]], grad_fn=<NegBackward>)
+tensor([[-7964.7487]], grad_fn=<NegBackward>)
+tensor([[-7964.4502]], grad_fn=<NegBackward>)
+tensor([[-7964.4842]], grad_fn=<NegBackward>)
+tensor([[-7964.7921]], grad_fn=<NegBackward>)
+tensor([[-7964.6463]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9456)
+Guess Alpha: 0.9393316879718713
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(2.8780e-05)
+Avg L2 error at Test Points: 0.017232049068706144
+Loss: tensor([[7965.1088]], grad_fn=<NegBackward>)
+
+tensor([[-6613.4908]], grad_fn=<NegBackward>)
+tensor([[-7389.5834]], grad_fn=<NegBackward>)
+tensor([[-7558.3245]], grad_fn=<NegBackward>)
+tensor([[-7670.1103]], grad_fn=<NegBackward>)
+tensor([[-7750.6974]], grad_fn=<NegBackward>)
+tensor([[-7808.9371]], grad_fn=<NegBackward>)
+tensor([[-7852.4240]], grad_fn=<NegBackward>)
+tensor([[-7884.8481]], grad_fn=<NegBackward>)
+tensor([[-7909.4463]], grad_fn=<NegBackward>)
+tensor([[-7927.9244]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9456)
+Guess Alpha: 0.9341399894107869
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(3.1232e-05)
+Avg L2 error at Test Points: 0.017646741370812284
+Loss: tensor([[7941.2696]], grad_fn=<NegBackward>)
+
+9
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.0133)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.9805)
+Avg L2 error at Ground Truth Points: tensor(0.7226)
+Avg L2 error at Test Points: 5.736507623452164
+Loss: tensor([[-924630.4079]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.0133)
+Guess Alpha: tensor(0.9176)
+Avg L2 Bias Error: tensor(0.0017)
+Avg L2 error at Ground Truth Points: tensor(4.6973e-05)
+Avg L2 error at Test Points: 0.017626956811198188
+Loss: tensor([[7770.0152]])
+
+tensor([[-7779.2800]], grad_fn=<NegBackward>)
+tensor([[-7779.8008]], grad_fn=<NegBackward>)
+tensor([[-7779.5021]], grad_fn=<NegBackward>)
+tensor([[-7779.8140]], grad_fn=<NegBackward>)
+tensor([[-7779.3330]], grad_fn=<NegBackward>)
+tensor([[-7779.3538]], grad_fn=<NegBackward>)
+tensor([[-7779.2349]], grad_fn=<NegBackward>)
+tensor([[-7779.3629]], grad_fn=<NegBackward>)
+tensor([[-7779.9007]], grad_fn=<NegBackward>)
+tensor([[-7778.9900]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0133)
+Guess Alpha: 0.9891253206293541
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(1.5032e-05)
+Avg L2 error at Test Points: 0.008515902121987258
+Loss: tensor([[7780.6948]], grad_fn=<NegBackward>)
+
+tensor([[-6499.4984]], grad_fn=<NegBackward>)
+tensor([[-7261.3113]], grad_fn=<NegBackward>)
+tensor([[-7428.5668]], grad_fn=<NegBackward>)
+tensor([[-7525.6620]], grad_fn=<NegBackward>)
+tensor([[-7593.7809]], grad_fn=<NegBackward>)
+tensor([[-7644.4677]], grad_fn=<NegBackward>)
+tensor([[-7681.9651]], grad_fn=<NegBackward>)
+tensor([[-7709.9434]], grad_fn=<NegBackward>)
+tensor([[-7730.9454]], grad_fn=<NegBackward>)
+tensor([[-7745.2882]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0133)
+Guess Alpha: 0.9459733193663764
+Avg L2 Bias Error: tensor(0.0010)
+Avg L2 error at Ground Truth Points: tensor(3.4589e-05)
+Avg L2 error at Test Points: 0.012535845258616361
+Loss: tensor([[7756.9308]], grad_fn=<NegBackward>)
+
+10
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.0109)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.1128)
+Avg L2 error at Ground Truth Points: tensor(2.7413)
+Avg L2 error at Test Points: 9.78016769926971
+Loss: tensor([[-1317422.9960]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.0109)
+Guess Alpha: tensor(0.8181)
+Avg L2 Bias Error: tensor(0.0458)
+Avg L2 error at Ground Truth Points: tensor(2.3863e-05)
+Avg L2 error at Test Points: 0.11139424231195429
+Loss: tensor([[7912.5687]])
+
+tensor([[-7925.6411]], grad_fn=<NegBackward>)
+tensor([[-7927.7305]], grad_fn=<NegBackward>)
+tensor([[-7927.4326]], grad_fn=<NegBackward>)
+tensor([[-7927.6054]], grad_fn=<NegBackward>)
+tensor([[-7927.6763]], grad_fn=<NegBackward>)
+tensor([[-7927.2981]], grad_fn=<NegBackward>)
+tensor([[-7927.2154]], grad_fn=<NegBackward>)
+tensor([[-7927.8977]], grad_fn=<NegBackward>)
+tensor([[-7927.6228]], grad_fn=<NegBackward>)
+tensor([[-7927.6229]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0109)
+Guess Alpha: 0.9452468252788256
+Avg L2 Bias Error: tensor(0.0064)
+Avg L2 error at Ground Truth Points: tensor(6.9531e-06)
+Avg L2 error at Test Points: 0.025565674389531175
+Loss: tensor([[7928.4308]], grad_fn=<NegBackward>)
+
+tensor([[-6676.5420]], grad_fn=<NegBackward>)
+tensor([[-7440.2073]], grad_fn=<NegBackward>)
+tensor([[-7606.0607]], grad_fn=<NegBackward>)
+tensor([[-7697.3742]], grad_fn=<NegBackward>)
+tensor([[-7757.6760]], grad_fn=<NegBackward>)
+tensor([[-7799.9501]], grad_fn=<NegBackward>)
+tensor([[-7830.7222]], grad_fn=<NegBackward>)
+tensor([[-7853.8925]], grad_fn=<NegBackward>)
+tensor([[-7871.7750]], grad_fn=<NegBackward>)
+tensor([[-7885.0566]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0109)
+Guess Alpha: 0.83790594157655
+Avg L2 Bias Error: tensor(0.0372)
+Avg L2 error at Ground Truth Points: tensor(1.8463e-05)
+Avg L2 error at Test Points: 0.08814139782510202
+Loss: tensor([[7896.1536]], grad_fn=<NegBackward>)
+
+11
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.9404)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.9188)
+Avg L2 error at Ground Truth Points: tensor(7.3305)
+Avg L2 error at Test Points: 3.0969631928642682
+Loss: tensor([[-1019161.6636]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.9404)
+Guess Alpha: tensor(0.8694)
+Avg L2 Bias Error: tensor(0.0103)
+Avg L2 error at Ground Truth Points: tensor(0.0022)
+Avg L2 error at Test Points: 0.03074647376578911
+Loss: tensor([[7871.2539]])
+
+tensor([[-7856.3952]], grad_fn=<NegBackward>)
+tensor([[-7878.8851]], grad_fn=<NegBackward>)
+tensor([[-7879.2360]], grad_fn=<NegBackward>)
+tensor([[-7879.2941]], grad_fn=<NegBackward>)
+tensor([[-7879.2310]], grad_fn=<NegBackward>)
+tensor([[-7879.2870]], grad_fn=<NegBackward>)
+tensor([[-7879.2383]], grad_fn=<NegBackward>)
+tensor([[-7879.2259]], grad_fn=<NegBackward>)
+tensor([[-7879.2154]], grad_fn=<NegBackward>)
+tensor([[-7878.8682]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9404)
+Guess Alpha: 0.9143430546385592
+Avg L2 Bias Error: tensor(0.0030)
+Avg L2 error at Ground Truth Points: tensor(0.0012)
+Avg L2 error at Test Points: 0.013233301966367409
+Loss: tensor([[7879.8550]], grad_fn=<NegBackward>)
+
+tensor([[-6571.2171]], grad_fn=<NegBackward>)
+tensor([[-7349.9607]], grad_fn=<NegBackward>)
+tensor([[-7508.7023]], grad_fn=<NegBackward>)
+tensor([[-7607.1904]], grad_fn=<NegBackward>)
+tensor([[-7679.0799]], grad_fn=<NegBackward>)
+tensor([[-7732.7461]], grad_fn=<NegBackward>)
+tensor([[-7774.2096]], grad_fn=<NegBackward>)
+tensor([[-7804.7670]], grad_fn=<NegBackward>)
+tensor([[-7828.8257]], grad_fn=<NegBackward>)
+tensor([[-7846.3827]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9404)
+Guess Alpha: 0.9005376749010823
+Avg L2 Bias Error: tensor(0.0048)
+Avg L2 error at Ground Truth Points: tensor(0.0014)
+Avg L2 error at Test Points: 0.01737617186447845
+Loss: tensor([[7859.5182]], grad_fn=<NegBackward>)
+
+12
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.0436)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.9628)
+Avg L2 error at Ground Truth Points: tensor(1.3558)
+Avg L2 error at Test Points: 2.931809296591791
+Loss: tensor([[-987948.8771]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.0436)
+Guess Alpha: tensor(1.0272)
+Avg L2 Bias Error: tensor(0.0007)
+Avg L2 error at Ground Truth Points: tensor(8.9158e-05)
+Avg L2 error at Test Points: 0.0092353929641881
+Loss: tensor([[7794.4710]])
+
+tensor([[-7778.2389]], grad_fn=<NegBackward>)
+tensor([[-7797.3915]], grad_fn=<NegBackward>)
+tensor([[-7796.9405]], grad_fn=<NegBackward>)
+tensor([[-7796.9115]], grad_fn=<NegBackward>)
+tensor([[-7797.0594]], grad_fn=<NegBackward>)
+tensor([[-7797.1633]], grad_fn=<NegBackward>)
+tensor([[-7796.9139]], grad_fn=<NegBackward>)
+tensor([[-7797.2388]], grad_fn=<NegBackward>)
+tensor([[-7796.9208]], grad_fn=<NegBackward>)
+tensor([[-7796.9760]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0436)
+Guess Alpha: 1.0400917370086422
+Avg L2 Bias Error: tensor(0.0004)
+Avg L2 error at Ground Truth Points: tensor(4.8905e-05)
+Avg L2 error at Test Points: 0.008681584090401977
+Loss: tensor([[7797.7777]], grad_fn=<NegBackward>)
+
+tensor([[-6513.9026]], grad_fn=<NegBackward>)
+tensor([[-7220.5648]], grad_fn=<NegBackward>)
+tensor([[-7384.2335]], grad_fn=<NegBackward>)
+tensor([[-7505.4973]], grad_fn=<NegBackward>)
+tensor([[-7595.6798]], grad_fn=<NegBackward>)
+tensor([[-7660.2621]], grad_fn=<NegBackward>)
+tensor([[-7705.5864]], grad_fn=<NegBackward>)
+tensor([[-7738.6090]], grad_fn=<NegBackward>)
+tensor([[-7761.6550]], grad_fn=<NegBackward>)
+tensor([[-7777.4588]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0436)
+Guess Alpha: 1.0385485307692948
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(5.4396e-05)
+Avg L2 error at Test Points: 0.009051573315167209
+Loss: tensor([[7788.5897]], grad_fn=<NegBackward>)
+
+13
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.1535)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.9386)
+Avg L2 error at Ground Truth Points: tensor(1.6970)
+Avg L2 error at Test Points: 5.5162917912438765
+Loss: tensor([[-1007872.8026]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.1535)
+Guess Alpha: tensor(1.1141)
+Avg L2 Bias Error: tensor(0.0021)
+Avg L2 error at Ground Truth Points: tensor(0.0002)
+Avg L2 error at Test Points: 0.012446369712423768
+Loss: tensor([[7789.5621]])
+
+tensor([[-7681.3728]], grad_fn=<NegBackward>)
+tensor([[-7791.5764]], grad_fn=<NegBackward>)
+tensor([[-7793.6787]], grad_fn=<NegBackward>)
+tensor([[-7793.8431]], grad_fn=<NegBackward>)
+tensor([[-7794.1144]], grad_fn=<NegBackward>)
+tensor([[-7794.0373]], grad_fn=<NegBackward>)
+tensor([[-7794.0023]], grad_fn=<NegBackward>)
+tensor([[-7793.9656]], grad_fn=<NegBackward>)
+tensor([[-7794.2899]], grad_fn=<NegBackward>)
+tensor([[-7794.0564]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1535)
+Guess Alpha: 1.1436847562824357
+Avg L2 Bias Error: tensor(0.0007)
+Avg L2 error at Ground Truth Points: tensor(0.0001)
+Avg L2 error at Test Points: 0.01026340416018303
+Loss: tensor([[7794.7794]], grad_fn=<NegBackward>)
+
+tensor([[-6517.6484]], grad_fn=<NegBackward>)
+tensor([[-7193.3824]], grad_fn=<NegBackward>)
+tensor([[-7374.9875]], grad_fn=<NegBackward>)
+tensor([[-7495.4905]], grad_fn=<NegBackward>)
+tensor([[-7582.4005]], grad_fn=<NegBackward>)
+tensor([[-7645.7559]], grad_fn=<NegBackward>)
+tensor([[-7691.6274]], grad_fn=<NegBackward>)
+tensor([[-7724.8370]], grad_fn=<NegBackward>)
+tensor([[-7749.3427]], grad_fn=<NegBackward>)
+tensor([[-7765.7648]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1535)
+Guess Alpha: 1.1379800628413548
+Avg L2 Bias Error: tensor(0.0008)
+Avg L2 error at Ground Truth Points: tensor(0.0001)
+Avg L2 error at Test Points: 0.010513118621077601
+Loss: tensor([[7777.8002]], grad_fn=<NegBackward>)
+
+14
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.9692)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.8111)
+Avg L2 error at Ground Truth Points: tensor(0.4818)
+Avg L2 error at Test Points: 3.0798995707054324
+Loss: tensor([[-870547.7211]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.9692)
+Guess Alpha: tensor(0.9593)
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(8.0465e-06)
+Avg L2 error at Test Points: 0.013589578083064942
+Loss: tensor([[7884.9041]])
+
+tensor([[-7875.0618]], grad_fn=<NegBackward>)
+tensor([[-7887.1350]], grad_fn=<NegBackward>)
+tensor([[-7887.1692]], grad_fn=<NegBackward>)
+tensor([[-7886.7291]], grad_fn=<NegBackward>)
+tensor([[-7887.1865]], grad_fn=<NegBackward>)
+tensor([[-7886.6877]], grad_fn=<NegBackward>)
+tensor([[-7886.9631]], grad_fn=<NegBackward>)
+tensor([[-7886.8474]], grad_fn=<NegBackward>)
+tensor([[-7887.1873]], grad_fn=<NegBackward>)
+tensor([[-7887.1066]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9692)
+Guess Alpha: 0.9697703284670226
+Avg L2 Bias Error: tensor(0.0004)
+Avg L2 error at Ground Truth Points: tensor(6.1016e-06)
+Avg L2 error at Test Points: 0.013379211931388623
+Loss: tensor([[7887.5828]], grad_fn=<NegBackward>)
+
+tensor([[-6529.3622]], grad_fn=<NegBackward>)
+tensor([[-7264.7893]], grad_fn=<NegBackward>)
+tensor([[-7461.5666]], grad_fn=<NegBackward>)
+tensor([[-7587.5070]], grad_fn=<NegBackward>)
+tensor([[-7675.1548]], grad_fn=<NegBackward>)
+tensor([[-7738.4480]], grad_fn=<NegBackward>)
+tensor([[-7784.7419]], grad_fn=<NegBackward>)
+tensor([[-7818.4884]], grad_fn=<NegBackward>)
+tensor([[-7843.1347]], grad_fn=<NegBackward>)
+tensor([[-7861.2663]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9692)
+Guess Alpha: 0.9691853260530526
+Avg L2 Bias Error: tensor(0.0004)
+Avg L2 error at Ground Truth Points: tensor(6.3796e-06)
+Avg L2 error at Test Points: 0.013322160453115364
+Loss: tensor([[7873.6741]], grad_fn=<NegBackward>)
+
+15
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.0877)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.9299)
+Avg L2 error at Ground Truth Points: tensor(0.4400)
+Avg L2 error at Test Points: 4.655823769758557
+Loss: tensor([[-851181.2863]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.0877)
+Guess Alpha: tensor(1.0646)
+Avg L2 Bias Error: tensor(0.0008)
+Avg L2 error at Ground Truth Points: tensor(2.3389e-05)
+Avg L2 error at Test Points: 0.01279683234640417
+Loss: tensor([[7857.0485]])
+
+tensor([[-7791.4389]], grad_fn=<NegBackward>)
+tensor([[-7860.0184]], grad_fn=<NegBackward>)
+tensor([[-7860.2659]], grad_fn=<NegBackward>)
+tensor([[-7859.8919]], grad_fn=<NegBackward>)
+tensor([[-7859.9207]], grad_fn=<NegBackward>)
+tensor([[-7859.9110]], grad_fn=<NegBackward>)
+tensor([[-7859.9369]], grad_fn=<NegBackward>)
+tensor([[-7860.0522]], grad_fn=<NegBackward>)
+tensor([[-7859.6344]], grad_fn=<NegBackward>)
+tensor([[-7859.7198]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0877)
+Guess Alpha: 1.078827886855698
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(1.3300e-05)
+Avg L2 error at Test Points: 0.012487104995269751
+Loss: tensor([[7860.5964]], grad_fn=<NegBackward>)
+
+tensor([[-6597.0188]], grad_fn=<NegBackward>)
+tensor([[-7253.7396]], grad_fn=<NegBackward>)
+tensor([[-7436.0610]], grad_fn=<NegBackward>)
+tensor([[-7558.9909]], grad_fn=<NegBackward>)
+tensor([[-7646.0372]], grad_fn=<NegBackward>)
+tensor([[-7708.8223]], grad_fn=<NegBackward>)
+tensor([[-7754.5406]], grad_fn=<NegBackward>)
+tensor([[-7788.7004]], grad_fn=<NegBackward>)
+tensor([[-7813.1313]], grad_fn=<NegBackward>)
+tensor([[-7831.1701]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0877)
+Guess Alpha: 1.0777253780649299
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(1.4289e-05)
+Avg L2 error at Test Points: 0.013169827623320942
+Loss: tensor([[7844.2773]], grad_fn=<NegBackward>)
+
+16
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.7993)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.8635)
+Avg L2 error at Ground Truth Points: tensor(1.2975)
+Avg L2 error at Test Points: 3.648032946648484
+Loss: tensor([[-943349.3665]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.7993)
+Guess Alpha: tensor(0.7789)
+Avg L2 Bias Error: tensor(0.0008)
+Avg L2 error at Ground Truth Points: tensor(3.0389e-05)
+Avg L2 error at Test Points: 0.01226896466678489
+Loss: tensor([[7950.4169]])
+
+tensor([[-7696.6974]], grad_fn=<NegBackward>)
+tensor([[-7935.8726]], grad_fn=<NegBackward>)
+tensor([[-7951.9456]], grad_fn=<NegBackward>)
+tensor([[-7953.9901]], grad_fn=<NegBackward>)
+tensor([[-7954.2079]], grad_fn=<NegBackward>)
+tensor([[-7953.9537]], grad_fn=<NegBackward>)
+tensor([[-7954.3376]], grad_fn=<NegBackward>)
+tensor([[-7954.2275]], grad_fn=<NegBackward>)
+tensor([[-7954.1003]], grad_fn=<NegBackward>)
+tensor([[-7954.2489]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.7993)
+Guess Alpha: 0.8021967181530475
+Avg L2 Bias Error: tensor(0.0006)
+Avg L2 error at Ground Truth Points: tensor(1.2820e-05)
+Avg L2 error at Test Points: 0.011353826430568828
+Loss: tensor([[7954.6440]], grad_fn=<NegBackward>)
+
+tensor([[-6534.9533]], grad_fn=<NegBackward>)
+tensor([[-7412.2827]], grad_fn=<NegBackward>)
+tensor([[-7573.6317]], grad_fn=<NegBackward>)
+tensor([[-7675.3468]], grad_fn=<NegBackward>)
+tensor([[-7750.0246]], grad_fn=<NegBackward>)
+tensor([[-7805.5523]], grad_fn=<NegBackward>)
+tensor([[-7846.3689]], grad_fn=<NegBackward>)
+tensor([[-7877.3637]], grad_fn=<NegBackward>)
+tensor([[-7900.4272]], grad_fn=<NegBackward>)
+tensor([[-7917.9837]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.7993)
+Guess Alpha: 0.7957200524184875
+Avg L2 Bias Error: tensor(0.0006)
+Avg L2 error at Ground Truth Points: tensor(1.4453e-05)
+Avg L2 error at Test Points: 0.011337581046157558
+Loss: tensor([[7930.8600]], grad_fn=<NegBackward>)
+
+17
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.9536)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.1882)
+Avg L2 error at Ground Truth Points: tensor(4.1575)
+Avg L2 error at Test Points: 6.249412113479654
+Loss: tensor([[-1242763.0725]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.9536)
+Guess Alpha: tensor(0.8958)
+Avg L2 Bias Error: tensor(0.0027)
+Avg L2 error at Ground Truth Points: tensor(0.0001)
+Avg L2 error at Test Points: 0.017344653549844966
+Loss: tensor([[7857.8495]])
+
+tensor([[-7839.6183]], grad_fn=<NegBackward>)
+tensor([[-7858.0300]], grad_fn=<NegBackward>)
+tensor([[-7858.5123]], grad_fn=<NegBackward>)
+tensor([[-7857.7838]], grad_fn=<NegBackward>)
+tensor([[-7858.1801]], grad_fn=<NegBackward>)
+tensor([[-7857.8578]], grad_fn=<NegBackward>)
+tensor([[-7857.6216]], grad_fn=<NegBackward>)
+tensor([[-7858.2522]], grad_fn=<NegBackward>)
+tensor([[-7857.9017]], grad_fn=<NegBackward>)
+tensor([[-7857.9419]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9536)
+Guess Alpha: 0.9049199996554281
+Avg L2 Bias Error: tensor(0.0020)
+Avg L2 error at Ground Truth Points: tensor(0.0001)
+Avg L2 error at Test Points: 0.015800141260220026
+Loss: tensor([[7858.7367]], grad_fn=<NegBackward>)
+
+tensor([[-6539.5556]], grad_fn=<NegBackward>)
+tensor([[-7329.5292]], grad_fn=<NegBackward>)
+tensor([[-7495.0101]], grad_fn=<NegBackward>)
+tensor([[-7592.8397]], grad_fn=<NegBackward>)
+tensor([[-7661.6855]], grad_fn=<NegBackward>)
+tensor([[-7714.6684]], grad_fn=<NegBackward>)
+tensor([[-7753.9827]], grad_fn=<NegBackward>)
+tensor([[-7784.7975]], grad_fn=<NegBackward>)
+tensor([[-7807.3725]], grad_fn=<NegBackward>)
+tensor([[-7825.0416]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9536)
+Guess Alpha: 0.8852513899357193
+Avg L2 Bias Error: tensor(0.0036)
+Avg L2 error at Ground Truth Points: tensor(0.0002)
+Avg L2 error at Test Points: 0.01956743753457118
+Loss: tensor([[7837.8501]], grad_fn=<NegBackward>)
+
+18
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.1230)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.9473)
+Avg L2 error at Ground Truth Points: tensor(3.1142)
+Avg L2 error at Test Points: 4.366455666405308
+Loss: tensor([[-984538.7973]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.1230)
+Guess Alpha: tensor(1.0652)
+Avg L2 Bias Error: tensor(0.0047)
+Avg L2 error at Ground Truth Points: tensor(0.0008)
+Avg L2 error at Test Points: 0.015718030147964482
+Loss: tensor([[7694.8690]])
+
+tensor([[-7662.3766]], grad_fn=<NegBackward>)
+tensor([[-7700.7909]], grad_fn=<NegBackward>)
+tensor([[-7700.4729]], grad_fn=<NegBackward>)
+tensor([[-7700.3649]], grad_fn=<NegBackward>)
+tensor([[-7700.6422]], grad_fn=<NegBackward>)
+tensor([[-7700.7047]], grad_fn=<NegBackward>)
+tensor([[-7700.8521]], grad_fn=<NegBackward>)
+tensor([[-7700.5751]], grad_fn=<NegBackward>)
+tensor([[-7700.6868]], grad_fn=<NegBackward>)
+tensor([[-7700.5341]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1230)
+Guess Alpha: 1.1073643029475735
+Avg L2 Bias Error: tensor(0.0013)
+Avg L2 error at Ground Truth Points: tensor(0.0003)
+Avg L2 error at Test Points: 0.010691461691699034
+Loss: tensor([[7701.1366]], grad_fn=<NegBackward>)
+
+tensor([[-6421.1748]], grad_fn=<NegBackward>)
+tensor([[-7088.6200]], grad_fn=<NegBackward>)
+tensor([[-7264.1578]], grad_fn=<NegBackward>)
+tensor([[-7386.2401]], grad_fn=<NegBackward>)
+tensor([[-7476.3196]], grad_fn=<NegBackward>)
+tensor([[-7543.8939]], grad_fn=<NegBackward>)
+tensor([[-7593.4157]], grad_fn=<NegBackward>)
+tensor([[-7629.7217]], grad_fn=<NegBackward>)
+tensor([[-7656.5918]], grad_fn=<NegBackward>)
+tensor([[-7675.6724]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1230)
+Guess Alpha: 1.103241449861219
+Avg L2 Bias Error: tensor(0.0015)
+Avg L2 error at Ground Truth Points: tensor(0.0004)
+Avg L2 error at Test Points: 0.011142327504013613
+Loss: tensor([[7689.7947]], grad_fn=<NegBackward>)
+
+19
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.0535)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.7643)
+Avg L2 error at Ground Truth Points: tensor(0.3131)
+Avg L2 error at Test Points: 3.27091565552602
+Loss: tensor([[-816957.5357]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.0535)
+Guess Alpha: tensor(1.0233)
+Avg L2 Bias Error: tensor(0.0014)
+Avg L2 error at Ground Truth Points: tensor(1.9990e-05)
+Avg L2 error at Test Points: 0.009084268210449171
+Loss: tensor([[7877.4457]])
+
+tensor([[-7864.0195]], grad_fn=<NegBackward>)
+tensor([[-7881.1787]], grad_fn=<NegBackward>)
+tensor([[-7881.1431]], grad_fn=<NegBackward>)
+tensor([[-7881.4974]], grad_fn=<NegBackward>)
+tensor([[-7880.9585]], grad_fn=<NegBackward>)
+tensor([[-7881.0551]], grad_fn=<NegBackward>)
+tensor([[-7880.7995]], grad_fn=<NegBackward>)
+tensor([[-7881.2601]], grad_fn=<NegBackward>)
+tensor([[-7881.2437]], grad_fn=<NegBackward>)
+tensor([[-7881.2892]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0535)
+Guess Alpha: 1.0420810461475105
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(1.1883e-05)
+Avg L2 error at Test Points: 0.008127244046284825
+Loss: tensor([[7881.6815]], grad_fn=<NegBackward>)
+
+tensor([[-6637.0317]], grad_fn=<NegBackward>)
+tensor([[-7296.4146]], grad_fn=<NegBackward>)
+tensor([[-7480.7887]], grad_fn=<NegBackward>)
+tensor([[-7600.4918]], grad_fn=<NegBackward>)
+tensor([[-7683.3135]], grad_fn=<NegBackward>)
+tensor([[-7741.9018]], grad_fn=<NegBackward>)
+tensor([[-7784.2417]], grad_fn=<NegBackward>)
+tensor([[-7814.5768]], grad_fn=<NegBackward>)
+tensor([[-7837.2060]], grad_fn=<NegBackward>)
+tensor([[-7853.4693]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0535)
+Guess Alpha: 1.0395240258092602
+Avg L2 Bias Error: tensor(0.0006)
+Avg L2 error at Ground Truth Points: tensor(1.2203e-05)
+Avg L2 error at Test Points: 0.008325235040048597
+Loss: tensor([[7864.7080]], grad_fn=<NegBackward>)
+
+20
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.1189)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.1070)
+Avg L2 error at Ground Truth Points: tensor(2.7286)
+Avg L2 error at Test Points: 4.000385481600895
+Loss: tensor([[-1080543.6562]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.1189)
+Guess Alpha: tensor(1.0793)
+Avg L2 Bias Error: tensor(0.0021)
+Avg L2 error at Ground Truth Points: tensor(0.0002)
+Avg L2 error at Test Points: 0.016281392044008212
+Loss: tensor([[7689.1451]])
+
+tensor([[-7646.4771]], grad_fn=<NegBackward>)
+tensor([[-7694.6812]], grad_fn=<NegBackward>)
+tensor([[-7695.7530]], grad_fn=<NegBackward>)
+tensor([[-7695.4159]], grad_fn=<NegBackward>)
+tensor([[-7695.2754]], grad_fn=<NegBackward>)
+tensor([[-7695.2604]], grad_fn=<NegBackward>)
+tensor([[-7694.8770]], grad_fn=<NegBackward>)
+tensor([[-7694.9316]], grad_fn=<NegBackward>)
+tensor([[-7695.5514]], grad_fn=<NegBackward>)
+tensor([[-7695.0589]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1189)
+Guess Alpha: 1.119977377227903
+Avg L2 Bias Error: tensor(0.0006)
+Avg L2 error at Ground Truth Points: tensor(7.3896e-05)
+Avg L2 error at Test Points: 0.013021385056473858
+Loss: tensor([[7696.1541]], grad_fn=<NegBackward>)
+
+tensor([[-6476.6349]], grad_fn=<NegBackward>)
+tensor([[-7132.5519]], grad_fn=<NegBackward>)
+tensor([[-7300.1237]], grad_fn=<NegBackward>)
+tensor([[-7414.0816]], grad_fn=<NegBackward>)
+tensor([[-7497.2184]], grad_fn=<NegBackward>)
+tensor([[-7557.0553]], grad_fn=<NegBackward>)
+tensor([[-7599.4706]], grad_fn=<NegBackward>)
+tensor([[-7630.6871]], grad_fn=<NegBackward>)
+tensor([[-7653.4180]], grad_fn=<NegBackward>)
+tensor([[-7668.7381]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1189)
+Guess Alpha: 1.1139609400039758
+Avg L2 Bias Error: tensor(0.0007)
+Avg L2 error at Ground Truth Points: tensor(9.1543e-05)
+Avg L2 error at Test Points: 0.01310523977542622
+Loss: tensor([[7679.5004]], grad_fn=<NegBackward>)
+
+21
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.1689)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.1957)
+Avg L2 error at Ground Truth Points: tensor(0.4482)
+Avg L2 error at Test Points: 5.05635825574023
+Loss: tensor([[-1255679.3388]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.1689)
+Guess Alpha: tensor(1.1599)
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(5.9624e-06)
+Avg L2 error at Test Points: 0.011446503291598239
+Loss: tensor([[7707.0466]])
+
+tensor([[-7170.1076]], grad_fn=<NegBackward>)
+tensor([[-7687.4595]], grad_fn=<NegBackward>)
+tensor([[-7706.2503]], grad_fn=<NegBackward>)
+tensor([[-7708.4759]], grad_fn=<NegBackward>)
+tensor([[-7708.0910]], grad_fn=<NegBackward>)
+tensor([[-7709.3177]], grad_fn=<NegBackward>)
+tensor([[-7708.7241]], grad_fn=<NegBackward>)
+tensor([[-7708.4270]], grad_fn=<NegBackward>)
+tensor([[-7708.3612]], grad_fn=<NegBackward>)
+tensor([[-7708.4170]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1689)
+Guess Alpha: 1.1675629093347812
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(4.9549e-06)
+Avg L2 error at Test Points: 0.011349055922824043
+Loss: tensor([[7709.3668]], grad_fn=<NegBackward>)
+
+tensor([[-6449.9274]], grad_fn=<NegBackward>)
+tensor([[-7076.8082]], grad_fn=<NegBackward>)
+tensor([[-7282.8836]], grad_fn=<NegBackward>)
+tensor([[-7419.4276]], grad_fn=<NegBackward>)
+tensor([[-7511.0193]], grad_fn=<NegBackward>)
+tensor([[-7574.6588]], grad_fn=<NegBackward>)
+tensor([[-7619.3005]], grad_fn=<NegBackward>)
+tensor([[-7650.9395]], grad_fn=<NegBackward>)
+tensor([[-7672.7054]], grad_fn=<NegBackward>)
+tensor([[-7687.3620]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.1689)
+Guess Alpha: 1.165688481473175
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(4.9662e-06)
+Avg L2 error at Test Points: 0.011407278556418089
+Loss: tensor([[7697.0696]], grad_fn=<NegBackward>)
+
+22
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.8739)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.0242)
+Avg L2 error at Ground Truth Points: tensor(0.4529)
+Avg L2 error at Test Points: 3.569928926280244
+Loss: tensor([[-895186.8204]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.8739)
+Guess Alpha: tensor(0.8359)
+Avg L2 Bias Error: tensor(0.0007)
+Avg L2 error at Ground Truth Points: tensor(5.3168e-06)
+Avg L2 error at Test Points: 0.010754320092349121
+Loss: tensor([[7878.3807]])
+
+tensor([[-7820.7498]], grad_fn=<NegBackward>)
+tensor([[-7878.8124]], grad_fn=<NegBackward>)
+tensor([[-7878.8753]], grad_fn=<NegBackward>)
+tensor([[-7879.0296]], grad_fn=<NegBackward>)
+tensor([[-7879.3485]], grad_fn=<NegBackward>)
+tensor([[-7878.8735]], grad_fn=<NegBackward>)
+tensor([[-7879.1786]], grad_fn=<NegBackward>)
+tensor([[-7879.4130]], grad_fn=<NegBackward>)
+tensor([[-7878.8091]], grad_fn=<NegBackward>)
+tensor([[-7878.9070]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.8739)
+Guess Alpha: 0.8545399390307409
+Avg L2 Bias Error: tensor(0.0004)
+Avg L2 error at Ground Truth Points: tensor(3.0692e-06)
+Avg L2 error at Test Points: 0.009084349260171442
+Loss: tensor([[7879.8656]], grad_fn=<NegBackward>)
+
+tensor([[-6565.5198]], grad_fn=<NegBackward>)
+tensor([[-7367.5840]], grad_fn=<NegBackward>)
+tensor([[-7527.6410]], grad_fn=<NegBackward>)
+tensor([[-7623.6592]], grad_fn=<NegBackward>)
+tensor([[-7692.2509]], grad_fn=<NegBackward>)
+tensor([[-7742.9877]], grad_fn=<NegBackward>)
+tensor([[-7781.1413]], grad_fn=<NegBackward>)
+tensor([[-7808.9686]], grad_fn=<NegBackward>)
+tensor([[-7830.2252]], grad_fn=<NegBackward>)
+tensor([[-7846.4553]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.8739)
+Guess Alpha: 0.8431233915992872
+Avg L2 Bias Error: tensor(0.0006)
+Avg L2 error at Ground Truth Points: tensor(3.2376e-06)
+Avg L2 error at Test Points: 0.010136416038104527
+Loss: tensor([[7857.8312]], grad_fn=<NegBackward>)
+
+23
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.0497)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.9519)
+Avg L2 error at Ground Truth Points: tensor(35.4921)
+Avg L2 error at Test Points: 6.488563727783034
+Loss: tensor([[-1004205.6364]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.0497)
+Guess Alpha: tensor(0.8702)
+Avg L2 Bias Error: tensor(0.0149)
+Avg L2 error at Ground Truth Points: tensor(0.0074)
+Avg L2 error at Test Points: 0.04866441477621118
+Loss: tensor([[7797.2159]])
+
+tensor([[-7807.4825]], grad_fn=<NegBackward>)
+tensor([[-7807.7119]], grad_fn=<NegBackward>)
+tensor([[-7807.6775]], grad_fn=<NegBackward>)
+tensor([[-7807.8422]], grad_fn=<NegBackward>)
+tensor([[-7807.9037]], grad_fn=<NegBackward>)
+tensor([[-7807.6327]], grad_fn=<NegBackward>)
+tensor([[-7807.8359]], grad_fn=<NegBackward>)
+tensor([[-7807.4625]], grad_fn=<NegBackward>)
+tensor([[-7808.1087]], grad_fn=<NegBackward>)
+tensor([[-7807.7860]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0497)
+Guess Alpha: 0.9822500917298721
+Avg L2 Bias Error: tensor(0.0026)
+Avg L2 error at Ground Truth Points: tensor(0.0048)
+Avg L2 error at Test Points: 0.017164750077279137
+Loss: tensor([[7808.3236]], grad_fn=<NegBackward>)
+
+tensor([[-6587.7715]], grad_fn=<NegBackward>)
+tensor([[-7336.3965]], grad_fn=<NegBackward>)
+tensor([[-7503.0091]], grad_fn=<NegBackward>)
+tensor([[-7587.7687]], grad_fn=<NegBackward>)
+tensor([[-7644.0606]], grad_fn=<NegBackward>)
+tensor([[-7684.2804]], grad_fn=<NegBackward>)
+tensor([[-7713.3419]], grad_fn=<NegBackward>)
+tensor([[-7735.2029]], grad_fn=<NegBackward>)
+tensor([[-7752.3998]], grad_fn=<NegBackward>)
+tensor([[-7765.4714]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0497)
+Guess Alpha: 0.8236977246376714
+Avg L2 Bias Error: tensor(0.0234)
+Avg L2 error at Ground Truth Points: tensor(0.0110)
+Avg L2 error at Test Points: 0.07493990449575876
+Loss: tensor([[7775.9860]], grad_fn=<NegBackward>)
+
+24
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.8149)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.0118)
+Avg L2 error at Ground Truth Points: tensor(8.4926)
+Avg L2 error at Test Points: 3.0582945296865587
+Loss: tensor([[-1012630.0358]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.8149)
+Guess Alpha: tensor(0.6746)
+Avg L2 Bias Error: tensor(0.0164)
+Avg L2 error at Ground Truth Points: tensor(0.0059)
+Avg L2 error at Test Points: 0.06649702401494227
+Loss: tensor([[7925.4594]])
+
+tensor([[-7874.5088]], grad_fn=<NegBackward>)
+tensor([[-7934.5892]], grad_fn=<NegBackward>)
+tensor([[-7941.0823]], grad_fn=<NegBackward>)
+tensor([[-7941.9584]], grad_fn=<NegBackward>)
+tensor([[-7942.2987]], grad_fn=<NegBackward>)
+tensor([[-7941.9617]], grad_fn=<NegBackward>)
+tensor([[-7942.1573]], grad_fn=<NegBackward>)
+tensor([[-7942.2326]], grad_fn=<NegBackward>)
+tensor([[-7942.3488]], grad_fn=<NegBackward>)
+tensor([[-7942.4004]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.8149)
+Guess Alpha: 0.7714535376187911
+Avg L2 Bias Error: tensor(0.0017)
+Avg L2 error at Ground Truth Points: tensor(0.0010)
+Avg L2 error at Test Points: 0.012423677941077458
+Loss: tensor([[7943.0313]], grad_fn=<NegBackward>)
+
+tensor([[-6588.6181]], grad_fn=<NegBackward>)
+tensor([[-7447.9566]], grad_fn=<NegBackward>)
+tensor([[-7622.7001]], grad_fn=<NegBackward>)
+tensor([[-7709.3496]], grad_fn=<NegBackward>)
+tensor([[-7764.9689]], grad_fn=<NegBackward>)
+tensor([[-7806.4868]], grad_fn=<NegBackward>)
+tensor([[-7838.8046]], grad_fn=<NegBackward>)
+tensor([[-7864.2688]], grad_fn=<NegBackward>)
+tensor([[-7884.5980]], grad_fn=<NegBackward>)
+tensor([[-7901.3796]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.8149)
+Guess Alpha: 0.7215600273278752
+Avg L2 Bias Error: tensor(0.0070)
+Avg L2 error at Ground Truth Points: tensor(0.0024)
+Avg L2 error at Test Points: 0.03000891219530776
+Loss: tensor([[7913.2007]], grad_fn=<NegBackward>)
+
+25
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.7066)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(0.8367)
+Avg L2 error at Ground Truth Points: tensor(0.8824)
+Avg L2 error at Test Points: 7.631651428300932
+Loss: tensor([[-939203.7529]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.7066)
+Guess Alpha: tensor(0.7826)
+Avg L2 Bias Error: tensor(0.0064)
+Avg L2 error at Ground Truth Points: tensor(0.0001)
+Avg L2 error at Test Points: 0.03537527776777948
+Loss: tensor([[8046.7157]])
+
+tensor([[-7906.1539]], grad_fn=<NegBackward>)
+tensor([[-8025.3725]], grad_fn=<NegBackward>)
+tensor([[-8049.9777]], grad_fn=<NegBackward>)
+tensor([[-8058.0568]], grad_fn=<NegBackward>)
+tensor([[-8061.2080]], grad_fn=<NegBackward>)
+tensor([[-8062.1599]], grad_fn=<NegBackward>)
+tensor([[-8062.5103]], grad_fn=<NegBackward>)
+tensor([[-8062.4972]], grad_fn=<NegBackward>)
+tensor([[-8062.3871]], grad_fn=<NegBackward>)
+tensor([[-8062.8030]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.7066)
+Guess Alpha: 0.6989583012749663
+Avg L2 Bias Error: tensor(0.0004)
+Avg L2 error at Ground Truth Points: tensor(2.9928e-05)
+Avg L2 error at Test Points: 0.016442741027810202
+Loss: tensor([[8063.3078]], grad_fn=<NegBackward>)
+
+tensor([[-6684.0875]], grad_fn=<NegBackward>)
+tensor([[-7587.3434]], grad_fn=<NegBackward>)
+tensor([[-7768.2201]], grad_fn=<NegBackward>)
+tensor([[-7855.6777]], grad_fn=<NegBackward>)
+tensor([[-7910.0423]], grad_fn=<NegBackward>)
+tensor([[-7948.6105]], grad_fn=<NegBackward>)
+tensor([[-7977.2360]], grad_fn=<NegBackward>)
+tensor([[-7998.9174]], grad_fn=<NegBackward>)
+tensor([[-8015.7500]], grad_fn=<NegBackward>)
+tensor([[-8028.1178]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.7066)
+Guess Alpha: 0.6526309481394982
+Avg L2 Bias Error: tensor(0.0035)
+Avg L2 error at Ground Truth Points: tensor(2.4450e-05)
+Avg L2 error at Test Points: 0.02892385742241615
+Loss: tensor([[8037.6919]], grad_fn=<NegBackward>)
+
+26
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(1.0016)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.0220)
+Avg L2 error at Ground Truth Points: tensor(28.3735)
+Avg L2 error at Test Points: 4.357968401206321
+Loss: tensor([[-1104737.3427]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(1.0016)
+Guess Alpha: tensor(0.7866)
+Avg L2 Bias Error: tensor(0.0561)
+Avg L2 error at Ground Truth Points: tensor(0.0050)
+Avg L2 error at Test Points: 0.1863796217059344
+Loss: tensor([[7778.1212]])
+
+tensor([[-7797.3619]], grad_fn=<NegBackward>)
+tensor([[-7800.7537]], grad_fn=<NegBackward>)
+tensor([[-7800.8770]], grad_fn=<NegBackward>)
+tensor([[-7800.5303]], grad_fn=<NegBackward>)
+tensor([[-7800.9099]], grad_fn=<NegBackward>)
+tensor([[-7800.5898]], grad_fn=<NegBackward>)
+tensor([[-7800.5843]], grad_fn=<NegBackward>)
+tensor([[-7800.6967]], grad_fn=<NegBackward>)
+tensor([[-7800.8706]], grad_fn=<NegBackward>)
+tensor([[-7800.7330]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0016)
+Guess Alpha: 0.9356232685815294
+Avg L2 Bias Error: tensor(0.0076)
+Avg L2 error at Ground Truth Points: tensor(0.0036)
+Avg L2 error at Test Points: 0.02784878550809712
+Loss: tensor([[7801.5394]], grad_fn=<NegBackward>)
+
+tensor([[-6486.4375]], grad_fn=<NegBackward>)
+tensor([[-7257.7875]], grad_fn=<NegBackward>)
+tensor([[-7443.1732]], grad_fn=<NegBackward>)
+tensor([[-7547.7299]], grad_fn=<NegBackward>)
+tensor([[-7617.8589]], grad_fn=<NegBackward>)
+tensor([[-7666.3813]], grad_fn=<NegBackward>)
+tensor([[-7701.8390]], grad_fn=<NegBackward>)
+tensor([[-7728.6468]], grad_fn=<NegBackward>)
+tensor([[-7748.6789]], grad_fn=<NegBackward>)
+tensor([[-7763.6346]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(1.0016)
+Guess Alpha: 0.83320619759487
+Avg L2 Bias Error: tensor(0.0353)
+Avg L2 error at Ground Truth Points: tensor(0.0045)
+Avg L2 error at Test Points: 0.10943853534790916
+Loss: tensor([[7775.6227]], grad_fn=<NegBackward>)
+
+27
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.9392)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.1869)
+Avg L2 error at Ground Truth Points: tensor(1.3563)
+Avg L2 error at Test Points: 6.459104815439497
+Loss: tensor([[-1284718.9540]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.9392)
+Guess Alpha: tensor(0.8850)
+Avg L2 Bias Error: tensor(0.0011)
+Avg L2 error at Ground Truth Points: tensor(0.0001)
+Avg L2 error at Test Points: 0.01672076777406371
+Loss: tensor([[7865.0688]])
+
+tensor([[-7838.0348]], grad_fn=<NegBackward>)
+tensor([[-7870.7862]], grad_fn=<NegBackward>)
+tensor([[-7870.7643]], grad_fn=<NegBackward>)
+tensor([[-7870.5041]], grad_fn=<NegBackward>)
+tensor([[-7870.5463]], grad_fn=<NegBackward>)
+tensor([[-7870.6283]], grad_fn=<NegBackward>)
+tensor([[-7871.0406]], grad_fn=<NegBackward>)
+tensor([[-7869.9122]], grad_fn=<NegBackward>)
+tensor([[-7870.6540]], grad_fn=<NegBackward>)
+tensor([[-7870.6329]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9392)
+Guess Alpha: 0.9165113171726833
+Avg L2 Bias Error: tensor(0.0004)
+Avg L2 error at Ground Truth Points: tensor(3.9717e-05)
+Avg L2 error at Test Points: 0.011911244285151239
+Loss: tensor([[7871.3958]], grad_fn=<NegBackward>)
+
+tensor([[-6593.0224]], grad_fn=<NegBackward>)
+tensor([[-7334.1447]], grad_fn=<NegBackward>)
+tensor([[-7491.5809]], grad_fn=<NegBackward>)
+tensor([[-7597.2256]], grad_fn=<NegBackward>)
+tensor([[-7674.6721]], grad_fn=<NegBackward>)
+tensor([[-7730.8830]], grad_fn=<NegBackward>)
+tensor([[-7771.6654]], grad_fn=<NegBackward>)
+tensor([[-7802.0247]], grad_fn=<NegBackward>)
+tensor([[-7823.7430]], grad_fn=<NegBackward>)
+tensor([[-7840.0883]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.9392)
+Guess Alpha: 0.908773364300464
+Avg L2 Bias Error: tensor(0.0006)
+Avg L2 error at Ground Truth Points: tensor(4.5444e-05)
+Avg L2 error at Test Points: 0.012788188555115041
+Loss: tensor([[7851.7082]], grad_fn=<NegBackward>)
+
+28
+-------Basic Gaussian Process Regression-------
+True Alpha: tensor(0.8898)
+Guess Alpha: tensor(1)
+Avg L2 Bias Error: tensor(1.1209)
+Avg L2 error at Ground Truth Points: tensor(0.3430)
+Avg L2 error at Test Points: 6.5831113440556575
+Loss: tensor([[-1082234.9338]])
+
+-------Gaussian Process Regression calculating both a changing bias and a chi alpha-------
+True Alpha: tensor(0.8898)
+Guess Alpha: tensor(0.8807)
+Avg L2 Bias Error: tensor(0.0005)
+Avg L2 error at Ground Truth Points: tensor(2.7233e-05)
+Avg L2 error at Test Points: 0.013388755795457976
+Loss: tensor([[7906.6408]])
+
+tensor([[-7671.8270]], grad_fn=<NegBackward>)
+tensor([[-7906.2176]], grad_fn=<NegBackward>)
+tensor([[-7907.7071]], grad_fn=<NegBackward>)
+tensor([[-7907.0776]], grad_fn=<NegBackward>)
+tensor([[-7907.4910]], grad_fn=<NegBackward>)
+tensor([[-7907.3716]], grad_fn=<NegBackward>)
+tensor([[-7907.0755]], grad_fn=<NegBackward>)
+tensor([[-7907.0495]], grad_fn=<NegBackward>)
+tensor([[-7907.1745]], grad_fn=<NegBackward>)
+tensor([[-7906.9445]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.8898)
+Guess Alpha: 0.8873419564049236
+Avg L2 Bias Error: tensor(0.0004)
+Avg L2 error at Ground Truth Points: tensor(1.8343e-05)
+Avg L2 error at Test Points: 0.01334797765200436
+Loss: tensor([[7907.9318]], grad_fn=<NegBackward>)
+
+tensor([[-6595.5680]], grad_fn=<NegBackward>)
+tensor([[-7365.4951]], grad_fn=<NegBackward>)
+tensor([[-7529.0687]], grad_fn=<NegBackward>)
+tensor([[-7640.8290]], grad_fn=<NegBackward>)
+tensor([[-7718.3023]], grad_fn=<NegBackward>)
+tensor([[-7773.3325]], grad_fn=<NegBackward>)
+tensor([[-7812.7416]], grad_fn=<NegBackward>)
+tensor([[-7841.6806]], grad_fn=<NegBackward>)
+tensor([[-7862.5903]], grad_fn=<NegBackward>)
+tensor([[-7878.1653]], grad_fn=<NegBackward>)
+-------Gaussian Process Regression Optimizing alpha, bias and Theta-------
+True Alpha: tensor(0.8898)
+Guess Alpha: 0.8873554392403518
+Avg L2 Bias Error: tensor(0.0004)
+Avg L2 error at Ground Truth Points: tensor(2.0144e-05)
+Avg L2 error at Test Points: 0.013335570336184726
+Loss: tensor([[7889.0091]], grad_fn=<NegBackward>)
+
+29
+Number of trials: 30
+Number of sensors: 100
+Number of GT sensors: 2
+[ 1.01834161e-01  9.77082900e-01  4.70920820e+00  5.29554518e+00
+ -1.01957884e+06]
+[6.89021240e-02 8.40947046e-03 1.14300125e-03 3.28222080e-02
+ 7.84423865e+03]
+[2.12834933e-02 1.55486916e-03 4.91745822e-04 1.41539726e-02
+ 7.85214816e+03]
+[5.13512537e-02 5.94468846e-03 9.26544896e-04 2.57041368e-02
+ 7.83117846e+03]
+tensor([0.0017, 0.0017])

@@ -28,8 +28,9 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
 
             def space_kernel(self, X, Y):
                 kernel = theta_not * torch.exp(
-                    -((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
-                    - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2))
+                    - ((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
+                    - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
+                    - ((X.T[2].repeat(len(Y), 1) - Y.T[2].repeat(len(X), 1).T) ** 2) / (2 * self.theta_alt ** 2))
                 return kernel
 
             def time_kernel(self, X, Y):
@@ -40,7 +41,8 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 kern = theta_not * torch.exp(
                     - ((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
                     - ((X.T[1].repeat(len(Y), 1) - Y.T[1].repeat(len(X), 1).T) ** 2) / (2 * self.theta_space ** 2)
-                    - ((X.T[2].repeat(len(Y), 1) - Y.T[2].repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
+                    - ((X.T[2].repeat(len(Y), 1) - Y.T[2].repeat(len(X), 1).T) ** 2) / (2 * self.theta_alt ** 2)
+                    - ((X.T[3].repeat(len(Y), 1) - Y.T[3].repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
                 return kern
 
             # This is the MAP Estimate of the GP
@@ -101,7 +103,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
         with torch.no_grad():
             holder = theta_model(Xt, Yt.T)
 
-        self.type = "Gaussian Process Regression Optimizing alpha and calculating bias"
+        self.type = "Gaussian Process Regression Optimizing alpha, bias and Theta"
         self.space_theta = theta_model.theta_space.detach().clone()
         self.time_theta = theta_model.theta_time.detach().clone()
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))

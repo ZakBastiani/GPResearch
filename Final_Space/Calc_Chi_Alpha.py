@@ -69,30 +69,30 @@ class CalcAlpha(Gaussian_Process.GaussianProcess):
                                                    torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
                                                    len(space_X), len(time_X), theta_not)
 
-        # # Building a graph showing the loss function for values of alpha to see how good our calc_both is
-        # alpha_range = torch.linspace(0.95, 1.15, 100)
-        # y = []
-        # ll = 0
-        # for a in alpha_range:
-        #     noise_lag = noise_sd / a
-        #     l = MAPEstimate.map_estimate_torch_chi2(X, Y, Xt, Yt, self.bias.flatten(), a, noise_sd,
-        #                                             self.Sigma, space_kernel, time_kernel, kernel, v, t2,
-        #                                             torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
-        #                                             len(space_X), len(time_X), theta_not)
-        #     y.append(l)
-        #     if l > ll:
-        #         ll = l
-        # fig, ax = plt.subplots(figsize=(12, 6))
-        # ax.plot(alpha_range, y, 'b-')
-        # chi2loss =  MAPEstimate.map_estimate_torch_chi2(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise_sd,
-        #                                                 self.Sigma, space_kernel, time_kernel, kernel, v, t2,
-        #                                                 torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
-        #                                                 len(space_X), len(time_X), theta_not)
-        # ax.plot(self.alpha, chi2loss, marker='o')
-        # # plt.ylim([1000, 2500])
-        # plt.title("Calc loss based on chi2 alpha with true bias")
-        # plt.show()
-        # print(ll)
+        # Building a graph showing the loss function for values of alpha to see how good our calc_both is
+        alpha_range = torch.linspace(0.95, 1.15, 100)
+        y = []
+        ll = 0
+        for a in alpha_range:
+            noise_lag = noise_sd / a
+            l = MAPEstimate.map_estimate_torch_chi2(X, Y, Xt, Yt, self.bias.flatten(), a, noise_sd,
+                                                    self.Sigma, space_kernel, time_kernel, kernel, v, t2,
+                                                    torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
+                                                    len(space_X), len(time_X), theta_not)
+            y.append(l)
+            if l > ll:
+                ll = l
+        fig, ax = plt.subplots(figsize=(12, 6))
+        ax.plot(alpha_range, y, 'b-')
+        chi2loss = MAPEstimate.map_estimate_torch_chi2(X, Y, Xt, Yt, self.bias.flatten(), self.alpha, noise_sd,
+                                                        self.Sigma, space_kernel, time_kernel, kernel, v, t2,
+                                                        torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X)),
+                                                        len(space_X), len(time_X), theta_not)
+        ax.plot(self.alpha, chi2loss, marker='o')
+        # plt.ylim([1000, 2500])
+        plt.title("Calc loss based on chi2 alpha with true bias")
+        plt.show()
+        print(ll)
 
 
 

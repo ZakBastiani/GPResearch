@@ -22,7 +22,7 @@ N_sensors = 50  # Number of sensors
 N_true_sensors = 2  # Number of ground truth sensor points
 N_time = 10  # Number of time samples
 N_true_time = 10  # Number of gt time samples
-noise_sd = 0.2  # random noise in the system Standard Deviation
+noise_sd = 0.01  # random noise in the system Standard Deviation
 
 space_range = 10
 time_range = 10
@@ -72,7 +72,7 @@ def kernel(X, Y):
 
 
 def bias_kernel(X, Y):
-    kern = bias_sd * torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T) ** 2) / (2 * theta_sensor_time_bias ** 2))
+    kern = (bias_sd**2) * torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T) ** 2) / (2 * theta_sensor_time_bias ** 2))
     return kern
 
 
@@ -169,13 +169,13 @@ for i in range(0, N_trials):
     # calc_normal_alpha_gt_estimate = calc_normal_alpha.build(true_sensors, true_sensor_time)
     # calc_normal_alpha_errors += calc_normal_alpha.print_error(alpha, sensor_bias, gaussian.underlying_data, calc_normal_alpha_estimate, true_data, calc_normal_alpha_gt_estimate)
     #
-    # # Building a GP that predicts a inverse chi squared alpha given bias
-    # calc_chi_alpha = Calc_Chi_Alpha.CalcAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
-    #                                                 space_kernel, time_kernel, kernel, noise_sd, theta_not, v, t2,
-    #                                                 sensor_bias, bias_kernel)
-    # calc_chi_alpha_estimate = calc_chi_alpha.build(gaussian.space, gaussian.time)
-    # calc_chi_alpha_gt_estimate = calc_chi_alpha.build(true_sensors, true_sensor_time)
-    # calc_chi_alpha_errors += calc_chi_alpha.print_error(alpha, sensor_bias, gaussian.underlying_data, calc_chi_alpha_estimate, true_data, calc_chi_alpha_gt_estimate)
+    # Building a GP that predicts a inverse chi squared alpha given bias
+    calc_chi_alpha = Calc_Chi_Alpha.CalcAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                                                    space_kernel, time_kernel, kernel, noise_sd, theta_not, v, t2,
+                                                    sensor_bias, bias_kernel)
+    calc_chi_alpha_estimate = calc_chi_alpha.build(gaussian.space, gaussian.time)
+    calc_chi_alpha_gt_estimate = calc_chi_alpha.build(true_sensors, true_sensor_time)
+    calc_chi_alpha_errors += calc_chi_alpha.print_error(alpha, sensor_bias, gaussian.underlying_data, calc_chi_alpha_estimate, true_data, calc_chi_alpha_gt_estimate)
 
     # # Building a GP that predicts the bias but is given alpha
     # changing_bias_gp = Calc_Bias_Changing_In_Time.ChangingBias(sensors, sensor_time, data, true_sensors, sensor_time,
