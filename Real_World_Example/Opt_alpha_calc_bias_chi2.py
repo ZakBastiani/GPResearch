@@ -25,8 +25,9 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 self.N_time = N_time
                 self.bias = np.zeros(len(space_X) * len(time_X))
                 self.alpha = nn.Parameter(torch.tensor(1.0))
-                self.theta_space = torch.tensor(2.0)
-                self.theta_time = torch.tensor(1.0)
+                self.theta_space = torch.tensor(4000.0)
+                self.theta_time = torch.tensor(0.25)
+                self.theta_alt = torch.tensor(100.0)
                 self.theta_not = theta_not
 
             def space_kernel(self, X, Y):
