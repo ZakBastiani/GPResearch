@@ -1,7 +1,9 @@
 import math
 import torch
+import numpy as np
 import pandas as pd
 from Real_World_Example import Opt_all_but_bias_chi2
+from Real_World_Example import Opt_alpha_calc_bias_chi2
 
 space = torch.tensor(pd.read_csv('real_data/space_coords.csv').to_numpy())
 time = torch.tensor(pd.read_csv('real_data/time_coords.csv').to_numpy())
@@ -30,12 +32,24 @@ space_theta = 4000  # meters
 time_theta = 0.25  # hours
 alt_theta = 100  # meters
 
+
 def bias_kernel(X, Y):
     kern = (bias_sd**2) * torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T) ** 2) / (2 * theta_sensor_time_bias ** 2))
     return kern
 
 
+opt_alpha = Opt_alpha_calc_bias_chi2.OptAlphaCalcBias(space, time, data,  gt_readings, gt_data,
+                                                      noise_sd, theta_not, bias_kernel, v, t2)
+
+print("Opt_Alpha Alpha: " + str(opt_alpha.alpha))
+pd.DataFrame(opt_alpha.bias.numpy()).to_csv('model\optalpha_bias.csv', header=False, index=False)
+
 opt_all_chi2 = Opt_all_but_bias_chi2.OptAll(space, time, data, gt_readings, gt_data, noise_sd,
                                             theta_not, bias_kernel, v, t2)
-# Need to figure out how I want to save and validate the model
-print(opt_all_chi2.alpha)
+print("Opt_All Alpha: " + str(opt_all_chi2.alpha))
+print("Opt_All Space Theta: " + str(opt_all_chi2.space_theta))
+print("Opt_All Time Theta: " + str(opt_all_chi2.time_theta))
+print("Opt_All Alt Theta: " + str(opt_all_chi2.alt_theta))
+pd.DataFrame(opt_all_chi2.bias.numpy()).to_csv('model\optall_bias.csv', header=False, index=False)
+
+

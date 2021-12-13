@@ -10,7 +10,7 @@ from Final_Space import Opt_all_but_bias_chi2
 
 # Variables that control the space
 N_sensors = 50  # Number of sensors
-N_true_sensors = 0  # Number of ground truth sensor points
+N_true_sensors = 2  # Number of ground truth sensor points
 N_time = 10  # Number of time samples
 N_true_time = 10  # Number of gt time samples
 noise_sd = 0.01  # random noise in the system Standard Deviation
@@ -116,13 +116,13 @@ for i in range(0, N_trials):
     data = alpha * gaussian.sensor_data + sensor_bias + noise
     true_data = gaussian.gt_sensor_data
 
-    # Building a basic GP
-    gp = Gaussian_Process.GaussianProcess(sensors, sensor_time, data, true_sensors, true_sensor_time, true_data,
-                                          space_kernel, time_kernel, kernel, noise_sd, N_sensors, alpha, alpha_mean, alpha_sd, bias_kernel, theta_not)
-    estimate = gp.build(gaussian.space, gaussian.time)
-    gt_estimate = gp.build(true_sensors, true_sensor_time)
-    gp_error += gp.print_error(alpha, sensor_bias, gaussian.underlying_data, estimate, gaussian.gt_sensor_data, gt_estimate)
-    # gp.display(gaussian.space, gaussian.time, estimate, space_points, time_points, "Basic Gaussian Process Model")
+    # # Building a basic GP
+    # gp = Gaussian_Process.GaussianProcess(sensors, sensor_time, data, true_sensors, true_sensor_time, true_data,
+    #                                       space_kernel, time_kernel, kernel, noise_sd + bias_sd, N_sensors, alpha, alpha_mean, alpha_sd, bias_kernel, theta_not)
+    # estimate = gp.build(gaussian.space, gaussian.time)
+    # gt_estimate = gp.build(true_sensors, true_sensor_time)
+    # gp_error += gp.print_error(alpha, sensor_bias, gaussian.underlying_data, estimate, gaussian.gt_sensor_data, gt_estimate)
+    # # gp.display(gaussian.space, gaussian.time, estimate, space_points, time_points, "Basic Gaussian Process Model")
 
     # Building a GP that predicts both bias and alpha using lagging variables
     calc_both_chi_alpha_gp = Calc_Chi_Alpha_Calc_Bias.CalcBothChiAlpha(sensors, sensor_time, data, true_sensors, sensor_time, true_data,

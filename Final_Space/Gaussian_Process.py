@@ -79,9 +79,8 @@ class GaussianProcess:
         # print("Guess Bias: " + str(self.bias))
         bias_error = sum(((self.bias - true_bias) ** 2).flatten()) / len(true_bias.flatten())
         print("Avg L2 Bias Error: " + str(bias_error))
-        gt_error = 0
-        # gt_error = sum(((gt_data - gt_guess) ** 2).flatten()) / (len(gt_guess.flatten()))
-        # print("Avg L2 error at Ground Truth Points: " + str(gt_error))
+        gt_error = sum(((gt_data - gt_guess) ** 2).flatten()) / (len(gt_guess.flatten()))
+        print("Avg L2 error at Ground Truth Points: " + str(gt_error))
         error = sum(((true_y - guess_y) ** 2).flatten()) / (len(guess_y.flatten()))
         print("Avg L2 error at Test Points: " + str(error))
         print("Loss: " + str(self.loss))

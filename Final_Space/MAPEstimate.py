@@ -10,7 +10,6 @@ def map_estimate_torch(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kernel, ti
     torch.set_default_dtype(torch.float64)
     Sigma_hat = alpha**2 * Sigma + (noise**2) * torch.eye(N_sensors*N_time)
     sigma_hat_inv = torch.inverse(Sigma_hat)
-    bias_sigma = bias_sigma
 
     chunk1 = -(1/2) * (torch.logdet(Sigma_hat)  # currently giving -inf
                        + (Y - bias).T @ sigma_hat_inv @ (Y - bias)
@@ -52,7 +51,6 @@ def map_estimate_torch_chi2(X, Y, Xt, Yt, bias, alpha, noise, Sigma, space_kerne
     torch.set_default_dtype(torch.float64)
     Sigma_hat = alpha**2 * Sigma + (noise**2) * torch.eye(N_sensors*N_time)
     sigma_hat_inv = torch.inverse(Sigma_hat)
-    bias_sigma = bias_sigma
 
     chunk1 = -(1/2) * (torch.logdet(Sigma_hat)  # currently giving -inf
                        + (Y - bias).T @ sigma_hat_inv @ (Y - bias)

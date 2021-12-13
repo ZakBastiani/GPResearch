@@ -9,7 +9,7 @@ import json
 def latlonToUTM(lat, lon):
     return utm.from_latlon(lat, lon)
 
-f = open('real_data/DAQ.json',)
+f = open('real_data/DAQ-March-Dust.json',)
 gt_data = json.load(f)
 
 start = datetime.datetime(2000, 1, 1, 0, 0, 0, 0)

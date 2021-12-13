@@ -4,18 +4,21 @@ import matplotlib.pyplot as plt
 import torch
 from torch import nn
 from Final_Space import Gaussian_Process
-from Final_Space import MAPEstimate
+from Real_World_Example import MAPEstimate
+from Real_World_Example import quick_inv
 
 
 class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
-    def __init__(self, space_X, time_X, _Y, space_Xt, time_Xt, _Yt,
+    def __init__(self, space_X, time_X, _Y, Xt, Yt,
                  noise_sd, theta_not, bias_kernel, v, t2):
         N_sensors = len(space_X)
         N_time = len(time_X)
 
         class theta_opt(nn.Module):
-            def __init__(self, X, Y, N_sensors, N_time):
+            def __init__(self, space_X, time_X, X, Y, N_sensors, N_time):
                 super(theta_opt, self).__init__()
+                self.space_X = space_X
+                self.time_X = time_X
                 self.X = X
                 self.Y = Y
                 self.N_sensors = N_sensors
@@ -47,24 +50,26 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
 
             # This is the MAP Estimate of the GP
             def forward(self, Xt, Yt):
-                sigma = self.kernel(self.X, self.X)
-                noise_lag = noise_sd/self.alpha
-                sigma_inv = torch.linalg.inv(sigma + (noise_lag ** 2) * torch.eye(len(sigma)))
+                space_k = self.space_kernel(self.space_X, self.space_X)
+                time_k = self.time_kernel(self.time_X, self.time_X)
+                sigma = torch.kron(time_k, space_k)
+                sigma_inv = quick_inv.quick_inv(space_k, time_k, self.alpha, self.noise_sd)
                 bias_sigma = torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X))
+
                 # Build and calc A and C
                 A = torch.zeros((N_sensors * N_time, N_sensors * N_time))
                 C = torch.zeros((1, N_sensors * N_time))
                 current_C = 0
                 for n in range(len(Xt)):
-                    k_star = self.kernel(Xt[n].unsqueeze(0), X)
+                    k_star = self.alpha * self.kernel(Xt[n].unsqueeze(0), X)
                     holder = (k_star.T @ sigma_inv @ k_star)[0][0]
                     holder2 = (k_star.T @ sigma_inv).T @ (k_star.T @ sigma_inv)
                     A += holder2 / (self.theta_not - holder)
                     current_C += ((k_star.T @ sigma_inv @ Y) * (k_star.T @ sigma_inv)
-                                  - self.alpha * Yt[n] * (k_star.T @ sigma_inv)) / (self.theta_not - holder)
-                A += (sigma_inv).T
+                                  - Yt[n] * (k_star.T @ sigma_inv)) / (self.theta_not - holder)
+                A += sigma_inv.T
 
-                A += (self.alpha ** 2) * torch.linalg.inv(bias_sigma)
+                A += torch.linalg.inv(bias_sigma)
                 C[0] = Y.T @ sigma_inv + current_C
 
                 # Inverse A and multiply it by C
@@ -73,21 +78,16 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 self.bias = b.flatten()
 
                 return MAPEstimate.map_estimate_torch_chi2(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise_sd,
-                                                           sigma, self.space_kernel, self.time_kernel, self.kernel,
-                                                           v, t2, bias_sigma,
+                                                           sigma, sigma_inv, self.space_kernel, self.time_kernel,
+                                                           self.kernel, v, t2, bias_sigma,
                                                            len(space_X), len(time_X), self.theta_not)
 
-
-        X = torch.cat((space_X.repeat(len(time_Xt), 1),
-                       time_Xt.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
+        X = torch.cat((space_X.repeat(len(time_X), 1),
+                       time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
         Y = _Y.flatten()
 
-        Xt = torch.cat((space_Xt.repeat(len(time_X), 1),
-                        time_X.repeat_interleave(len(space_Xt)).repeat(1, 1).T), 1)
-        Yt = _Yt.flatten()
-
         # setting the model and then using torch to optimize
-        theta_model = theta_opt(X, Y, len(space_X), len(time_X))
+        theta_model = theta_opt(space_X, time_X, X, Y, len(space_X), len(time_X))
         optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.01)
         smallest_loss = 5000
         for i in range(1000):
@@ -106,6 +106,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
         self.type = "Gaussian Process Regression Optimizing alpha, bias and Theta"
         self.space_theta = theta_model.theta_space.detach().clone()
         self.time_theta = theta_model.theta_time.detach().clone()
+        self.alt_theta = theta_model.theta_alt.detach().clone()
         self.space_X = space_X  # np.concatenate((space_X, space_Xt))
         self.time_X = time_X
         self.alpha = theta_model.alpha.item()
