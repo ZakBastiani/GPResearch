@@ -11,3 +11,26 @@ def quick_inv(space_k, time_k, alpha, noise_sd):
     S_st = torch.diag(S_st)
     sigma_inv = U_st @ S_st @ V_st
     return sigma_inv
+
+
+def linear_cg(A, b, x0, tol=1e-3):
+    xk = x0
+    rk = A @ xk - b
+    pk = -rk
+    rk_norm = torch.norm(rk)
+
+    num_iter = 0
+    while rk_norm > tol:
+        apk = A @ pk
+        rkrk = rk.T @ rk
+
+        alpha = rkrk / (pk.T @ apk)
+        xk = xk + alpha * pk
+        rk = rk + alpha * apk
+        beta = (rk.T @ rk) / rkrk
+        pk = -rk + beta * pk
+
+        num_iter += 1
+        rk_norm = torch.norm(rk)
+
+    return xk, num_iter

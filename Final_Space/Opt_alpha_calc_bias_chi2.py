@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from scipy.sparse import linalg
 import matplotlib.pyplot as plt
 import torch
 from torch import nn
@@ -68,6 +69,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 # Inverse A and multiply it by C
                 A_inverse = torch.linalg.inv(A)
                 b = C @ A_inverse
+
                 self.bias = b.flatten()
 
                 return MAPEstimate.map_estimate_torch_chi2(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise_sd,

@@ -5,12 +5,13 @@ import torch
 from torch import nn
 from Final_Space import Gaussian_Process
 from Real_World_Example import MAPEstimate
-from Real_World_Example import quick_inv
+from Real_World_Example import fast_functions
 
 
 class OptAll(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, Xt, _Yt,
                  noise_sd, theta_not, bias_kernel, v, t2):
+        torch.set_default_dtype(torch.float64)
         N_sensors = len(space_X)
         N_time = len(time_X)
 
@@ -38,7 +39,7 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 return kernel
 
             def time_kernel(self, X, Y):
-                kernel = torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
+                kernel = torch.exp(-((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
                 return kernel
 
             def kernel(self, X, Y):
@@ -54,7 +55,7 @@ class OptAll(Gaussian_Process.GaussianProcess):
                 space_k = self.space_kernel(self.space_X, self.space_X)
                 time_k = self.time_kernel(self.time_X, self.time_X)
                 sigma = torch.kron(time_k, space_k)
-                sigma_inv = quick_inv.quick_inv(space_k, time_k, self.alpha, self.noise_sd)
+                sigma_inv = fast_functions.quick_inv(space_k, time_k, self.alpha, noise_sd)
                 bias_sigma = torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X))
 
                 # Build and calc A and C
@@ -91,7 +92,7 @@ class OptAll(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         theta_model = theta_opt(X, Y, len(space_X), len(time_X))
-        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.02)
+        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.01)
         smallest_loss = 5000
         for i in range(1000):
             optimizer.zero_grad()

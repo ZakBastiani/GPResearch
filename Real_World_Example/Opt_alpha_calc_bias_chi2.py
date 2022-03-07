@@ -1,16 +1,16 @@
 import math
-import numpy as np
+from scipy.sparse import linalg
 import matplotlib.pyplot as plt
 import torch
 from torch import nn
 from Final_Space import Gaussian_Process
 from Real_World_Example import MAPEstimate
-from Real_World_Example import quick_inv
-
+from Real_World_Example import fast_functions
 
 class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
     def __init__(self, space_X, time_X, _Y, Xt, Yt,
                  noise_sd, theta_not, bias_kernel, v, t2):
+        torch.set_default_dtype(torch.float64)
         N_sensors = len(space_X)
         N_time = len(time_X)
 
@@ -23,7 +23,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 self.Y = Y
                 self.N_sensors = N_sensors
                 self.N_time = N_time
-                self.bias = np.zeros(len(space_X) * len(time_X))
+                self.bias = torch.zeros(len(space_X) * len(time_X))
                 self.alpha = nn.Parameter(torch.tensor(1.0))
                 self.theta_space = torch.tensor(4000.0)
                 self.theta_time = torch.tensor(0.25)
@@ -38,7 +38,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 return kernel
 
             def time_kernel(self, X, Y):
-                kernel = torch.exp(-((X.repeat(len(Y), 1) - Y.repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
+                kernel = torch.exp(-((X.T[0].repeat(len(Y), 1) - Y.T[0].repeat(len(X), 1).T) ** 2) / (2 * self.theta_time ** 2))
                 return kernel
 
             def kernel(self, X, Y):
@@ -54,8 +54,8 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
                 space_k = self.space_kernel(self.space_X, self.space_X)
                 time_k = self.time_kernel(self.time_X, self.time_X)
                 sigma = torch.kron(time_k, space_k)
-                sigma_inv = quick_inv.quick_inv(space_k, time_k, self.alpha, self.noise_sd)
-                bias_sigma = torch.kron(torch.eye(len(space_X)), bias_kernel(time_X, time_X))
+                sigma_inv = fast_functions.quick_inv(space_k, time_k, self.alpha, noise_sd)
+                bias_sigma = torch.kron(torch.eye(len(self.space_X)), bias_kernel(self.time_X, self.time_X))
 
                 # Build and calc A and C
                 A = torch.zeros((N_sensors * N_time, N_sensors * N_time))
@@ -72,10 +72,12 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
 
                 A += torch.linalg.inv(bias_sigma)
                 C[0] = Y.T @ sigma_inv + current_C
+                C = C.T
 
                 # Inverse A and multiply it by C
                 A_inverse = torch.linalg.inv(A)
-                b = C @ A_inverse
+                b = A_inverse @ C
+
                 self.bias = b.flatten()
 
                 return MAPEstimate.map_estimate_torch_chi2(self.X, self.Y, Xt, Yt, self.bias, self.alpha, noise_sd,
@@ -89,7 +91,7 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
 
         # setting the model and then using torch to optimize
         theta_model = theta_opt(space_X, time_X, X, Y, len(space_X), len(time_X))
-        optimizer = torch.optim.Adagrad(theta_model.parameters(), lr=0.01)
+        optimizer = torch.optim.Adam(theta_model.parameters(), lr=0.01)
         smallest_loss = 5000
         for i in range(1000):
             optimizer.zero_grad()
@@ -97,7 +99,8 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
             if loss < smallest_loss:
                 smallest_loss = loss
             if i % 100 == 0:
-                print(loss)
+                print('Loss: ' + str(loss))
+                print('Alpha: ' + str(theta_model.alpha))
             loss.backward()
             optimizer.step()
         # print("Smallest Loss:" + str(smallest_loss))
@@ -119,6 +122,6 @@ class OptAlphaCalcBias(Gaussian_Process.GaussianProcess):
         self.kernel = theta_model.kernel
         self.points = torch.cat((space_X.repeat(len(time_X), 1),
                                  time_X.repeat_interleave(len(space_X)).repeat(1, 1).T), 1)
-        self.Sigma = self.kernel(self.points, self.points)
-        self.L = torch.linalg.cholesky(self.Sigma + self.noise_sd ** 2 * torch.eye(len(self.Sigma)))
+        # self.Sigma = self.kernel(self.points, self.points)
+        # self.L = torch.linalg.cholesky(self.Sigma + self.noise_sd ** 2 * torch.eye(len(self.Sigma)))
         self.loss = -smallest_loss

@@ -14,6 +14,7 @@ from Final_Space import MAPEstimate
 from Final_Space import Opt_Theta
 from Final_Space import Opt_All_but_bias
 from Final_Space import Opt_all_but_bias_chi2
+from Final_Space import Opt_alpha_calc_bias_chi2
 from Final_Space import Opt_Bias
 from Final_Space import Opt_bias_alpha_pingpong
 
@@ -85,6 +86,7 @@ calc_changing_bias_error = np.zeros(5)
 calc_changing_int_bias_error = np.zeros(5)
 calc_both_error = np.zeros(5)
 calc_both_chi_alpha_error = np.zeros(5)
+opt_alpha_calc_bias_chi2_error = np.zeros(5)
 opt_theta_error = np.zeros(5)
 opt_all_error = np.zeros(5)
 opt_all_chi2_error = np.zeros(5)
@@ -188,13 +190,13 @@ for i in range(0, N_trials):
     # # changing_bias_gp.display(gaussian.space, gaussian.time, changing_bias_estimate, space_points, time_points,
     # #                          "GP with given alpha assuming the bias is changing in time")
     #
-    # Building a GP that predicts the bias using an integrated GP but is given alpha
-    changing_bias_int_gp = Calc_Bias_Changing_In_Time_Integrated_GP.ChangingBiasIntGP(sensors, sensor_time, data, true_sensors, sensor_time,
-                                                                                      true_data, space_kernel, time_kernel, kernel, noise_sd,
-                                                                                      theta_not, bias_kernel, alpha, alpha_mean, alpha_sd, sensor_bias)
-    changing_bias_int_estimate = changing_bias_int_gp.build(gaussian.space, gaussian.time)
-    changing_bias_int_gt_estimate = changing_bias_int_gp.build(true_sensors, true_sensor_time)
-    calc_changing_int_bias_error += changing_bias_int_gp.print_error(alpha, sensor_bias, gaussian.underlying_data, changing_bias_int_estimate, true_data, changing_bias_int_gt_estimate)
+    # # Building a GP that predicts the bias using an integrated GP but is given alpha
+    # changing_bias_int_gp = Calc_Bias_Changing_In_Time_Integrated_GP.ChangingBiasIntGP(sensors, sensor_time, data, true_sensors, sensor_time,
+    #                                                                                   true_data, space_kernel, time_kernel, kernel, noise_sd,
+    #                                                                                   theta_not, bias_kernel, alpha, alpha_mean, alpha_sd, sensor_bias)
+    # changing_bias_int_estimate = changing_bias_int_gp.build(gaussian.space, gaussian.time)
+    # changing_bias_int_gt_estimate = changing_bias_int_gp.build(true_sensors, true_sensor_time)
+    # calc_changing_int_bias_error += changing_bias_int_gp.print_error(alpha, sensor_bias, gaussian.underlying_data, changing_bias_int_estimate, true_data, changing_bias_int_gt_estimate)
     # changing_bias_int_gp.display(gaussian.space, gaussian.time, changing_bias_int_estimate, space_points, time_points,
     #                              "GP with given alpha assuming the bias is changing in time with integrated GP")
 
@@ -216,6 +218,13 @@ for i in range(0, N_trials):
     # # calc_both_chi_alpha_gp.display(gaussian.space, gaussian.time, calc_both_chi_alpha_estimate, space_points, time_points,
     # #                              "GP calculating both a changing bias and alpha with int gp")
 
+    # Optimizing for alpha calculating bias
+    opt_alpha_calc_bias_chi2 = Opt_alpha_calc_bias_chi2.OptAlphaCalcBias(sensors, sensor_time, data, true_sensors, sensor_time, true_data,
+                             noise_sd, theta_not, bias_kernel, v, t2)
+    opt_alpha_calc_bias_chi2_estimate = opt_alpha_calc_bias_chi2.build(gaussian.space, gaussian.time)
+    opt_alpha_calc_bias_chi2_gt_estimate = opt_alpha_calc_bias_chi2.build(true_sensors, true_sensor_time)
+    opt_alpha_calc_bias_chi2_error += opt_alpha_calc_bias_chi2.print_error(alpha, sensor_bias, gaussian.underlying_data,
+                                                                           opt_alpha_calc_bias_chi2_estimate, true_data, opt_alpha_calc_bias_chi2_gt_estimate)
 
     # # Using an optimizer to find theta_time and theta_space
     # opt_theta = Opt_Theta.OptTheta(sensors, sensor_time, data, true_sensors, sensor_time, true_data,

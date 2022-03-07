@@ -15,9 +15,9 @@ def map_estimate_torch_chi2(X, Y, Xt, Yt, bias, alpha, noise, Sigma_hat, sigma_h
 
     chi2 = torch.distributions.gamma.Gamma(v/2, v*t2/2)
     prob_a = chi2.log_prob(1/alpha)
-    prob_b = -(1/2) * (torch.logdet(bias_sigma)
-                       + bias.T @ torch.inverse(bias_sigma) @ bias
-                       + len(bias) * math.log(2 * math.pi))
+    prob_b = -(1/2) * (  # torch.logdet(bias_sigma)
+                       + (bias.T @ torch.inverse(bias_sigma) @ bias)
+                       + len(bias) * (math.log(2 * math.pi)))
     chunk2 = prob_a + prob_b
 
     def v(x):
